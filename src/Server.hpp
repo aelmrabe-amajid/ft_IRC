@@ -10,10 +10,10 @@
 #include <poll.h> //-> for poll()
 #include <csignal> //-> for signal()
 //-------------------------------------------------------//
-#define RED "\e[1;31m" //-> for red color
-#define WHI "\e[0;37m" //-> for white color
-#define GRE "\e[1;32m" //-> for green color
-#define YEL "\e[1;33m" //-> for yellow color
+#define RED "\e[1;31m" 
+#define WHI "\e[0;37m" 
+#define GRE "\e[1;32m" 
+#define YEL "\e[1;33m" 
 //-------------------------------------------------------//
 class Client //-> class for client
 {
