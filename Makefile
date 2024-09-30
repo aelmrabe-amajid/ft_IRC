@@ -1,4 +1,4 @@
-SRCS=  
+SRCS=  src/main.cpp
 OBJS= $(SRCS:.cpp=.o)
 CFLAGS= -Wall -Wextra -Werror -std=c++98 
 CPP= c++
