@@ -1,4 +1,4 @@
-SRCS=  src/main.cpp
+SRCS=  src/main.cpp src/Server.cpp
 OBJS= $(SRCS:.cpp=.o)
 CFLAGS= -Wall -Wextra -Werror -std=c++98 
 CPP= c++
@@ -8,7 +8,7 @@ NAME= ircserv
 
 all: $(NAME)
 
-%.o: %.cpp 
+%.o: %.cpp src/Server.hpp
 	$(CPP) $(CFLAGS) -c $< -o $@
 
 $(NAME): $(OBJS)
