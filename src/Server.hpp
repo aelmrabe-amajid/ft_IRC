@@ -18,15 +18,20 @@
 class Client //-> class for client
 {
 private:
-	int Fd; //-> client file descriptor
-	std::string IPadd; //-> client ip address
+    int Fd; //-> client file descriptor
+    std::string IPadd; //-> client ip address
+    std::string data; // recived string from the client
+    std::string message; //-> message received from the client
 public:
-	Client(){}; //-> default constructor
-	int GetFd(){return Fd;} //-> getter for fd
+    Client(){}; //-> default constructor
+    int GetFd(){return Fd;} //-> getter for fd
 
-	void SetFd(int fd){Fd = fd;} //-> setter for fd
-	void setIpAdd(std::string ipadd){IPadd = ipadd;} //-> setter for ipadd
+    void SetFd(int fd){Fd = fd;} //-> setter for fd
+    void setIpAdd(std::string ipadd){IPadd = ipadd;} //-> setter for ipadd
+    void setMessage(std::string msg){message = msg;} //-> setter for message
+    std::string getMessage(){return message;} //-> getter for message
 };
+
 
 class Server //-> class for server
 {
@@ -44,12 +49,12 @@ public:
 	void SerSocket(); //-> server socket creation
 	void AcceptNewClient(); //-> accept new client
 	void ReceiveNewData(int fd); //-> receive new data from a registered client
-
+	std::vector<Client> &GetClients(){return clients;} //-> getter for clients
 	static void SignalHandler(int signum); //-> signal handler
  
+
 	void CloseFds(); //-> close file descriptors
 	void ClearClients(int fd); //-> clear clients
 	void SendData(int fd, std::string data); //-> send data to a registered client
 	void SendAll(std::string data); //-> send data to all clients
 };
-
