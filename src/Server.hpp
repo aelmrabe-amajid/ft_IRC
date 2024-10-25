@@ -15,6 +15,8 @@
 #define GRE "\e[1;32m" 
 #define YEL "\e[1;33m" 
 //-------------------------------------------------------//
+
+// #include "./channels/channels.hpp"
 class Client //-> class for client
 {
 private:
@@ -35,26 +37,27 @@ public:
 
 class Server //-> class for server
 {
-private:
-	int Port; //-> server port
-	int SerSocketFd; //-> server socket file descriptor
-	static bool Signal; //-> static boolean for signal
-	std::vector<Client> clients; //-> vector of clients
-	std::vector<struct pollfd> fds; //-> vector of pollfd
-	std::string Passwd; //-> server password
-public:
-	Server(){SerSocketFd = -1;} //-> default constructor
+	private:
+		int Port; //-> server port
+		int SerSocketFd; //-> server socket file descriptor
+		static bool Signal; //-> static boolean for signal
+		std::vector<Client> clients; //-> vector of clients
+		std::vector<struct pollfd> fds; //-> vector of pollfd
+		std::string Passwd; //-> server password
+	
+	public:
+		Server(){SerSocketFd = -1;} //-> default constructor
 
-	void ServerInit(int port, std::string passwd); //-> server initialization
-	void SerSocket(); //-> server socket creation
-	void AcceptNewClient(); //-> accept new client
-	void ReceiveNewData(int fd); //-> receive new data from a registered client
-	std::vector<Client> &GetClients(){return clients;} //-> getter for clients
-	static void SignalHandler(int signum); //-> signal handler
- 
+		void ServerInit(int port, std::string passwd); //-> server initialization
+		void SerSocket(); //-> server socket creation
+		void AcceptNewClient(); //-> accept new client
+		void ReceiveNewData(int fd); //-> receive new data from a registered client
+		std::vector<Client> &GetClients(){return clients;} //-> getter for clients
+		static void SignalHandler(int signum); //-> signal handler
+	
 
-	void CloseFds(); //-> close file descriptors
-	void ClearClients(int fd); //-> clear clients
-	void SendData(int fd, std::string data); //-> send data to a registered client
-	void SendAll(std::string data); //-> send data to all clients
+		void CloseFds(); //-> close file descriptors
+		void ClearClients(int fd); //-> clear clients
+		void SendData(int fd, std::string data); //-> send data to a registered client
+		void SendAll(std::string data); //-> send data to all clients
 };

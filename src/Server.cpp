@@ -31,28 +31,67 @@ void	Server::CloseFds(){
 	}
 }
 
+std::vector<std::string> MsgSplit(std::string Message)
+{
+	std::vector<std::string> res;
+	size_t beggin = 0;
+	size_t end = Message.find(" ");
+	while(end != std::string::npos)
+	{
+		// std::cout << beggin << " " << end << "\n";
+		res.push_back(Message.substr(beggin, end - beggin));
+		// std::cout << "message = " << Message << "\n";
+		std::cout << res.back() << "\n";
+		while(Message[end] == ' ')
+			end++;
+		// std::cout << end << "\n";
+		beggin = end;
+		end = Message.find(' ', beggin);
+	}
+	res.push_back(Message.substr(beggin, Message.size()));
+	return res;
+}
+
 void Server::ReceiveNewData(int fd)
 {
-    char buff[1024]; //-> buffer for the received data
-    memset(buff, 0, sizeof(buff)); //-> clear the buffer
+    char Message[1024]; //-> buffer for the received data
+    memset(Message, 0, sizeof(Message)); //-> clear the buffer
 
-    ssize_t bytes = recv(fd, buff, sizeof(buff) - 1 , 0); //-> receive the data
+    ssize_t bytes = recv(fd, Message, sizeof(Message) - 1 , 0); //-> receive the data
 
     if(bytes <= 0){ //-> check if the client disconnected
+		/*
+		 	Tools::removeClient(fd);
+		*/
         std::cout << RED << "Client <" << fd << "> Disconnected" << WHI << std::endl;
         ClearClients(fd); //-> clear the client
         close(fd); //-> close the client socket
     }
 
     else{ //-> print the received data
-        buff[bytes] = '\0';
-        std::cout << YEL << "Client <" << fd << "> Data: " << WHI << buff;
+        Message[bytes] = '\0';
+        std::cout << YEL << "Client <" << fd << "> Data: " << WHI << Message;
         //here you can add your code to process the received data: parse, check, authenticate, handle the command, etc...
-
+		// std::cout << buff << std::endl;
         // Find the client and set the message
+		/*
+			int typeMessage;
+			typeMessage = Tool::DataParse(fd,Message)
+			if (typeMessage == COMMAND)
+			else if (typeMessage == FILE)
+			else if (typeMessage == TEXT)
+		*/
+		std::vector<std::string>res;
+		res = MsgSplit(Message);
+		std::cout << "--------------" << std::endl;
+		for(int unsigned i = 0; i < res.size(); i++)
+		{
+			std::cout << res[i] << "\n";
+		}
+		std::cout << "--------------" << std::endl;
         for(size_t i = 0; i < clients.size(); i++){
             if (clients[i].GetFd() == fd){
-                clients[i].setMessage(std::string(buff));
+                clients[i].setMessage(std::string(Message));
 				std::cout << clients[i].getMessage() << std::endl;
                 break;
             }
@@ -78,11 +117,17 @@ void Server::AcceptNewClient()
 	NewPoll.events = POLLIN; //-> set the event to POLLIN for reading data
 	NewPoll.revents = 0; //-> set the revents to 0
 
+	/*
+		class tools provide a addClient(int fd) // this method will create client class for you 
+		and will add client to map ClientIDs. 
+		cli = Tools::getClientByID(id)
+	*/
 	cli.SetFd(incofd); //-> set the client file descriptor
 	cli.setIpAdd(inet_ntoa((cliadd.sin_addr))); //-> convert the ip address to string and set it
 	clients.push_back(cli); //-> add the client to the vector of clients
 	fds.push_back(NewPoll); //-> add the client socket to the pollfd
 
+	std::cout << cli.GetFd() << inet_ntoa((cliadd.sin_addr)) << std::endl;
 	std::cout << GRE << "Client <" << incofd << "> Connected" << WHI << std::endl;
 }
 
@@ -96,6 +141,7 @@ void Server::SerSocket()
 	add.sin_port = htons(this->Port); //-> convert the port to network byte order (big endian)
 
 	SerSocketFd = socket(AF_INET, SOCK_STREAM, 0); //-> create the server socket
+	std::cout <<"the server socket " <<  SerSocketFd << std::endl;
 	if(SerSocketFd == -1) //-> check if the socket is created
 		throw(std::runtime_error("faild to create socket"));
 
