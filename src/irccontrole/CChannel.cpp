@@ -1,5 +1,4 @@
-#include "CChannel.hpp"
-
+#include "../../inc/CChannel.hpp"
 
 // ---------------Channel---------------
 
@@ -7,52 +6,52 @@ Channel::Channel() {}
 
 Channel::~Channel() {}
 
-std::string Channel::getCreator(void) const {
-    return this->creator_name;
+std::string Channel::getCreator() const {
+    return this->creatorName;
 }
 
-std::string Channel::getCreation_Time(void) const {
-    return this->creation_time;
+std::string Channel::getCreationTime() const {
+    return this->creationTime;
 }
 
-std::string Channel::getTopic(void) const {
+std::string Channel::getTopic() const {
     return this->topic;
 }
 
-std::string Channel::getKey(void) const {
+std::string Channel::getKey() const {
     return this->key;
 }
 
-int Channel::getUserLimits(void) const {
-    return this->user_limits;
+int Channel::getChannelId() const {
+    return this->id;
 }
 
-std::map<std::string, Client> Channel::getmembers(void) const {
+std::map<std::string, Client> Channel::getMembers() const {
     return this->members;
 }
 
-std::map<std::string, Client> Channel::getoperators(void) const {
+std::map<std::string, Client> Channel::getOperators() const {
     return this->operators;
 }
 
-std::map<std::string, Client> Channel::getban_list(void) const {
-    return this->ban_list;
+std::map<std::string, Client> Channel::getBanList() const {
+    return this->banList;
 }
 
-void Channel::setCreator(const std::string& _creator) {
-    this->creator_name = _creator;
+void Channel::setCreator(const std::string& creator) {
+    this->creatorName = creator;
 }
 
-void Channel::setCreation_time(const std::string& _time) {
-    this->creation_time = _time;
+void Channel::setCreationTime(const std::string& time) {
+    this->creationTime = time;
 }
 
-void Channel::setTopic(const std::string& _topic) {
-    this->topic = _topic;
+void Channel::setTopic(const std::string& topic) {
+    this->topic = topic;
 }
 
-void Channel::setKey(const std::string& _key) {
-    this->key = _key;
+void Channel::setKey(const std::string& key) {
+    this->key = key;
 }
 
 void Channel::addMember(const std::string& name, const Client& client) {
@@ -63,24 +62,24 @@ void Channel::removeMember(const std::string& name) {
     this->members.erase(name);
 }
 
-void Channel::SetChannelId(int id){
-	this->id = id;
+void Channel::setChannelId(int id) {
+    this->id = id;
 }
 
-void Channel::SetInviteMode(bool _invite){
-	this->_invite = _invite;
+void Channel::setMode(int mode) {
+    this->mode = mode;
 }
 
-void Channel::SetPassMode(bool _key){
-	this->_key = _key;
+int Channel::getMode() const {
+    return this->mode;
 }
 
-void Channel::SetUserLimits(int _limits){
-	this->user_limits = _limits;
+void Channel::setUserLimits(int limits) {
+    this->limits = limits;
 }
 
-void Channel::SettopicMode(bool _topic){
-	this->_topic = _topic;
+int Channel::getUserLimits() const {
+    return this->limits;
 }
 
 // ---------------Commands---------------

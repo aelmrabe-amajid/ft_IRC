@@ -1,4 +1,4 @@
-#include "Server.hpp"
+#include "../inc/Server.hpp"
 
 void Server::ClearClients(int fd){ //-> clear the clients
 	for(size_t i = 0; i < fds.size(); i++){ //-> remove the client from the pollfd

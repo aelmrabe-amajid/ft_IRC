@@ -1,4 +1,4 @@
-#include "CClient.hpp"
+#include "../../inc/CClient.hpp"
 
 Client::Client(void){}
 

@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-class Client //-> class for client
+class Client
 {
 	private:
 	    int id; //-> client file descriptor
@@ -16,25 +16,22 @@ class Client //-> class for client
 		std::string userName;
 		std::string nickName;
 		std::string realName;
-		std::vector<int> channelList; // Vector that will host int of channel that this client are join to it 
+		std::vector<int> channelList;
 	public:
-	    Client(){}; //-> default constructor
+	    Client(); //-> default constructor
 		~Client();
 		Client&operator=(const Client& obj);
-
 	    int GetFd(){return id;} //-> getter for fd
 	    void SetFd(int fd){id = fd;} //-> setter for fd
 	    void setIpAdd(std::string ipadd){IPadd = ipadd;} //-> setter for ipadd
 	    void setMessage(std::string msg){message = msg;} //-> setter for message
 	    std::string getMessage(){return message;} //-> getter for message
-				
 		//----------getters-----------
 		bool getstate() const;
 		std::string getuserName() const;
 		std::string getnickName() const;
 		std::string getrealName() const;
 		int getuserId(void) const;
-
 		//----------setters-----------
 		void setState(bool _state);
 		void setuserName(const std::string &userName);

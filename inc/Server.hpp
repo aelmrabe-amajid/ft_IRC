@@ -1,6 +1,5 @@
 #pragma once
-#include <iostream>
-#include <vector> //-> for vector
+#include "irccontrole.hpp"
 #include <sys/socket.h> //-> for socket()
 #include <sys/types.h> //-> for socket()
 #include <netinet/in.h> //-> for sockaddr_in
@@ -17,22 +16,22 @@
 //-------------------------------------------------------//
 
 // #include "./channels/channels.hpp"
-class Client //-> class for client
-{
-private:
-    int Fd; //-> client file descriptor
-    std::string IPadd; //-> client ip address
-    std::string data; // recived string from the client
-    std::string message; //-> message received from the client
-public:
-    Client(){}; //-> default constructor
-    int GetFd(){return Fd;} //-> getter for fd
+// class Client //-> class for client
+// {
+// private:
+//     int Fd; //-> client file descriptor
+//     std::string IPadd; //-> client ip address
+//     std::string data; // recived string from the client
+//     std::string message; //-> message received from the client
+// public:
+//     Client(){}; //-> default constructor
+//     int GetFd(){return Fd;} //-> getter for fd
 
-    void SetFd(int fd){Fd = fd;} //-> setter for fd
-    void setIpAdd(std::string ipadd){IPadd = ipadd;} //-> setter for ipadd
-    void setMessage(std::string msg){message = msg;} //-> setter for message
-    std::string getMessage(){return message;} //-> getter for message
-};
+//     void SetFd(int fd){Fd = fd;} //-> setter for fd
+//     void setIpAdd(std::string ipadd){IPadd = ipadd;} //-> setter for ipadd
+//     void setMessage(std::string msg){message = msg;} //-> setter for message
+//     std::string getMessage(){return message;} //-> getter for message
+// };
 
 
 class Server //-> class for server

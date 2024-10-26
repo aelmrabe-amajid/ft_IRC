@@ -1,4 +1,4 @@
-#include "irccontrole.hpp"
+#include "../../inc/irccontrole.hpp"
 
 t_content IRCCommandParser::parse() {
     t_content parsed;
@@ -140,25 +140,28 @@ void IRCCommandParser::parseInvite(t_content& parsed) {
     parsed.channels.push_back(channel);
 }
 
-std::vector<std::string> IRCCommandParser::splitString(const std::string& str, char delimiter) {
+std::vector<std::string> IRCCommandParser::splitString(const std::string& str, char delimiter)
+{
     std::vector<std::string> tokens;
     std::istringstream stream(str);
     std::string token;
-    while (std::getline(stream, token, delimiter)) {
+    while (std::getline(stream, token, delimiter))
         tokens.push_back(token);
-    }
     return tokens;
 }
 
 //------------------------
+
 IRCControle::IRCControle(void){};
 IRCControle::~IRCControle(void){};
 
 int IRCControle::RunCommand(int fd, std::string Command)
 {
-
+    return (0);
 }
-void IRCControle::addClient(int id){
+
+void IRCControle::addClient(int id)
+{
     Client User;
     User.setnickName("");
     User.setuserName("");
@@ -168,10 +171,11 @@ void IRCControle::addClient(int id){
     this->ClientIds[id] = User;
 }
 
-void IRCControle::addChannel(int id){
+void IRCControle::addChannel(int id)
+{
     Channel Chn;
 
-    Chn.SetChannelId(id);
-    Chn.setKey(false);
-    Chn.se
+    Chn.setChannelId(id);
+    Chn.setMode(0);
+    Chn.setUserLimits(0);
 }

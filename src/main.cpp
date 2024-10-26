@@ -1,5 +1,5 @@
-#include "Server.hpp"
-#include <string>
+#include "../inc/Server.hpp"
+
 int main(int arg_num, char **args)
 {
     if(arg_num != 3) //-> check the number of arguments
