@@ -52,10 +52,38 @@ std::vector<std::string> MsgSplit(std::string Message)
 	return res;
 }
 
+// int main()
+// {
+
+// 	/*
+// 		IRCCommand::RunCommand(fd,Command)
+// 		{
+// 			IRCCommandParser parser(command);
+// 			res = IRCCommandVerify verify(fd,parser.parse());
+// 			if (res.state != VALIDE)
+// 				return (IRCReplay::ERR(fd,res));
+// 			return (IRCReplay::RPL(fd,res));
+// 		}
+// 	*/
+// 	std::string input = "JOIN #my_channel,#my_channel2,#my_channel3 1111,2222,3333,4444";
+// 	IRCCommandParser parser(input);
+// 	t_content result = parser.parse();
+// 	std::cout << "Command ID: " << result.command << std::endl;
+// 	for (std::vector<std::string>::iterator it = result.channels.begin(); it != result.channels.end(); it++)
+// 		std::cout << "channels: " << *it << std::endl;
+// 	for (std::vector<std::string>::iterator it = result.users.begin(); it != result.users.end(); it++)
+// 		std::cout << "users: " << *it << std::endl;
+//     // Output parsed data
+//     std::cout << "Message: " << result.message << std::endl;
+//     std::cout << "Reason: " << result.reason << std::endl;
+//     return 0;
+// }
+
 void Server::ReceiveNewData(int fd)
 {
     char Message[1024]; //-> buffer for the received data
     memset(Message, 0, sizeof(Message)); //-> clear the buffer
+	IRCControle controle;
 
     ssize_t bytes = recv(fd, Message, sizeof(Message) - 1 , 0); //-> receive the data
 
@@ -81,18 +109,11 @@ void Server::ReceiveNewData(int fd)
 			else if (typeMessage == FILE)
 			else if (typeMessage == TEXT)
 		*/
-		std::vector<std::string>res;
-		res = MsgSplit(Message);
-		std::cout << "--------------" << std::endl;
-		for(int unsigned i = 0; i < res.size(); i++)
-		{
-			std::cout << res[i] << "\n";
-		}
-		std::cout << "--------------" << std::endl;
         for(size_t i = 0; i < clients.size(); i++){
             if (clients[i].GetFd() == fd){
                 clients[i].setMessage(std::string(Message));
-				std::cout << clients[i].getMessage() << std::endl;
+				controle.RunCommand(fd,Message);
+				// std::cout << clients[i].getMessage() << std::endl;
                 break;
             }
         }
@@ -165,6 +186,8 @@ void Server::ServerInit(int port, std::string passwd)
 	this->Port = port; //-> set the server port
     this->Passwd = passwd; //-> set the server password
 	SerSocket(); //-> create the server socket
+	IRCControle Controle; //-> create the IRCControle object
+
 
 	std::cout << GRE << "Server <" << SerSocketFd << "> Connected" << WHI << std::endl;
 	std::cout << "Waiting to accept a connection...\n";

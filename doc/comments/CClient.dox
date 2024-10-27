@@ -1,0 +1,48 @@
+/// @file CClient.dox
+/// @brief Documentation for the Client class
+
+/**
+ * @class Client
+ * @brief Represents a client with various attributes like ID, IP address, and state.
+ * 
+ * The Client class stores information about a client, such as ID, IP address, message,
+ * and channel list. It provides methods to access and modify these attributes.
+ */
+
+/**
+ * @brief Default constructor for Client.
+ * Initializes a new Client object with default values.
+ */
+Client::Client() {}
+
+/**
+ * @brief Destructor for Client.
+ * Cleans up any resources used by the Client.
+ */
+Client::~Client() {}
+
+/**
+ * @brief Get the client's file descriptor.
+ * @return The client's file descriptor as an integer.
+ */
+int Client::GetFd() { return id; }
+
+/**
+ * @brief Set the client's file descriptor.
+ * @param fd The file descriptor to set.
+ */
+void Client::SetFd(int fd) { id = fd; }
+
+/**
+ * @brief Set the client's IP address.
+ * @param ipadd The IP address to set as a string.
+ */
+void Client::setIpAdd(std::string ipadd) { IPadd = ipadd; }
+
+/**
+ * @brief Get the current message.
+ * @return The message as a string.
+ */
+std::string Client::getMessage() { return message; }
+
+// Continue with similar documentation for each function and member

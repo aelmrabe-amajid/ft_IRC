@@ -60,3 +60,17 @@ void Client::setnickName(const std::string& _nickName) {
 void Client::setrealName(const std::string& _realName) {
     this->realName = _realName;
 }
+
+std::vector<int> Client::getChannelsList(void)const {
+	return (this->channelList);
+}
+
+void Client::addChannelid(int channelId){
+	this->channelList.push_back(channelId);	
+}
+
+void Client::removeChannelid(int channelId){
+	for (std::vector<int>::iterator it = this->channelList.begin(); it != this->channelList.end(); it++)
+		if (*it == channelId)
+			this->channelList.erase(it);
+}

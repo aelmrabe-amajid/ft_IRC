@@ -1,0 +1,102 @@
+\doxysection{irccontrole.\+hpp}
+\hypertarget{irccontrole_8hpp_source}{}\label{irccontrole_8hpp_source}\index{inc/irccontrole.hpp@{inc/irccontrole.hpp}}
+\mbox{\hyperlink{irccontrole_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ IRCCONTROLE\_HPP}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ IRCCONTROLE\_HPP}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <sstream>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_c_channel_8hpp}{CChannel.hpp}}"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_client}{Client}};}
+\DoxyCodeLine{00012\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_channel}{Channel}};}
+\DoxyCodeLine{00013\ \textcolor{keyword}{enum}\ \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352}{CommandType}}\ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a4925a399dab94b9b58f6d1b5cd246af7}{JOIN}},\ \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a173f98c603042f6241b70157d56e385f}{PART}},\ \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a4f82d41890373d4f9f31254e2c7be803}{PRIVMSG}},\ \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a552dbfc018bbff8b37c76efea76ca893}{KICK}},\ \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a3e8e9fa31579ebd1db3ffc0fc7528ddb}{TOPIC}},\ \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a76bdc8adfd6c6463ab269ff4c06be9b4}{QUIT}},\ \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a3e724a44d5e55b043a1c6ba83aa08bea}{NICK}},\ \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352ae2d30a195cee6b2961cc2c23ea4b520b}{USER}},\ \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a0afa825567e442a46d131be6c71cb40f}{PASS}},\ \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352ad7fefe2c0ce6f89ca630dacf7436e01b}{INVITE}},\ \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a6ce26a62afab55d7606ad4e92428b30c}{UNKNOWN}}}
+\DoxyCodeLine{00015\ \};}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structs__content}{s\_content}}\{}
+\DoxyCodeLine{00018\ \ \ \ \ \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352}{CommandType}}\ \mbox{\hyperlink{structs__content_a03d007bdd4218d0dcd52fc666622e7b3}{command}};}
+\DoxyCodeLine{00019\ \ \ \ \ std::vector<std::string>\ \mbox{\hyperlink{structs__content_a39940d45b7970954450356d7be6b3be1}{channels}};}
+\DoxyCodeLine{00020\ \ \ \ \ std::vector<std::string>\ \mbox{\hyperlink{structs__content_aea89fc9143eac6bca525077c2e8c6a38}{users}};}
+\DoxyCodeLine{00021\ \ \ \ \ std::string\ \mbox{\hyperlink{structs__content_a5a162741520f1e3f5231763826f7fbcd}{message}};}
+\DoxyCodeLine{00022\ \ \ \ \ std::string\ \mbox{\hyperlink{structs__content_a7cb30152f24f7c98447535e9073274aa}{reason}};}
+\DoxyCodeLine{00023\ \}\mbox{\hyperlink{irccontrole_8hpp_a4dc07c8e039d7fe24a5c9f5de734cae8}{t\_content}};}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ \ \ \ this\ class\ will\ be\ used\ to\ parse}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ \ \ \ command\ also\ at\ the\ same\ time\ will}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ \ \ \ verify\ if\ the\ command\ is\ following}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ \ \ \ the\ syntax\ of\ rfc\ }}
+\DoxyCodeLine{00030\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00031\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_i_r_c_command_parser}{IRCCommandParser}}\{}
+\DoxyCodeLine{00032\ \ \ \ \ }
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00034\ \ \ \ \ \mbox{\hyperlink{class_i_r_c_command_parser_afb761049787a3b6d2416d2c85132b103}{IRCCommandParser}}(\textcolor{keyword}{const}\ std::string\&\ input)\ :\ \mbox{\hyperlink{class_i_r_c_command_parser_afaba15587723a6fafbee6a115555c7c6}{raw\_message}}(input)\ \{\}}
+\DoxyCodeLine{00035\ \ \ \ \ \mbox{\hyperlink{structs__content}{t\_content}}\ \mbox{\hyperlink{class_i_r_c_command_parser_a44cce9944071f6bf06dd5ee6e7ff7e94}{parse}}();}
+\DoxyCodeLine{00036\ \ \ \ \ \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352}{CommandType}}\ \mbox{\hyperlink{class_i_r_c_command_parser_aa298b04ee6a43b6a9b4558016abdb73c}{identifyCommand}}();}
+\DoxyCodeLine{00037\ \ \ \ \ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00039\ \ \ \ \ std::string\ \mbox{\hyperlink{class_i_r_c_command_parser_afaba15587723a6fafbee6a115555c7c6}{raw\_message}};}
+\DoxyCodeLine{00040\ \ \ \ \ std::vector<std::string>\ \mbox{\hyperlink{class_i_r_c_command_parser_a40bcd4e75d063d4d0301e671fc14ab66}{splitString}}(\textcolor{keyword}{const}\ std::string\&\ str,\ \textcolor{keywordtype}{char}\ delimiter);}
+\DoxyCodeLine{00041\ \ \ \ \ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_command_parser_ab837eed50a8009f156445cf39ac3427f}{parseJoin}}(\mbox{\hyperlink{structs__content}{t\_content}}\&\ parsed);}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_command_parser_abb22a13b5938c58a3d0fcdf9c02b42f3}{parsePart}}(\mbox{\hyperlink{structs__content}{t\_content}}\&\ parsed);}
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_command_parser_ab68b3e046b125279459f00ecbb5ed9cf}{parsePrivmsg}}(\mbox{\hyperlink{structs__content}{t\_content}}\&\ parsed);}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_command_parser_ad9684457a46d2548afe328d8068f401b}{parseKick}}(\mbox{\hyperlink{structs__content}{t\_content}}\&\ parsed);}
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_command_parser_af43862424eac6654659da077dc83816e}{parseTopic}}(\mbox{\hyperlink{structs__content}{t\_content}}\&\ parsed);}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_command_parser_a6a30a61dd37e8d26167919e1bb4c0f5e}{parseQuit}}(\mbox{\hyperlink{structs__content}{t\_content}}\&\ parsed);}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_command_parser_a2c3aebc5ac64c13f82216020e1a5535c}{parseNick}}(\mbox{\hyperlink{structs__content}{t\_content}}\&\ parsed);}
+\DoxyCodeLine{00049\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_command_parser_aea61eb673e5f599af17dee7d31dcfd7a}{parseUser}}(\mbox{\hyperlink{structs__content}{t\_content}}\&\ parsed);}
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_command_parser_a928cc0df7529ca9c940549b0fa8982cb}{parsePass}}(\mbox{\hyperlink{structs__content}{t\_content}}\&\ parsed);}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_command_parser_acd64a9cec78b966a59f8de804d5e34fe}{parseInvite}}(\mbox{\hyperlink{structs__content}{t\_content}}\&\ parsed);}
+\DoxyCodeLine{00052\ \};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ \ \ \ This\ class\ will\ be\ used\ to\ verify\ }}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ \ if\ user\ is\ allowed\ to\ run\ the\ command}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ \ also\ if\ channel\ accept\ the\ this\ command}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ \ (in\ general\ this\ class\ check\ rules\ between\ client\ and\ channel)}}
+\DoxyCodeLine{00059\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00060\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_i_r_c_command_verify}{IRCCommandVerify}}\{}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_i_r_c_command_verify_add9bb8d06403d8579c8f57683046d169}{VerifyCommand}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},\ \mbox{\hyperlink{structs__content}{t\_content}}\ Content);}
+\DoxyCodeLine{00063\ \};}
+\DoxyCodeLine{00064\ }
+\DoxyCodeLine{00065\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_i_r_c_replay}{IRCReplay}}\{}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_replay_abf227659b8f40b113aa59366ec7ae918}{ERR}}(\textcolor{keywordtype}{int}\ client\_id,\ \textcolor{keywordtype}{int}\ err\_num);}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_replay_a83ddcd8d41d42793756cc56aca38b931}{RPL}}(\textcolor{keywordtype}{int}\ client\_id,\ \textcolor{keywordtype}{int}\ rpl\_num);}
+\DoxyCodeLine{00069\ \};}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_i_r_c_controle}{IRCControle}}\{}
+\DoxyCodeLine{00072\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ std::map<int,Client>\mbox{\hyperlink{class_i_r_c_controle_a6de784acc94ca6700775a3acaa21531f}{ClientIds}};}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ std::map<int,Channel>\mbox{\hyperlink{class_i_r_c_controle_a7dcd8f926a09da4c32c098355ca312ab}{ChannelIds}};}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{comment}{//-\/-\/-\/-\/-\/Class-\/Methods-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_i_r_c_controle_ae79f2017d3628be1bc89bcdd99b1eb7d}{IRCControle}}();}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_i_r_c_controle_a4fe9eca2ff5ab5648f107029c3726620}{\string~IRCControle}}();}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_i_r_c_controle_a7af9a604ba139f80ce31ba4744a5f890}{RunCommand}}(\textcolor{keywordtype}{int}\ fd,\ std::string\ \mbox{\hyperlink{class_command}{Command}});\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{comment}{//-\/-\/-\/-\/-\/Maps-\/Getters-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ std::map<int,Client>\ \mbox{\hyperlink{class_i_r_c_controle_a8a6d094bbdb6c4c78ca340d37be47edc}{getClientIds}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ std::map<int,Channel>\ \mbox{\hyperlink{class_i_r_c_controle_aa617a20787578acd3647752c9791de77}{getChannelIds}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_channel}{Channel}}\ \mbox{\hyperlink{class_i_r_c_controle_a91ce4bba3aded4e944c17812c253210e}{getChannelById}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_client}{Client}}\ \mbox{\hyperlink{class_i_r_c_controle_a74ea2a03193f490494c3d95ab309a21d}{getClientById}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_i_r_c_controle_a0c2e581c4f5a701bbf66b5e82f81cf87}{getChannelByName}}(std::string\ name);}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_i_r_c_controle_ac379cd2db75cddec204067c921697e3c}{getClientByName}}(std::string\ name);}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_i_r_c_controle_ab4f980957e3abfac58ae80bc4f7439a6}{getFreeChannelId}}();}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{comment}{//-\/-\/-\/-\/-\/Maps-\/Setters-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_controle_acb932fb1376578d74a1569e33259d27c}{addClient}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_controle_a1745326ea08306ea83b06507fcc3b7d7}{addChannel}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_controle_a68e0539d6f7624bc5186e70b72f30368}{removeClient}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_i_r_c_controle_ac3f24508e693c4196ee596790805ff89}{removeChannel}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00093\ \};}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \textcolor{preprocessor}{\#endif\ }}
+\DoxyCodeLine{00096\ }
+
+\end{DoxyCode}

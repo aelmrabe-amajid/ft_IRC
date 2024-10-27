@@ -1,0 +1,169 @@
+\doxysection{Server Class Reference}
+\hypertarget{class_server}{}\label{class_server}\index{Server@{Server}}
+
+
+{\ttfamily \#include $<$Server.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_server_ad5ec9462b520e59f7ea831e157ee5e59}{Server}} ()
+\item 
+void \mbox{\hyperlink{class_server_a58e006a7d931547522a042c557c68378}{Server\+Init}} (int port, std\+::string passwd)
+\item 
+void \mbox{\hyperlink{class_server_a2f1af10bca9ca1803e7c2208d798042b}{Ser\+Socket}} ()
+\item 
+void \mbox{\hyperlink{class_server_a221a97f6a64efa095d226b53c5eaf7c1}{Accept\+New\+Client}} ()
+\item 
+void \mbox{\hyperlink{class_server_a1ad1a9e38afc27fe8bce060996ef0ec4}{Receive\+New\+Data}} (int fd)
+\item 
+std\+::vector$<$ \mbox{\hyperlink{class_client}{Client}} $>$ \& \mbox{\hyperlink{class_server_a6dcd79a40fad91b1ab728663d6795a62}{Get\+Clients}} ()
+\item 
+void \mbox{\hyperlink{class_server_a66cc3b94a1e0b92cd7c17ccd08f495ec}{Close\+Fds}} ()
+\item 
+void \mbox{\hyperlink{class_server_a85e3089deedf86e2a8bf680c067c6625}{Clear\+Clients}} (int fd)
+\item 
+void \mbox{\hyperlink{class_server_a6da0b72bd1837b0c34616dd32c063630}{Send\+Data}} (int fd, std\+::string data)
+\item 
+void \mbox{\hyperlink{class_server_a027f98e0d1aaf81451723ecb34cca5a5}{Send\+All}} (std\+::string data)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{class_server_acd4e531d38348e85db9bf5c0664171c4}{Signal\+Handler}} (int signum)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{class_server_a10b2bb89279de7624d8858acd3de4ad4}{Port}}
+\item 
+int \mbox{\hyperlink{class_server_a23c85da96b0ed7b64a31e85c7834c9bd}{Ser\+Socket\+Fd}}
+\item 
+std\+::vector$<$ \mbox{\hyperlink{class_client}{Client}} $>$ \mbox{\hyperlink{class_server_ae4f51f6091114a170d7c8d5dcb899419}{clients}}
+\item 
+std\+::vector$<$ struct pollfd $>$ \mbox{\hyperlink{class_server_af2f47def240ac594c7311159bd416a4f}{fds}}
+\item 
+std\+::string \mbox{\hyperlink{class_server_aebbd407c1fa74f77cf04d236f5e24b8d}{Passwd}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static bool \mbox{\hyperlink{class_server_a61032a78cd346ea412d5c754e325b907}{Signal}} = false
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_server_ad5ec9462b520e59f7ea831e157ee5e59}\index{Server@{Server}!Server@{Server}}
+\index{Server@{Server}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{Server()}{Server()}}
+{\footnotesize\ttfamily \label{class_server_ad5ec9462b520e59f7ea831e157ee5e59} 
+Server\+::\+Server (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_server_a221a97f6a64efa095d226b53c5eaf7c1}\index{Server@{Server}!AcceptNewClient@{AcceptNewClient}}
+\index{AcceptNewClient@{AcceptNewClient}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{AcceptNewClient()}{AcceptNewClient()}}
+{\footnotesize\ttfamily \label{class_server_a221a97f6a64efa095d226b53c5eaf7c1} 
+void Server\+::\+Accept\+New\+Client (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_server_a85e3089deedf86e2a8bf680c067c6625}\index{Server@{Server}!ClearClients@{ClearClients}}
+\index{ClearClients@{ClearClients}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{ClearClients()}{ClearClients()}}
+{\footnotesize\ttfamily \label{class_server_a85e3089deedf86e2a8bf680c067c6625} 
+void Server\+::\+Clear\+Clients (\begin{DoxyParamCaption}\item[{int}]{fd}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_server_a66cc3b94a1e0b92cd7c17ccd08f495ec}\index{Server@{Server}!CloseFds@{CloseFds}}
+\index{CloseFds@{CloseFds}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{CloseFds()}{CloseFds()}}
+{\footnotesize\ttfamily \label{class_server_a66cc3b94a1e0b92cd7c17ccd08f495ec} 
+void Server\+::\+Close\+Fds (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_server_a6dcd79a40fad91b1ab728663d6795a62}\index{Server@{Server}!GetClients@{GetClients}}
+\index{GetClients@{GetClients}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{GetClients()}{GetClients()}}
+{\footnotesize\ttfamily \label{class_server_a6dcd79a40fad91b1ab728663d6795a62} 
+std\+::vector$<$ \mbox{\hyperlink{class_client}{Client}} $>$ \& Server\+::\+Get\+Clients (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_server_a1ad1a9e38afc27fe8bce060996ef0ec4}\index{Server@{Server}!ReceiveNewData@{ReceiveNewData}}
+\index{ReceiveNewData@{ReceiveNewData}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{ReceiveNewData()}{ReceiveNewData()}}
+{\footnotesize\ttfamily \label{class_server_a1ad1a9e38afc27fe8bce060996ef0ec4} 
+void Server\+::\+Receive\+New\+Data (\begin{DoxyParamCaption}\item[{int}]{fd}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_server_a027f98e0d1aaf81451723ecb34cca5a5}\index{Server@{Server}!SendAll@{SendAll}}
+\index{SendAll@{SendAll}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{SendAll()}{SendAll()}}
+{\footnotesize\ttfamily \label{class_server_a027f98e0d1aaf81451723ecb34cca5a5} 
+void Server\+::\+Send\+All (\begin{DoxyParamCaption}\item[{std\+::string}]{data}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_server_a6da0b72bd1837b0c34616dd32c063630}\index{Server@{Server}!SendData@{SendData}}
+\index{SendData@{SendData}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{SendData()}{SendData()}}
+{\footnotesize\ttfamily \label{class_server_a6da0b72bd1837b0c34616dd32c063630} 
+void Server\+::\+Send\+Data (\begin{DoxyParamCaption}\item[{int}]{fd}{, }\item[{std\+::string}]{data}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_server_a2f1af10bca9ca1803e7c2208d798042b}\index{Server@{Server}!SerSocket@{SerSocket}}
+\index{SerSocket@{SerSocket}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{SerSocket()}{SerSocket()}}
+{\footnotesize\ttfamily \label{class_server_a2f1af10bca9ca1803e7c2208d798042b} 
+void Server\+::\+Ser\+Socket (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_server_a58e006a7d931547522a042c557c68378}\index{Server@{Server}!ServerInit@{ServerInit}}
+\index{ServerInit@{ServerInit}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{ServerInit()}{ServerInit()}}
+{\footnotesize\ttfamily \label{class_server_a58e006a7d931547522a042c557c68378} 
+void Server\+::\+Server\+Init (\begin{DoxyParamCaption}\item[{int}]{port}{, }\item[{std\+::string}]{passwd}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_server_acd4e531d38348e85db9bf5c0664171c4}\index{Server@{Server}!SignalHandler@{SignalHandler}}
+\index{SignalHandler@{SignalHandler}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{SignalHandler()}{SignalHandler()}}
+{\footnotesize\ttfamily \label{class_server_acd4e531d38348e85db9bf5c0664171c4} 
+void Server\+::\+Signal\+Handler (\begin{DoxyParamCaption}\item[{int}]{signum}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_server_ae4f51f6091114a170d7c8d5dcb899419}\index{Server@{Server}!clients@{clients}}
+\index{clients@{clients}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{clients}{clients}}
+{\footnotesize\ttfamily \label{class_server_ae4f51f6091114a170d7c8d5dcb899419} 
+std\+::vector$<$\mbox{\hyperlink{class_client}{Client}}$>$ Server\+::clients\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_server_af2f47def240ac594c7311159bd416a4f}\index{Server@{Server}!fds@{fds}}
+\index{fds@{fds}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{fds}{fds}}
+{\footnotesize\ttfamily \label{class_server_af2f47def240ac594c7311159bd416a4f} 
+std\+::vector$<$struct pollfd$>$ Server\+::fds\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_server_aebbd407c1fa74f77cf04d236f5e24b8d}\index{Server@{Server}!Passwd@{Passwd}}
+\index{Passwd@{Passwd}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{Passwd}{Passwd}}
+{\footnotesize\ttfamily \label{class_server_aebbd407c1fa74f77cf04d236f5e24b8d} 
+std\+::string Server\+::\+Passwd\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_server_a10b2bb89279de7624d8858acd3de4ad4}\index{Server@{Server}!Port@{Port}}
+\index{Port@{Port}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{Port}{Port}}
+{\footnotesize\ttfamily \label{class_server_a10b2bb89279de7624d8858acd3de4ad4} 
+int Server\+::\+Port\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_server_a23c85da96b0ed7b64a31e85c7834c9bd}\index{Server@{Server}!SerSocketFd@{SerSocketFd}}
+\index{SerSocketFd@{SerSocketFd}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{SerSocketFd}{SerSocketFd}}
+{\footnotesize\ttfamily \label{class_server_a23c85da96b0ed7b64a31e85c7834c9bd} 
+int Server\+::\+Ser\+Socket\+Fd\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_server_a61032a78cd346ea412d5c754e325b907}\index{Server@{Server}!Signal@{Signal}}
+\index{Signal@{Signal}!Server@{Server}}
+\doxysubsubsection{\texorpdfstring{Signal}{Signal}}
+{\footnotesize\ttfamily \label{class_server_a61032a78cd346ea412d5c754e325b907} 
+bool Server\+::\+Signal = false\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+inc/\mbox{\hyperlink{_server_8hpp}{Server.\+hpp}}\item 
+src/\mbox{\hyperlink{_server_8cpp}{Server.\+cpp}}\end{DoxyCompactItemize}

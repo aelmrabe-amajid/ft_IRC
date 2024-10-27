@@ -1,0 +1,139 @@
+\doxysection{CChannel.\+hpp}
+\hypertarget{_c_channel_8hpp_source}{}\label{_c_channel_8hpp_source}\index{inc/CChannel.hpp@{inc/CChannel.hpp}}
+\mbox{\hyperlink{_c_channel_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ CCHANNEL\_HPP}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ CCHANNEL\_HPP}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <exception>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{_c_client_8hpp}{CClient.hpp}}"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_client}{Client}};}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_channel}{Channel}}\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_channel_a0f43da90bb49b9c6d4cb1bc01e19f700}{id}};\ \textcolor{comment}{//\ each\ channel\ will\ have\ a\ unique\ id\ }}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_channel_ada99cbc86d45a09ca8d4231d9b9043a1}{limits}};}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_channel_a3b78b003181eb87facfeb96ff9ea2f8a}{mode}};\ \textcolor{comment}{//(idea\ 2)}}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ because\ we\ have\ just\ 4\ Flags\ we\ can\ use\ 4\ bits\ to\ store\ them\ or\ we\ can\ use\ int\ to\ store\ them}}
+\DoxyCodeLine{00017\ \textcolor{comment}{}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ (idea\ 1\ using\ 4\ bits\ bitmasks\ to\ store\ and\ check\ the\ flags)\ (\&\ check\ |\ set\ \&\string~\ clear).}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 0000\ =\ if\ all\ flags\ are\ false\ and\ limits\ not\ set\ (-\/1)}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 0001\ =\ if\ inviteonly\ flag\ is\ true}}
+\DoxyCodeLine{00021\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 0010\ =\ if\ topic\ flag\ is\ true}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 0011\ =\ if\ inviteonly\ flag\ is\ true\ and\ topic\ flag\ is\ true}}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 0100\ =\ if\ password\ key\ flag\ is\ true}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 0101\ =\ if\ password\ key\ flag\ is\ true\ and\ inviteonly\ flag\ is\ true}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 0110\ =\ if\ password\ key\ flag\ is\ true\ and\ topic\ flag\ is\ true}}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 0111\ =\ if\ password\ key\ flag\ is\ true\ and\ topic\ flag\ is\ true\ and\ inviteonly\ flag\ is\ true}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 1000\ =\ if\ user\ limits\ is\ >\ 0}}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 1001\ =\ if\ user\ limits\ is\ >\ 0\ and\ inviteonly\ flag\ is\ true}}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 1010\ =\ if\ user\ limits\ is\ >\ 0\ and\ topic\ flag\ is\ true}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 1011\ =\ if\ user\ limits\ is\ >\ 0\ and\ topic\ flag\ is\ true\ and\ inviteonly\ flag\ is\ true}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 1100\ =\ if\ user\ limits\ is\ >\ 0\ and\ password\ key\ flag\ is\ true}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 1101\ =\ if\ user\ limits\ is\ >\ 0\ and\ password\ key\ flag\ is\ true\ and\ inviteonly\ flag\ is\ true}}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 1110\ =\ if\ user\ limits\ is\ >\ 0\ and\ password\ key\ flag\ is\ true\ and\ topic\ flag\ is\ true}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 1111\ =\ if\ all\ flags\ are\ true\ and\ user\ limits\ is\ >\ 0}}
+\DoxyCodeLine{00035\ \textcolor{comment}{}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ (idea\ 2\ using\ int\ +\ to\ store\ (\%,\ /)\ to\ check\ the\ flags)\ (+\ set\ \%,/\ check\ -\/\ clear).}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 0000\ :\ if\ all\ flags\ are\ false\ and\ limits\ not\ set\ (-\/1)}}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ 1111\ :\ if\ all\ flags\ are\ true\ and\ user\ limits\ is\ >\ 0}}
+\DoxyCodeLine{00039\ \textcolor{comment}{}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ inviteonly}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ key}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ topic}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ userlimt}}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ \ 1111\ \%10\ }}
+\DoxyCodeLine{00045\ \textcolor{comment}{}}
+\DoxyCodeLine{00046\ \textcolor{comment}{}}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_channel_a53c394cf84bf7798e6a69a070e914371}{creatorName}};}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_channel_ab56b8f23a4c25801b26e58f1809085b2}{creationTime}};}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_channel_aabf950297869ac3f7126ae892fe68dfb}{topic}};}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_channel_a14278775f07f135b16eff1dec70d8a19}{key}};}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ std::map<std::string,\ Client>\ \mbox{\hyperlink{class_channel_a6ff009027e3cdddd1751a25a1de9e267}{members}};}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ std::map<int,Client>memebers\ //\ this\ is\ better?}}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ std::map<int,Client>operators\ //\ this\ is\ better?}}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ std::map<int,Client>banList\ //\ this\ is\ better?}}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ another\ Idea\ way\ we\ need\ map\ here\ ?}}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ it's\ can\ be\ just\ vector\ that\ can\ be\ easy}}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ std::vector<int>members;}}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ std::vector<int>operators;}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ std::vector<int>banList;}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ std::map<std::string,\ Client>\ \mbox{\hyperlink{class_channel_a19e741e9c1a10bb64f51b42f0c959d5e}{operators}};}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ std::map<std::string,\ Client>\ \mbox{\hyperlink{class_channel_a4d0735279bad4bedec410fa24bf92b7e}{banList}};}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_channel_af2b4b16288cbb2c592b1e0f6486c2430}{Channel}}();}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_channel_a5f15ebd302464069f1a9e3f0ded14482}{\string~Channel}}();}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/Global-\/Getters-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_channel_a36021cb3cc7df5fd17f5ede8e1117025}{getChannelId}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_channel_a4d4a017f038e57cea4f9d044efbc5c57}{getCreator}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_channel_a44475262f0d79f24989745b2c8b01d72}{getCreationTime}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_channel_a766f81f2e4047329f08c5902f7a32352}{getTopic}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_channel_a44f5311965af74195a8ddeb615b3ac01}{getKey}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ std::map<std::string,\ Client>\ \mbox{\hyperlink{class_channel_ab40aa3056e656c1968688344346b1ed8}{getMembers}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ std::map<std::string,\ Client>\ \mbox{\hyperlink{class_channel_a349aaadb9e592d28ab4247182ce9143d}{getOperators}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ std::map<std::string,\ Client>\ \mbox{\hyperlink{class_channel_a650f5131dbb519725af66ba032bb8d83}{getBanList}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/Global-\/Setters-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_channel_a243bc3f3081303d010e72ec8287b12e9}{setCreator}}(\textcolor{keyword}{const}\ std::string\&\ creator);}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_channel_ac109f095d69a39521a9af2ebb14e2e8f}{setCreationTime}}(\textcolor{keyword}{const}\ std::string\&\ time);}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_channel_a8b0d764f961d6ce231c99cd2a88f2f64}{setTopic}}(\textcolor{keyword}{const}\ std::string\&\ \mbox{\hyperlink{class_channel_aabf950297869ac3f7126ae892fe68dfb}{topic}});}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_channel_af005421a66b90463e5575ed109233598}{setKey}}(\textcolor{keyword}{const}\ std::string\&\ \mbox{\hyperlink{class_channel_a14278775f07f135b16eff1dec70d8a19}{key}});}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_channel_ad4a84c095b5d79cd2eac84b5acfd250e}{addMember}}(\textcolor{keyword}{const}\ std::string\&\ name,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{class_client}{Client}}\&\ client);}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_channel_a6f454469915ea59661a084691e1efbf2}{removeMember}}(\textcolor{keyword}{const}\ std::string\&\ name);}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_channel_a19a1d0bcba5e510468aedbcdfe198d1c}{setChannelId}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/MODE-\/SETTERS-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_channel_a9524bfbb59d2a05e9e678708315d33d3}{setMode}}(\textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_channel_a3b78b003181eb87facfeb96ff9ea2f8a}{mode}});}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_channel_af3af54920adf2e6a1795fc0c9c81b6f1}{setUserLimits}}(\textcolor{keywordtype}{int}\ \_limits);}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/MODE-\/GETTERS-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_channel_a00bc884471ccd72ee457a893af06046e}{getMode}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_channel_a062bb77041937ee3cdbe90c5120b1f80}{getUserLimits}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00091\ \};}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00093\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00094\ \textcolor{comment}{\ *\ \ @brief\ :\ this\ class\ will\ be\ used\ with\ the\ server\ this\ class\ will\ take\ care\ of\ all\ the\ client\ and\ commands\ and\ also\ channels}}
+\DoxyCodeLine{00095\ \textcolor{comment}{\ *\ \ @details\ :\ start\ from\ beginning\ of\ server\ will\ take\ each\ client\ and\ add\ it\ to}}
+\DoxyCodeLine{00096\ \textcolor{comment}{\ *\ \ @var:\ ClientIds\ is\ a\ multimap\ that\ will\ hold\ \{client\_name,\ client\_class,\ client\_id\}}}
+\DoxyCodeLine{00097\ \textcolor{comment}{\ *\ \ }}
+\DoxyCodeLine{00098\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \textcolor{comment}{//\ class\ Tools\{}}
+\DoxyCodeLine{00101\ \ \ \ \ }
+\DoxyCodeLine{00102\ \textcolor{comment}{//\ \ private:}}
+\DoxyCodeLine{00103\ \textcolor{comment}{//\ \ \ \ \ \ static\ std::map<int,Client>ClientIDs;}}
+\DoxyCodeLine{00104\ \textcolor{comment}{//\ \ \ \ \ \ static\ std::map<int,Channel>ChannelsList;}}
+\DoxyCodeLine{00105\ \textcolor{comment}{//\ \ public:}}
+\DoxyCodeLine{00106\ \textcolor{comment}{//\ \ \ \ \ \ //\ \string~Tools();}}
+\DoxyCodeLine{00107\ \textcolor{comment}{//\ \ \ \ \ \ //\ Tools();}}
+\DoxyCodeLine{00108\ \textcolor{comment}{//\ \ \ \ \ \ //-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/setters-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00109\ \textcolor{comment}{//\ \ \ \ \ \ static\ void\ addClient(const\ int\ id);}}
+\DoxyCodeLine{00110\ \textcolor{comment}{//\ \ \ \ \ \ static\ void\ addChannel(const\ int\ id);}}
+\DoxyCodeLine{00111\ \textcolor{comment}{//\ \ \ \ \ \ static\ void\ initTools(void);}}
+\DoxyCodeLine{00112\ \textcolor{comment}{//\ \ \ \ \ \ static\ void\ removeClient(int\ id);}}
+\DoxyCodeLine{00113\ \textcolor{comment}{//\ \ \ \ \ \ static\ void\ removeChannel(int\ id);}}
+\DoxyCodeLine{00114\ \textcolor{comment}{//\ \ \ \ \ \ static\ Client\ \&getClientById(int\ id);}}
+\DoxyCodeLine{00115\ \textcolor{comment}{//\ \ \ \ \ \ static\ Channel\ \&getChannelById(int\ id);}}
+\DoxyCodeLine{00116\ \textcolor{comment}{//\ \ \ \ \ \ static\ int\ DataParse(int\ id,\ std::string\ Message);}}
+\DoxyCodeLine{00117\ \textcolor{comment}{//\ \ \ \ \ \ static\ int\ getKey(std::string\ Nick);}}
+\DoxyCodeLine{00118\ \textcolor{comment}{//\ \ \ \ \ \ static\ int\ getKey(std::string\ ChannelName);}}
+\DoxyCodeLine{00119\ \textcolor{comment}{//\ \ \ \ \ \ //-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/getters-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \textcolor{comment}{//\ \ \ \ \ \ //-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/Exceptions-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00122\ \textcolor{comment}{//\ \ \ \ \ \ //\ class\ NoUser\ :\ public\ std::exception\ \{}}
+\DoxyCodeLine{00123\ \textcolor{comment}{//\ \ \ \ \ \ //\ \ public:}}
+\DoxyCodeLine{00124\ \textcolor{comment}{//\ \ \ \ \ \ //\ \ \ \ \ \ char\ *\ what()\ const\ throw();}}
+\DoxyCodeLine{00125\ \textcolor{comment}{//\ \ \ \ \ \ //\ \};}}
+\DoxyCodeLine{00126\ \textcolor{comment}{//\ \};}}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00129\ \textcolor{comment}{\ \ \ \ Tools::addClient()}}
+\DoxyCodeLine{00130\ \textcolor{comment}{\ *\ }}
+\DoxyCodeLine{00131\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ CCHANNEL\_HPP}}
+
+\end{DoxyCode}

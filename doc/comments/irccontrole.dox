@@ -1,0 +1,96 @@
+#ifndef IRCCONTROLE_HPP
+#define IRCCONTROLE_HPP
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
+#include <sstream>
+#include "CChannel.hpp"
+
+class Client;
+class Channel;
+enum CommandType {
+	    JOIN, PART, PRIVMSG, KICK, TOPIC, QUIT, NICK, USER, PASS, INVITE, UNKNOWN
+};
+
+typedef struct s_content{
+	CommandType command;
+	std::vector<std::string> channels;
+	std::vector<std::string> users;
+	std::string message;
+	std::string reason;
+}t_content;
+
+/*
+    this class will be used to parse
+    command also at the same time will
+    verify if the command is following
+    the syntax of rfc 
+*/
+class IRCCommandParser{
+	
+	public:
+	IRCCommandParser(const std::string& input) : raw_message(input) {}
+    t_content parse();
+    CommandType identifyCommand();
+	
+	private:
+    std::string raw_message;
+    std::vector<std::string> splitString(const std::string& str, char delimiter);
+    
+	void parseJoin(t_content& parsed);
+    void parsePart(t_content& parsed);
+    void parsePrivmsg(t_content& parsed);
+    void parseKick(t_content& parsed);
+    void parseTopic(t_content& parsed);
+    void parseQuit(t_content& parsed);
+    void parseNick(t_content& parsed);
+    void parseUser(t_content& parsed);
+    void parsePass(t_content& parsed);
+    void parseInvite(t_content& parsed);
+};
+
+/*
+    This class will be used to verify 
+    if user is allowed to run the command
+    also if channel accept the this command
+    (in general this class check rules between client and channel)
+*/
+class IRCCommandVerify{
+    public:
+        int VerifyCommand(int id, t_content Content);
+};
+
+class IRCReplay{
+    public:
+        void ERR(int client_id, int err_num);
+        void RPL(int client_id, int rpl_num);
+};
+
+class IRCControle{
+    private:
+        std::map<int,Client>ClientIds;
+        std::map<int,Channel>ChannelIds;
+    public:
+        //-----Class-Methods-------
+        IRCControle();
+        ~IRCControle();
+        int RunCommand(int fd, std::string Command);        
+        //-----Maps-Getters--------
+        std::map<int,Client> getClientIds() const;
+        std::map<int,Channel> getChannelIds() const;
+        Channel getChannelById(int id);
+        Client getClientById(int id);
+        int getChannelByName(std::string name);
+        int getClientByName(std::string name);
+        int getFreeChannelId();
+        //-----Maps-Setters--------
+        void addClient(int id);
+        void addChannel(int id);
+        void removeClient(int id);
+        void removeChannel(int id);
+};
+
+#endif 
+

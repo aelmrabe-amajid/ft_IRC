@@ -1,0 +1,333 @@
+\doxysection{Client Class Reference}
+\hypertarget{class_client}{}\label{class_client}\index{Client@{Client}}
+
+
+Represents a client with various attributes like ID, IP address, and state.  
+
+
+
+
+{\ttfamily \#include $<$CClient.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_client_ae51af7aa6b8f591496a8f6a4a87a14bf}{Client}} ()
+\begin{DoxyCompactList}\small\item\em Default constructor for \doxylink{class_client}{Client}. Initializes a new \doxylink{class_client}{Client} object with default values. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_client_a840e519ca781888cbd54181572ebe3a7}{\texorpdfstring{$\sim$}{\string~}\+Client}} ()
+\begin{DoxyCompactList}\small\item\em Destructor for \doxylink{class_client}{Client}. Cleans up any resources used by the \doxylink{class_client}{Client}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_client}{Client}} \& \mbox{\hyperlink{class_client_ad053d6a8d58047323bffdcdb298a90d1}{operator=}} (const \mbox{\hyperlink{class_client}{Client}} \&obj)
+\item 
+int \mbox{\hyperlink{class_client_a7e0fe4059994eddc71a32320c239f4c1}{Get\+Fd}} ()
+\begin{DoxyCompactList}\small\item\em Get the client\textquotesingle{}s file descriptor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_client_a09ad818fe6a488f262f402cf4f77d0f6}{Set\+Fd}} (int fd)
+\begin{DoxyCompactList}\small\item\em Set the client\textquotesingle{}s file descriptor. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_client_ae0a18acf264384da614fb6f23a2c8f4b}{set\+Ip\+Add}} (std\+::string ipadd)
+\begin{DoxyCompactList}\small\item\em Set the client\textquotesingle{}s IP address. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_client_aa50b44514ccd7f2994dafecc2d199d8e}{set\+Message}} (std\+::string msg)
+\item 
+std\+::string \mbox{\hyperlink{class_client_a628e8e01efea3db565c8f0fe4ef40c0f}{get\+Message}} ()
+\begin{DoxyCompactList}\small\item\em Get the current message. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_client_a7b7fe39812c55175fb86f38cb0a506b3}{getstate}} () const
+\item 
+std\+::string \mbox{\hyperlink{class_client_a2f4c7c5009b2c97b9c04b55c571c81da}{getuser\+Name}} () const
+\item 
+std\+::string \mbox{\hyperlink{class_client_a6b1e8043033f76f7f46446f4cecfd2c1}{getnick\+Name}} () const
+\item 
+std\+::string \mbox{\hyperlink{class_client_a6ec829d6740a6a503c4b0559ebe69d02}{getreal\+Name}} () const
+\item 
+int \mbox{\hyperlink{class_client_af9bc75d714781be7afde876eeb870753}{getuser\+Id}} (void) const
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{class_client_aa2f1cbd47f90d3ee8feee13ea6a16492}{get\+Channel\+List}} (void) const
+\item 
+int \mbox{\hyperlink{class_client_aa54872a3ba0fa0948208459f1b317655}{is\+Channel\+Memeber}} (int channel\+\_\+id) const
+\item 
+void \mbox{\hyperlink{class_client_acb00421026e2b86080c5d9995f08da19}{set\+State}} (bool \+\_\+state)
+\item 
+void \mbox{\hyperlink{class_client_ad76085554efb43d22f6a47d93fec9f05}{setuser\+Name}} (const std\+::string \&\mbox{\hyperlink{class_client_a2e301c3058563fea37161d30407e79ab}{user\+Name}})
+\item 
+void \mbox{\hyperlink{class_client_a6c20c7a32d8700fe14f8986dee09458f}{setnick\+Name}} (const std\+::string \&\mbox{\hyperlink{class_client_a5a2093b8de870220c80648ea9a8bacb9}{nick\+Name}})
+\item 
+void \mbox{\hyperlink{class_client_ac0e22154871b0b5b389e86265b1a13cb}{setreal\+Name}} (const std\+::string \&\mbox{\hyperlink{class_client_a6faef5e78b019ed61746b66b72227d8e}{real\+Name}})
+\item 
+void \mbox{\hyperlink{class_client_aec649ba7fbff94baa5b6538efc11a089}{setuser\+Id}} (int fd)
+\item 
+void \mbox{\hyperlink{class_client_a808c1133c3f04f881877dd6033804ecf}{givepermission}} (int \mbox{\hyperlink{class_client_ab79ad95264939f089a2f0b8e0ca62d37}{id}})
+\item 
+void \mbox{\hyperlink{class_client_a1ffd2ae11238593953704e83aacee219}{takepermission}} (int \mbox{\hyperlink{class_client_ab79ad95264939f089a2f0b8e0ca62d37}{id}})
+\item 
+void \mbox{\hyperlink{class_client_a3ae5889320927d426688912bd7980a87}{add\+Channel\+To\+List}} (const int \mbox{\hyperlink{class_client_ab79ad95264939f089a2f0b8e0ca62d37}{id}})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{class_client_ab79ad95264939f089a2f0b8e0ca62d37}{id}}
+\item 
+std\+::string \mbox{\hyperlink{class_client_a52cd0d4b2d8b0f984849c8a61eac9758}{IPadd}}
+\item 
+std\+::string \mbox{\hyperlink{class_client_a74339a40a25e43a3ab241d1053f001c6}{data}}
+\item 
+std\+::string \mbox{\hyperlink{class_client_abb45c8bc7742c5c0b2c80528b7b40b1e}{message}}
+\item 
+bool \mbox{\hyperlink{class_client_ace2c675451e7ee11810d96525d3da215}{state}}
+\item 
+std\+::string \mbox{\hyperlink{class_client_a2e301c3058563fea37161d30407e79ab}{user\+Name}}
+\item 
+std\+::string \mbox{\hyperlink{class_client_a5a2093b8de870220c80648ea9a8bacb9}{nick\+Name}}
+\item 
+std\+::string \mbox{\hyperlink{class_client_a6faef5e78b019ed61746b66b72227d8e}{real\+Name}}
+\item 
+std\+::vector$<$ int $>$ \mbox{\hyperlink{class_client_a2ffaa8457369609cd0bcd0da4fff1990}{channel\+List}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Represents a client with various attributes like ID, IP address, and state. 
+
+The \doxylink{class_client}{Client} class stores information about a client, such as ID, IP address, message, and channel list. It provides methods to access and modify these attributes. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_client_ae51af7aa6b8f591496a8f6a4a87a14bf}\index{Client@{Client}!Client@{Client}}
+\index{Client@{Client}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{Client()}{Client()}}
+{\footnotesize\ttfamily \label{class_client_ae51af7aa6b8f591496a8f6a4a87a14bf} 
+Client\+::\+Client (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Default constructor for \doxylink{class_client}{Client}. Initializes a new \doxylink{class_client}{Client} object with default values. 
+
+\Hypertarget{class_client_a840e519ca781888cbd54181572ebe3a7}\index{Client@{Client}!````~Client@{\texorpdfstring{$\sim$}{\string~}Client}}
+\index{````~Client@{\texorpdfstring{$\sim$}{\string~}Client}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}Client()}{\string~Client()}}
+{\footnotesize\ttfamily \label{class_client_a840e519ca781888cbd54181572ebe3a7} 
+Client\+::\texorpdfstring{$\sim$}{\string~}\+Client (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Destructor for \doxylink{class_client}{Client}. Cleans up any resources used by the \doxylink{class_client}{Client}. 
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_client_a3ae5889320927d426688912bd7980a87}\index{Client@{Client}!addChannelToList@{addChannelToList}}
+\index{addChannelToList@{addChannelToList}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{addChannelToList()}{addChannelToList()}}
+{\footnotesize\ttfamily \label{class_client_a3ae5889320927d426688912bd7980a87} 
+void Client\+::add\+Channel\+To\+List (\begin{DoxyParamCaption}\item[{const int}]{id}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_client_aa2f1cbd47f90d3ee8feee13ea6a16492}\index{Client@{Client}!getChannelList@{getChannelList}}
+\index{getChannelList@{getChannelList}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{getChannelList()}{getChannelList()}}
+{\footnotesize\ttfamily \label{class_client_aa2f1cbd47f90d3ee8feee13ea6a16492} 
+std\+::vector$<$ int $>$ Client\+::get\+Channel\+List (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_client_a7e0fe4059994eddc71a32320c239f4c1}\index{Client@{Client}!GetFd@{GetFd}}
+\index{GetFd@{GetFd}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{GetFd()}{GetFd()}}
+{\footnotesize\ttfamily \label{class_client_a7e0fe4059994eddc71a32320c239f4c1} 
+int Client\+::\+Get\+Fd (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the client\textquotesingle{}s file descriptor. 
+
+\begin{DoxyReturn}{Returns}
+The client\textquotesingle{}s file descriptor as an integer. 
+\end{DoxyReturn}
+\Hypertarget{class_client_a628e8e01efea3db565c8f0fe4ef40c0f}\index{Client@{Client}!getMessage@{getMessage}}
+\index{getMessage@{getMessage}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{getMessage()}{getMessage()}}
+{\footnotesize\ttfamily \label{class_client_a628e8e01efea3db565c8f0fe4ef40c0f} 
+std\+::string Client\+::get\+Message (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the current message. 
+
+\begin{DoxyReturn}{Returns}
+The message as a string. 
+\end{DoxyReturn}
+\Hypertarget{class_client_a6b1e8043033f76f7f46446f4cecfd2c1}\index{Client@{Client}!getnickName@{getnickName}}
+\index{getnickName@{getnickName}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{getnickName()}{getnickName()}}
+{\footnotesize\ttfamily \label{class_client_a6b1e8043033f76f7f46446f4cecfd2c1} 
+std\+::string Client\+::getnick\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_client_a6ec829d6740a6a503c4b0559ebe69d02}\index{Client@{Client}!getrealName@{getrealName}}
+\index{getrealName@{getrealName}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{getrealName()}{getrealName()}}
+{\footnotesize\ttfamily \label{class_client_a6ec829d6740a6a503c4b0559ebe69d02} 
+std\+::string Client\+::getreal\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_client_a7b7fe39812c55175fb86f38cb0a506b3}\index{Client@{Client}!getstate@{getstate}}
+\index{getstate@{getstate}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{getstate()}{getstate()}}
+{\footnotesize\ttfamily \label{class_client_a7b7fe39812c55175fb86f38cb0a506b3} 
+bool Client\+::getstate (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_client_af9bc75d714781be7afde876eeb870753}\index{Client@{Client}!getuserId@{getuserId}}
+\index{getuserId@{getuserId}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{getuserId()}{getuserId()}}
+{\footnotesize\ttfamily \label{class_client_af9bc75d714781be7afde876eeb870753} 
+int Client\+::getuser\+Id (\begin{DoxyParamCaption}\item[{void}]{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_client_a2f4c7c5009b2c97b9c04b55c571c81da}\index{Client@{Client}!getuserName@{getuserName}}
+\index{getuserName@{getuserName}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{getuserName()}{getuserName()}}
+{\footnotesize\ttfamily \label{class_client_a2f4c7c5009b2c97b9c04b55c571c81da} 
+std\+::string Client\+::getuser\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_client_a808c1133c3f04f881877dd6033804ecf}\index{Client@{Client}!givepermission@{givepermission}}
+\index{givepermission@{givepermission}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{givepermission()}{givepermission()}}
+{\footnotesize\ttfamily \label{class_client_a808c1133c3f04f881877dd6033804ecf} 
+void Client\+::givepermission (\begin{DoxyParamCaption}\item[{int}]{id}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_client_aa54872a3ba0fa0948208459f1b317655}\index{Client@{Client}!isChannelMemeber@{isChannelMemeber}}
+\index{isChannelMemeber@{isChannelMemeber}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{isChannelMemeber()}{isChannelMemeber()}}
+{\footnotesize\ttfamily \label{class_client_aa54872a3ba0fa0948208459f1b317655} 
+int Client\+::is\+Channel\+Memeber (\begin{DoxyParamCaption}\item[{int}]{channel\+\_\+id}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_client_ad053d6a8d58047323bffdcdb298a90d1}\index{Client@{Client}!operator=@{operator=}}
+\index{operator=@{operator=}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}}
+{\footnotesize\ttfamily \label{class_client_ad053d6a8d58047323bffdcdb298a90d1} 
+\mbox{\hyperlink{class_client}{Client}} \& Client\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{class_client}{Client}} \&}]{obj}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_client_a09ad818fe6a488f262f402cf4f77d0f6}\index{Client@{Client}!SetFd@{SetFd}}
+\index{SetFd@{SetFd}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{SetFd()}{SetFd()}}
+{\footnotesize\ttfamily \label{class_client_a09ad818fe6a488f262f402cf4f77d0f6} 
+void Client\+::\+Set\+Fd (\begin{DoxyParamCaption}\item[{int}]{fd}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the client\textquotesingle{}s file descriptor. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em fd} & The file descriptor to set. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_client_ae0a18acf264384da614fb6f23a2c8f4b}\index{Client@{Client}!setIpAdd@{setIpAdd}}
+\index{setIpAdd@{setIpAdd}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{setIpAdd()}{setIpAdd()}}
+{\footnotesize\ttfamily \label{class_client_ae0a18acf264384da614fb6f23a2c8f4b} 
+void Client\+::set\+Ip\+Add (\begin{DoxyParamCaption}\item[{std\+::string}]{ipadd}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the client\textquotesingle{}s IP address. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ipadd} & The IP address to set as a string. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_client_aa50b44514ccd7f2994dafecc2d199d8e}\index{Client@{Client}!setMessage@{setMessage}}
+\index{setMessage@{setMessage}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{setMessage()}{setMessage()}}
+{\footnotesize\ttfamily \label{class_client_aa50b44514ccd7f2994dafecc2d199d8e} 
+void Client\+::set\+Message (\begin{DoxyParamCaption}\item[{std\+::string}]{msg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\Hypertarget{class_client_a6c20c7a32d8700fe14f8986dee09458f}\index{Client@{Client}!setnickName@{setnickName}}
+\index{setnickName@{setnickName}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{setnickName()}{setnickName()}}
+{\footnotesize\ttfamily \label{class_client_a6c20c7a32d8700fe14f8986dee09458f} 
+void Client\+::setnick\+Name (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{nick\+Name}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_client_ac0e22154871b0b5b389e86265b1a13cb}\index{Client@{Client}!setrealName@{setrealName}}
+\index{setrealName@{setrealName}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{setrealName()}{setrealName()}}
+{\footnotesize\ttfamily \label{class_client_ac0e22154871b0b5b389e86265b1a13cb} 
+void Client\+::setreal\+Name (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{real\+Name}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_client_acb00421026e2b86080c5d9995f08da19}\index{Client@{Client}!setState@{setState}}
+\index{setState@{setState}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{setState()}{setState()}}
+{\footnotesize\ttfamily \label{class_client_acb00421026e2b86080c5d9995f08da19} 
+void Client\+::set\+State (\begin{DoxyParamCaption}\item[{bool}]{\+\_\+state}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_client_aec649ba7fbff94baa5b6538efc11a089}\index{Client@{Client}!setuserId@{setuserId}}
+\index{setuserId@{setuserId}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{setuserId()}{setuserId()}}
+{\footnotesize\ttfamily \label{class_client_aec649ba7fbff94baa5b6538efc11a089} 
+void Client\+::setuser\+Id (\begin{DoxyParamCaption}\item[{int}]{fd}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_client_ad76085554efb43d22f6a47d93fec9f05}\index{Client@{Client}!setuserName@{setuserName}}
+\index{setuserName@{setuserName}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{setuserName()}{setuserName()}}
+{\footnotesize\ttfamily \label{class_client_ad76085554efb43d22f6a47d93fec9f05} 
+void Client\+::setuser\+Name (\begin{DoxyParamCaption}\item[{const std\+::string \&}]{user\+Name}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_client_a1ffd2ae11238593953704e83aacee219}\index{Client@{Client}!takepermission@{takepermission}}
+\index{takepermission@{takepermission}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{takepermission()}{takepermission()}}
+{\footnotesize\ttfamily \label{class_client_a1ffd2ae11238593953704e83aacee219} 
+void Client\+::takepermission (\begin{DoxyParamCaption}\item[{int}]{id}{}\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_client_a2ffaa8457369609cd0bcd0da4fff1990}\index{Client@{Client}!channelList@{channelList}}
+\index{channelList@{channelList}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{channelList}{channelList}}
+{\footnotesize\ttfamily \label{class_client_a2ffaa8457369609cd0bcd0da4fff1990} 
+std\+::vector$<$int$>$ Client\+::channel\+List\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_client_a74339a40a25e43a3ab241d1053f001c6}\index{Client@{Client}!data@{data}}
+\index{data@{data}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{data}{data}}
+{\footnotesize\ttfamily \label{class_client_a74339a40a25e43a3ab241d1053f001c6} 
+std\+::string Client\+::data\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_client_ab79ad95264939f089a2f0b8e0ca62d37}\index{Client@{Client}!id@{id}}
+\index{id@{id}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{id}{id}}
+{\footnotesize\ttfamily \label{class_client_ab79ad95264939f089a2f0b8e0ca62d37} 
+int Client\+::id\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_client_a52cd0d4b2d8b0f984849c8a61eac9758}\index{Client@{Client}!IPadd@{IPadd}}
+\index{IPadd@{IPadd}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{IPadd}{IPadd}}
+{\footnotesize\ttfamily \label{class_client_a52cd0d4b2d8b0f984849c8a61eac9758} 
+std\+::string Client\+::\+IPadd\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_client_abb45c8bc7742c5c0b2c80528b7b40b1e}\index{Client@{Client}!message@{message}}
+\index{message@{message}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{message}{message}}
+{\footnotesize\ttfamily \label{class_client_abb45c8bc7742c5c0b2c80528b7b40b1e} 
+std\+::string Client\+::message\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_client_a5a2093b8de870220c80648ea9a8bacb9}\index{Client@{Client}!nickName@{nickName}}
+\index{nickName@{nickName}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{nickName}{nickName}}
+{\footnotesize\ttfamily \label{class_client_a5a2093b8de870220c80648ea9a8bacb9} 
+std\+::string Client\+::nick\+Name\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_client_a6faef5e78b019ed61746b66b72227d8e}\index{Client@{Client}!realName@{realName}}
+\index{realName@{realName}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{realName}{realName}}
+{\footnotesize\ttfamily \label{class_client_a6faef5e78b019ed61746b66b72227d8e} 
+std\+::string Client\+::real\+Name\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_client_ace2c675451e7ee11810d96525d3da215}\index{Client@{Client}!state@{state}}
+\index{state@{state}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{state}{state}}
+{\footnotesize\ttfamily \label{class_client_ace2c675451e7ee11810d96525d3da215} 
+bool Client\+::state\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_client_a2e301c3058563fea37161d30407e79ab}\index{Client@{Client}!userName@{userName}}
+\index{userName@{userName}!Client@{Client}}
+\doxysubsubsection{\texorpdfstring{userName}{userName}}
+{\footnotesize\ttfamily \label{class_client_a2e301c3058563fea37161d30407e79ab} 
+std\+::string Client\+::user\+Name\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+inc/\mbox{\hyperlink{_c_client_8hpp}{CClient.\+hpp}}\item 
+doc/comments/\mbox{\hyperlink{_c_client_8dox}{CClient.\+dox}}\end{DoxyCompactItemize}

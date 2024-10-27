@@ -1,0 +1,97 @@
+\doxysection{Command Class Reference}
+\hypertarget{class_command}{}\label{class_command}\index{Command@{Command}}
+
+
+{\ttfamily \#include $<$commands.\+hpp$>$}
+
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static int \mbox{\hyperlink{class_command_a4e380e983b3c592c0a925dc7c2771fbe}{NICK}} (int id, std\+::string Nick\+Name)
+\item 
+static int \mbox{\hyperlink{class_command_a552d8b63408ce47537038e6e77f31f2f}{PASS}} (int id, std\+::string Pass\+Word, std\+::string Server\+Pass)
+\item 
+static int \mbox{\hyperlink{class_command_a326e99ae92f74cecce7abaf5bee33dd4}{PRVMSG}} (int id, std\+::vector$<$ std\+::string $>$target, std\+::string content)
+\item 
+static int \mbox{\hyperlink{class_command_a7e1e7c254f358f7cb2c74091d34273a1}{JOIN}} (int id, std\+::vector$<$ std\+::string $>$channel, std\+::vector$<$ std\+::string $>$key)
+\item 
+static int \mbox{\hyperlink{class_command_a9d51ceace626cf8e2551e1a3d5469c51}{PART}} (int id, std\+::vector$<$ std\+::string $>$channel, std\+::string reason)
+\item 
+static int \mbox{\hyperlink{class_command_a464867c3959794532b649939396a68dc}{TOPIC}} (int id, std\+::string channel, std\+::string topic)
+\item 
+static int \mbox{\hyperlink{class_command_a28909b0ae4d5bb3eb17a2d73429e1431}{KICK}} (int id, std\+::vector$<$ std\+::string $>$channel, std\+::vector$<$ std\+::string $>$user, std\+::string reason)
+\item 
+static int \mbox{\hyperlink{class_command_a198e443b44eb925ce23a51cadf9b32b1}{INVIT}} (int id, std\+::string nickname, std\+::string channel)
+\item 
+static int \mbox{\hyperlink{class_command_aea96b2bb1c5650778dc305079ce68989}{QUIT}} (int id, std\+::string reason)
+\item 
+static int \mbox{\hyperlink{class_command_a80655df45d6ce398b4e717f2a8356116}{USER}} (int id, std\+::string User\+Name, std\+::string Real\+Name)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_command_a198e443b44eb925ce23a51cadf9b32b1}\index{Command@{Command}!INVIT@{INVIT}}
+\index{INVIT@{INVIT}!Command@{Command}}
+\doxysubsubsection{\texorpdfstring{INVIT()}{INVIT()}}
+{\footnotesize\ttfamily \label{class_command_a198e443b44eb925ce23a51cadf9b32b1} 
+static int Command\+::\+INVIT (\begin{DoxyParamCaption}\item[{int}]{id}{, }\item[{std\+::string}]{nickname}{, }\item[{std\+::string}]{channel}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_command_a7e1e7c254f358f7cb2c74091d34273a1}\index{Command@{Command}!JOIN@{JOIN}}
+\index{JOIN@{JOIN}!Command@{Command}}
+\doxysubsubsection{\texorpdfstring{JOIN()}{JOIN()}}
+{\footnotesize\ttfamily \label{class_command_a7e1e7c254f358f7cb2c74091d34273a1} 
+static int Command\+::\+JOIN (\begin{DoxyParamCaption}\item[{int}]{id}{, }\item[{std\+::vector$<$ std\+::string $>$}]{channel}{, }\item[{std\+::vector$<$ std\+::string $>$}]{key}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_command_a28909b0ae4d5bb3eb17a2d73429e1431}\index{Command@{Command}!KICK@{KICK}}
+\index{KICK@{KICK}!Command@{Command}}
+\doxysubsubsection{\texorpdfstring{KICK()}{KICK()}}
+{\footnotesize\ttfamily \label{class_command_a28909b0ae4d5bb3eb17a2d73429e1431} 
+static int Command\+::\+KICK (\begin{DoxyParamCaption}\item[{int}]{id}{, }\item[{std\+::vector$<$ std\+::string $>$}]{channel}{, }\item[{std\+::vector$<$ std\+::string $>$}]{user}{, }\item[{std\+::string}]{reason}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_command_a4e380e983b3c592c0a925dc7c2771fbe}\index{Command@{Command}!NICK@{NICK}}
+\index{NICK@{NICK}!Command@{Command}}
+\doxysubsubsection{\texorpdfstring{NICK()}{NICK()}}
+{\footnotesize\ttfamily \label{class_command_a4e380e983b3c592c0a925dc7c2771fbe} 
+static int Command\+::\+NICK (\begin{DoxyParamCaption}\item[{int}]{id}{, }\item[{std\+::string}]{Nick\+Name}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_command_a9d51ceace626cf8e2551e1a3d5469c51}\index{Command@{Command}!PART@{PART}}
+\index{PART@{PART}!Command@{Command}}
+\doxysubsubsection{\texorpdfstring{PART()}{PART()}}
+{\footnotesize\ttfamily \label{class_command_a9d51ceace626cf8e2551e1a3d5469c51} 
+static int Command\+::\+PART (\begin{DoxyParamCaption}\item[{int}]{id}{, }\item[{std\+::vector$<$ std\+::string $>$}]{channel}{, }\item[{std\+::string}]{reason}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_command_a552d8b63408ce47537038e6e77f31f2f}\index{Command@{Command}!PASS@{PASS}}
+\index{PASS@{PASS}!Command@{Command}}
+\doxysubsubsection{\texorpdfstring{PASS()}{PASS()}}
+{\footnotesize\ttfamily \label{class_command_a552d8b63408ce47537038e6e77f31f2f} 
+static int Command\+::\+PASS (\begin{DoxyParamCaption}\item[{int}]{id}{, }\item[{std\+::string}]{Pass\+Word}{, }\item[{std\+::string}]{Server\+Pass}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_command_a326e99ae92f74cecce7abaf5bee33dd4}\index{Command@{Command}!PRVMSG@{PRVMSG}}
+\index{PRVMSG@{PRVMSG}!Command@{Command}}
+\doxysubsubsection{\texorpdfstring{PRVMSG()}{PRVMSG()}}
+{\footnotesize\ttfamily \label{class_command_a326e99ae92f74cecce7abaf5bee33dd4} 
+static int Command\+::\+PRVMSG (\begin{DoxyParamCaption}\item[{int}]{id}{, }\item[{std\+::vector$<$ std\+::string $>$}]{target}{, }\item[{std\+::string}]{content}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_command_aea96b2bb1c5650778dc305079ce68989}\index{Command@{Command}!QUIT@{QUIT}}
+\index{QUIT@{QUIT}!Command@{Command}}
+\doxysubsubsection{\texorpdfstring{QUIT()}{QUIT()}}
+{\footnotesize\ttfamily \label{class_command_aea96b2bb1c5650778dc305079ce68989} 
+static int Command\+::\+QUIT (\begin{DoxyParamCaption}\item[{int}]{id}{, }\item[{std\+::string}]{reason}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_command_a464867c3959794532b649939396a68dc}\index{Command@{Command}!TOPIC@{TOPIC}}
+\index{TOPIC@{TOPIC}!Command@{Command}}
+\doxysubsubsection{\texorpdfstring{TOPIC()}{TOPIC()}}
+{\footnotesize\ttfamily \label{class_command_a464867c3959794532b649939396a68dc} 
+static int Command\+::\+TOPIC (\begin{DoxyParamCaption}\item[{int}]{id}{, }\item[{std\+::string}]{channel}{, }\item[{std\+::string}]{topic}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_command_a80655df45d6ce398b4e717f2a8356116}\index{Command@{Command}!USER@{USER}}
+\index{USER@{USER}!Command@{Command}}
+\doxysubsubsection{\texorpdfstring{USER()}{USER()}}
+{\footnotesize\ttfamily \label{class_command_a80655df45d6ce398b4e717f2a8356116} 
+static int Command\+::\+USER (\begin{DoxyParamCaption}\item[{int}]{id}{, }\item[{std\+::string}]{User\+Name}{, }\item[{std\+::string}]{Real\+Name}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+inc/\mbox{\hyperlink{commands_8hpp}{commands.\+hpp}}\end{DoxyCompactItemize}

@@ -1,0 +1,154 @@
+\doxysection{IRCControle Class Reference}
+\hypertarget{class_i_r_c_controle}{}\label{class_i_r_c_controle}\index{IRCControle@{IRCControle}}
+
+
+{\ttfamily \#include $<$irccontrole.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_i_r_c_controle_ae79f2017d3628be1bc89bcdd99b1eb7d}{IRCControle}} ()
+\item 
+\mbox{\hyperlink{class_i_r_c_controle_a4fe9eca2ff5ab5648f107029c3726620}{\texorpdfstring{$\sim$}{\string~}\+IRCControle}} ()
+\item 
+int \mbox{\hyperlink{class_i_r_c_controle_a7af9a604ba139f80ce31ba4744a5f890}{Run\+Command}} (int fd, std\+::string \mbox{\hyperlink{class_command}{Command}})
+\item 
+std\+::map$<$ int, \mbox{\hyperlink{class_client}{Client}} $>$ \mbox{\hyperlink{class_i_r_c_controle_a8a6d094bbdb6c4c78ca340d37be47edc}{get\+Client\+Ids}} () const
+\item 
+std\+::map$<$ int, \mbox{\hyperlink{class_channel}{Channel}} $>$ \mbox{\hyperlink{class_i_r_c_controle_aa617a20787578acd3647752c9791de77}{get\+Channel\+Ids}} () const
+\item 
+\mbox{\hyperlink{class_channel}{Channel}} \mbox{\hyperlink{class_i_r_c_controle_a91ce4bba3aded4e944c17812c253210e}{get\+Channel\+By\+Id}} (int id)
+\item 
+\mbox{\hyperlink{class_client}{Client}} \mbox{\hyperlink{class_i_r_c_controle_a74ea2a03193f490494c3d95ab309a21d}{get\+Client\+By\+Id}} (int id)
+\item 
+int \mbox{\hyperlink{class_i_r_c_controle_a0c2e581c4f5a701bbf66b5e82f81cf87}{get\+Channel\+By\+Name}} (std\+::string name)
+\item 
+int \mbox{\hyperlink{class_i_r_c_controle_ac379cd2db75cddec204067c921697e3c}{get\+Client\+By\+Name}} (std\+::string name)
+\item 
+int \mbox{\hyperlink{class_i_r_c_controle_ab4f980957e3abfac58ae80bc4f7439a6}{get\+Free\+Channel\+Id}} ()
+\item 
+void \mbox{\hyperlink{class_i_r_c_controle_acb932fb1376578d74a1569e33259d27c}{add\+Client}} (int id)
+\item 
+void \mbox{\hyperlink{class_i_r_c_controle_a1745326ea08306ea83b06507fcc3b7d7}{add\+Channel}} (int id)
+\item 
+void \mbox{\hyperlink{class_i_r_c_controle_a68e0539d6f7624bc5186e70b72f30368}{remove\+Client}} (int id)
+\item 
+void \mbox{\hyperlink{class_i_r_c_controle_ac3f24508e693c4196ee596790805ff89}{remove\+Channel}} (int id)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::map$<$ int, \mbox{\hyperlink{class_client}{Client}} $>$ \mbox{\hyperlink{class_i_r_c_controle_a6de784acc94ca6700775a3acaa21531f}{Client\+Ids}}
+\item 
+std\+::map$<$ int, \mbox{\hyperlink{class_channel}{Channel}} $>$ \mbox{\hyperlink{class_i_r_c_controle_a7dcd8f926a09da4c32c098355ca312ab}{Channel\+Ids}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_i_r_c_controle_ae79f2017d3628be1bc89bcdd99b1eb7d}\index{IRCControle@{IRCControle}!IRCControle@{IRCControle}}
+\index{IRCControle@{IRCControle}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{IRCControle()}{IRCControle()}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_ae79f2017d3628be1bc89bcdd99b1eb7d} 
+IRCControle\+::\+IRCControle (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_i_r_c_controle_a4fe9eca2ff5ab5648f107029c3726620}\index{IRCControle@{IRCControle}!````~IRCControle@{\texorpdfstring{$\sim$}{\string~}IRCControle}}
+\index{````~IRCControle@{\texorpdfstring{$\sim$}{\string~}IRCControle}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{\texorpdfstring{$\sim$}{\string~}IRCControle()}{\string~IRCControle()}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_a4fe9eca2ff5ab5648f107029c3726620} 
+IRCControle\+::\texorpdfstring{$\sim$}{\string~}\+IRCControle (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_i_r_c_controle_a1745326ea08306ea83b06507fcc3b7d7}\index{IRCControle@{IRCControle}!addChannel@{addChannel}}
+\index{addChannel@{addChannel}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{addChannel()}{addChannel()}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_a1745326ea08306ea83b06507fcc3b7d7} 
+void IRCControle\+::add\+Channel (\begin{DoxyParamCaption}\item[{int}]{id}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_i_r_c_controle_acb932fb1376578d74a1569e33259d27c}\index{IRCControle@{IRCControle}!addClient@{addClient}}
+\index{addClient@{addClient}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{addClient()}{addClient()}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_acb932fb1376578d74a1569e33259d27c} 
+void IRCControle\+::add\+Client (\begin{DoxyParamCaption}\item[{int}]{id}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_i_r_c_controle_a91ce4bba3aded4e944c17812c253210e}\index{IRCControle@{IRCControle}!getChannelById@{getChannelById}}
+\index{getChannelById@{getChannelById}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{getChannelById()}{getChannelById()}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_a91ce4bba3aded4e944c17812c253210e} 
+\mbox{\hyperlink{class_channel}{Channel}} IRCControle\+::get\+Channel\+By\+Id (\begin{DoxyParamCaption}\item[{int}]{id}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_i_r_c_controle_a0c2e581c4f5a701bbf66b5e82f81cf87}\index{IRCControle@{IRCControle}!getChannelByName@{getChannelByName}}
+\index{getChannelByName@{getChannelByName}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{getChannelByName()}{getChannelByName()}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_a0c2e581c4f5a701bbf66b5e82f81cf87} 
+int IRCControle\+::get\+Channel\+By\+Name (\begin{DoxyParamCaption}\item[{std\+::string}]{name}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_i_r_c_controle_aa617a20787578acd3647752c9791de77}\index{IRCControle@{IRCControle}!getChannelIds@{getChannelIds}}
+\index{getChannelIds@{getChannelIds}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{getChannelIds()}{getChannelIds()}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_aa617a20787578acd3647752c9791de77} 
+std\+::map$<$ int, \mbox{\hyperlink{class_channel}{Channel}} $>$ IRCControle\+::get\+Channel\+Ids (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_i_r_c_controle_a74ea2a03193f490494c3d95ab309a21d}\index{IRCControle@{IRCControle}!getClientById@{getClientById}}
+\index{getClientById@{getClientById}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{getClientById()}{getClientById()}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_a74ea2a03193f490494c3d95ab309a21d} 
+\mbox{\hyperlink{class_client}{Client}} IRCControle\+::get\+Client\+By\+Id (\begin{DoxyParamCaption}\item[{int}]{id}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_i_r_c_controle_ac379cd2db75cddec204067c921697e3c}\index{IRCControle@{IRCControle}!getClientByName@{getClientByName}}
+\index{getClientByName@{getClientByName}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{getClientByName()}{getClientByName()}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_ac379cd2db75cddec204067c921697e3c} 
+int IRCControle\+::get\+Client\+By\+Name (\begin{DoxyParamCaption}\item[{std\+::string}]{name}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_i_r_c_controle_a8a6d094bbdb6c4c78ca340d37be47edc}\index{IRCControle@{IRCControle}!getClientIds@{getClientIds}}
+\index{getClientIds@{getClientIds}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{getClientIds()}{getClientIds()}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_a8a6d094bbdb6c4c78ca340d37be47edc} 
+std\+::map$<$ int, \mbox{\hyperlink{class_client}{Client}} $>$ IRCControle\+::get\+Client\+Ids (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const}
+
+\Hypertarget{class_i_r_c_controle_ab4f980957e3abfac58ae80bc4f7439a6}\index{IRCControle@{IRCControle}!getFreeChannelId@{getFreeChannelId}}
+\index{getFreeChannelId@{getFreeChannelId}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{getFreeChannelId()}{getFreeChannelId()}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_ab4f980957e3abfac58ae80bc4f7439a6} 
+int IRCControle\+::get\+Free\+Channel\+Id (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_i_r_c_controle_ac3f24508e693c4196ee596790805ff89}\index{IRCControle@{IRCControle}!removeChannel@{removeChannel}}
+\index{removeChannel@{removeChannel}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{removeChannel()}{removeChannel()}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_ac3f24508e693c4196ee596790805ff89} 
+void IRCControle\+::remove\+Channel (\begin{DoxyParamCaption}\item[{int}]{id}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_i_r_c_controle_a68e0539d6f7624bc5186e70b72f30368}\index{IRCControle@{IRCControle}!removeClient@{removeClient}}
+\index{removeClient@{removeClient}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{removeClient()}{removeClient()}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_a68e0539d6f7624bc5186e70b72f30368} 
+void IRCControle\+::remove\+Client (\begin{DoxyParamCaption}\item[{int}]{id}{}\end{DoxyParamCaption})}
+
+\Hypertarget{class_i_r_c_controle_a7af9a604ba139f80ce31ba4744a5f890}\index{IRCControle@{IRCControle}!RunCommand@{RunCommand}}
+\index{RunCommand@{RunCommand}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{RunCommand()}{RunCommand()}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_a7af9a604ba139f80ce31ba4744a5f890} 
+int IRCControle\+::\+Run\+Command (\begin{DoxyParamCaption}\item[{int}]{fd}{, }\item[{std\+::string}]{Command}{}\end{DoxyParamCaption})}
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_i_r_c_controle_a7dcd8f926a09da4c32c098355ca312ab}\index{IRCControle@{IRCControle}!ChannelIds@{ChannelIds}}
+\index{ChannelIds@{ChannelIds}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{ChannelIds}{ChannelIds}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_a7dcd8f926a09da4c32c098355ca312ab} 
+std\+::map$<$int,\mbox{\hyperlink{class_channel}{Channel}}$>$ IRCControle\+::\+Channel\+Ids\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_i_r_c_controle_a6de784acc94ca6700775a3acaa21531f}\index{IRCControle@{IRCControle}!ClientIds@{ClientIds}}
+\index{ClientIds@{ClientIds}!IRCControle@{IRCControle}}
+\doxysubsubsection{\texorpdfstring{ClientIds}{ClientIds}}
+{\footnotesize\ttfamily \label{class_i_r_c_controle_a6de784acc94ca6700775a3acaa21531f} 
+std\+::map$<$int,\mbox{\hyperlink{class_client}{Client}}$>$ IRCControle\+::\+Client\+Ids\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+inc/\mbox{\hyperlink{irccontrole_8hpp}{irccontrole.\+hpp}}\end{DoxyCompactItemize}

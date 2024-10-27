@@ -1,0 +1,68 @@
+\doxysection{Server.\+hpp}
+\hypertarget{_server_8hpp_source}{}\label{_server_8hpp_source}\index{inc/Server.hpp@{inc/Server.hpp}}
+\mbox{\hyperlink{_server_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{irccontrole_8hpp}{irccontrole.hpp}}"{}}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <sys/socket.h>}\ \textcolor{comment}{//-\/>\ for\ socket()}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <sys/types.h>}\ \textcolor{comment}{//-\/>\ for\ socket()}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <netinet/in.h>}\ \textcolor{comment}{//-\/>\ for\ sockaddr\_in}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <fcntl.h>}\ \textcolor{comment}{//-\/>\ for\ fcntl()}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <unistd.h>}\ \textcolor{comment}{//-\/>\ for\ close()}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <arpa/inet.h>}\ \textcolor{comment}{//-\/>\ for\ inet\_ntoa()}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <poll.h>}\ \textcolor{comment}{//-\/>\ for\ poll()}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <csignal>}\ \textcolor{comment}{//-\/>\ for\ signal()}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\///}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ RED\ "{}\(\backslash\)e[1;31m"{}\ }}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#define\ WHI\ "{}\(\backslash\)e[0;37m"{}\ }}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ GRE\ "{}\(\backslash\)e[1;32m"{}\ }}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ YEL\ "{}\(\backslash\)e[1;33m"{}\ }}
+\DoxyCodeLine{00016\ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\///}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{comment}{//\ \#include\ "{}./channels/channels.hpp"{}}}
+\DoxyCodeLine{00019\ \textcolor{comment}{//\ class\ Client\ //-\/>\ class\ for\ client}}
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ \{}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ private:}}
+\DoxyCodeLine{00022\ \textcolor{comment}{//\ \ \ \ \ int\ Fd;\ //-\/>\ client\ file\ descriptor}}
+\DoxyCodeLine{00023\ \textcolor{comment}{//\ \ \ \ \ std::string\ IPadd;\ //-\/>\ client\ ip\ address}}
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ \ \ \ \ std::string\ data;\ //\ recived\ string\ from\ the\ client}}
+\DoxyCodeLine{00025\ \textcolor{comment}{//\ \ \ \ \ std::string\ message;\ //-\/>\ message\ received\ from\ the\ client}}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ public:}}
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ \ \ \ \ Client()\{\};\ //-\/>\ default\ constructor}}
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ \ \ \ \ int\ GetFd()\{return\ Fd;\}\ //-\/>\ getter\ for\ fd}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{comment}{//\ \ \ \ \ void\ SetFd(int\ fd)\{Fd\ =\ fd;\}\ //-\/>\ setter\ for\ fd}}
+\DoxyCodeLine{00031\ \textcolor{comment}{//\ \ \ \ \ void\ setIpAdd(std::string\ ipadd)\{IPadd\ =\ ipadd;\}\ //-\/>\ setter\ for\ ipadd}}
+\DoxyCodeLine{00032\ \textcolor{comment}{//\ \ \ \ \ void\ setMessage(std::string\ msg)\{message\ =\ msg;\}\ //-\/>\ setter\ for\ message}}
+\DoxyCodeLine{00033\ \textcolor{comment}{//\ \ \ \ \ std::string\ getMessage()\{return\ message;\}\ //-\/>\ getter\ for\ message}}
+\DoxyCodeLine{00034\ \textcolor{comment}{//\ \};}}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_server}{Server}}\ \textcolor{comment}{//-\/>\ class\ for\ server}}
+\DoxyCodeLine{00038\ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_server_a10b2bb89279de7624d8858acd3de4ad4}{Port}};\ \textcolor{comment}{//-\/>\ server\ port}}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_server_a23c85da96b0ed7b64a31e85c7834c9bd}{SerSocketFd}};\ \textcolor{comment}{//-\/>\ server\ socket\ file\ descriptor}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_server_a61032a78cd346ea412d5c754e325b907}{Signal}};\ \textcolor{comment}{//-\/>\ static\ boolean\ for\ signal}}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ std::vector<Client>\ \mbox{\hyperlink{class_server_ae4f51f6091114a170d7c8d5dcb899419}{clients}};\ \textcolor{comment}{//-\/>\ vector\ of\ clients}}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ std::vector<struct\ pollfd>\ \mbox{\hyperlink{class_server_af2f47def240ac594c7311159bd416a4f}{fds}};\ \textcolor{comment}{//-\/>\ vector\ of\ pollfd}}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_server_aebbd407c1fa74f77cf04d236f5e24b8d}{Passwd}};\ \textcolor{comment}{//-\/>\ server\ password}}
+\DoxyCodeLine{00046\ \ \ \ \ }
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_server_ad5ec9462b520e59f7ea831e157ee5e59}{Server}}()\{\mbox{\hyperlink{class_server_a23c85da96b0ed7b64a31e85c7834c9bd}{SerSocketFd}}\ =\ -\/1;\}\ \textcolor{comment}{//-\/>\ default\ constructor}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_server_a58e006a7d931547522a042c557c68378}{ServerInit}}(\textcolor{keywordtype}{int}\ port,\ std::string\ passwd);\ \textcolor{comment}{//-\/>\ server\ initialization}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_server_a2f1af10bca9ca1803e7c2208d798042b}{SerSocket}}();\ \textcolor{comment}{//-\/>\ server\ socket\ creation}}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_server_a221a97f6a64efa095d226b53c5eaf7c1}{AcceptNewClient}}();\ \textcolor{comment}{//-\/>\ accept\ new\ client}}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_server_a1ad1a9e38afc27fe8bce060996ef0ec4}{ReceiveNewData}}(\textcolor{keywordtype}{int}\ fd);\ \textcolor{comment}{//-\/>\ receive\ new\ data\ from\ a\ registered\ client}}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ std::vector<Client>\ \&\mbox{\hyperlink{class_server_a6dcd79a40fad91b1ab728663d6795a62}{GetClients}}()\{\textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_server_ae4f51f6091114a170d7c8d5dcb899419}{clients}};\}\ \textcolor{comment}{//-\/>\ getter\ for\ clients}}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_server_acd4e531d38348e85db9bf5c0664171c4}{SignalHandler}}(\textcolor{keywordtype}{int}\ signum);\ \textcolor{comment}{//-\/>\ signal\ handler}}
+\DoxyCodeLine{00056\ \ \ \ \ }
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_server_a66cc3b94a1e0b92cd7c17ccd08f495ec}{CloseFds}}();\ \textcolor{comment}{//-\/>\ close\ file\ descriptors}}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_server_a85e3089deedf86e2a8bf680c067c6625}{ClearClients}}(\textcolor{keywordtype}{int}\ fd);\ \textcolor{comment}{//-\/>\ clear\ clients}}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_server_a6da0b72bd1837b0c34616dd32c063630}{SendData}}(\textcolor{keywordtype}{int}\ fd,\ std::string\ data);\ \textcolor{comment}{//-\/>\ send\ data\ to\ a\ registered\ client}}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_server_a027f98e0d1aaf81451723ecb34cca5a5}{SendAll}}(std::string\ data);\ \textcolor{comment}{//-\/>\ send\ data\ to\ all\ clients}}
+\DoxyCodeLine{00062\ \};}
+
+\end{DoxyCode}

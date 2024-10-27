@@ -23,7 +23,7 @@ typedef struct s_content{
 }t_content;
 
 class IRCCommandParser{
-	
+	 
 	public:
 	IRCCommandParser(const std::string& input) : raw_message(input) {}
     t_content parse();
@@ -47,26 +47,54 @@ class IRCCommandParser{
 
 class IRCCommandVerify{
     public:
-        int VerifyCommand(int id, t_content Content);
+        static int Verify(int clienID, t_content content);
+    
+    private:
+        static int VerifyJoin(int clientID, t_content content);
+        static int VerifyPart(int clientID, t_content content); 
+        static int VerifyPrivmsg(int clientID, t_content content); 
+        static int VerifyKick(int clientID, t_content content); 
+        static int VerifyTopic(int clientID, t_content content); 
+        static int VerifyQuit(int clientID, t_content content); 
+        static int VerifyNick(int clientID, t_content content); 
+        static int VerifyUser(int clientID, t_content content); 
+        static int VerifyPass(int clientID, t_content content); 
+        static int VerifyInvite(int clientID, t_content content); 
 };
 
 class IRCReplay{
     public:
-
-    static void ERR(int client_id, int err_num);
-    static void RPL(int client_id, int rpl_num);
 };
 
 class IRCControle{
     private:
-        std::map<int,Client>ClientIds;
-        std::map<int,Channel>ChannelIds;
+        std::map<int,Client>Clients;
+        std::map<int,Channel>Channels;
     public:
+        //-----Class-Methods-------
         IRCControle();
         ~IRCControle();
-        int RunCommand(int fd, std::string Command);
+        int RunCommand(int fd, std::string Command);     
+        //-----Maps-Getters--------
+        // std::map<int,Client> getClientIds() const;
+        std::map<int,Client>getClientsList()const;
+        std::map<int,Channel>getChannelsList()const;
+        std::vector<int> getClientsIdslist() const;
+        std::vector<int> getChannelsIdsList() const;
+        int getChannelByName(std::string name) const;
+        int getClientByName(std::string name)const;
+        // std::map<int,Channel> getChannelIds() const;
+        Channel getChannelById(int id);
+        Client getClientById(int id);
+        int getFreeChannelId();
+        //-----Maps-Setters--------
         void addClient(int id);
         void addChannel(int id);
+        void removeClient(int id);
+        void removeChannel(int id);
+        //------Replays-------------
+        void ERR(int client_id, int err_num);
+        void RPL(int client_id, int rpl_num);
 };
 
 #endif 

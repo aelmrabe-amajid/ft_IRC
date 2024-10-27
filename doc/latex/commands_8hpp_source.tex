@@ -1,0 +1,82 @@
+\doxysection{commands.\+hpp}
+\hypertarget{commands_8hpp_source}{}\label{commands_8hpp_source}\index{inc/commands.hpp@{inc/commands.hpp}}
+\mbox{\hyperlink{commands_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ COMMANDS\_HPP}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ COMMAND\_HPP}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_client}{Client}};}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}channels.hpp"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ <map>}}
+\DoxyCodeLine{00010\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00011\ \textcolor{comment}{\ \ \ \ NICK}}
+\DoxyCodeLine{00012\ \textcolor{comment}{\ \ \ \ PASS}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ \ \ \ PRVMSG}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ \ \ \ JOIN}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ \ \ \ PART}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ \ \ MODE}}
+\DoxyCodeLine{00017\ \textcolor{comment}{\ \ \ \ TOPIC}}
+\DoxyCodeLine{00018\ \textcolor{comment}{\ \ \ \ KICK}}
+\DoxyCodeLine{00019\ \textcolor{comment}{\ \ \ \ INVITE}}
+\DoxyCodeLine{00020\ \textcolor{comment}{\ \ \ \ QUIT}}
+\DoxyCodeLine{00021\ \textcolor{comment}{}}
+\DoxyCodeLine{00022\ \textcolor{comment}{\ \ \ \ Command\ Syntax\ :\ }}
+\DoxyCodeLine{00023\ \textcolor{comment}{\ \ \ \ -\/>\ NICK}}
+\DoxyCodeLine{00024\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ NickName}}
+\DoxyCodeLine{00025\ \textcolor{comment}{\ \ \ \ }}
+\DoxyCodeLine{00026\ \textcolor{comment}{\ \ \ \ -\/>\ PASS}}
+\DoxyCodeLine{00027\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ secretpasswordhere\ }}
+\DoxyCodeLine{00028\ \textcolor{comment}{\ \ \ \ }}
+\DoxyCodeLine{00029\ \textcolor{comment}{\ \ \ \ -\/>\ PRVMSG}}
+\DoxyCodeLine{00030\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ target\ Content}}
+\DoxyCodeLine{00031\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ target,target\ Content}}
+\DoxyCodeLine{00032\ \textcolor{comment}{\ \ \ \ }}
+\DoxyCodeLine{00033\ \textcolor{comment}{\ \ \ \ -\/>\ JOIN}}
+\DoxyCodeLine{00034\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ channel\ key}}
+\DoxyCodeLine{00035\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ channel,channel\ key,key}}
+\DoxyCodeLine{00036\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ channel,channel,channel\ key,key}}
+\DoxyCodeLine{00037\ \textcolor{comment}{\ \ \ \ }}
+\DoxyCodeLine{00038\ \textcolor{comment}{\ \ \ \ -\/>\ PART}}
+\DoxyCodeLine{00039\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ channel}}
+\DoxyCodeLine{00040\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ channel,reason}}
+\DoxyCodeLine{00041\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ channel,channel}}
+\DoxyCodeLine{00042\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ channel,channel\ reason}}
+\DoxyCodeLine{00043\ \textcolor{comment}{\ \ \ \ }}
+\DoxyCodeLine{00044\ \textcolor{comment}{\ \ \ \ -\/>\ TOPIC}}
+\DoxyCodeLine{00045\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ channel\ topic}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ \ \ \ }}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ \ \ \ -\/>\ KICK}}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ channel\ user}}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ channel\ user\ comment}}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ channel,channel,channel\ user\ comment}}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ channel\ user,user,user\ comment}}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ \ \ \ }}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ \ \ \ -\/>\ INVITE}}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ nickname\ channel}}
+\DoxyCodeLine{00055\ \textcolor{comment}{\ \ \ \ }}
+\DoxyCodeLine{00056\ \textcolor{comment}{\ \ \ \ -\/>\ QUIT}}
+\DoxyCodeLine{00057\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ }}
+\DoxyCodeLine{00058\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ reason\ }}
+\DoxyCodeLine{00059\ \textcolor{comment}{\ \ \ \ }}
+\DoxyCodeLine{00060\ \textcolor{comment}{\ \ \ \ -\/>\ USER}}
+\DoxyCodeLine{00061\ \textcolor{comment}{\ \ \ \ \ \ \ \ Parameters:\ UserName\ 0\ *\ RealName\ (In\ Case\ The\ RealName\ or\ UserName\ not\ provided\ will\ be\ replaced\ by\ NickName)}}
+\DoxyCodeLine{00062\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00063\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_command}{Command}}\{}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_command_a4e380e983b3c592c0a925dc7c2771fbe}{NICK}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},std::string\ NickName);}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_command_a552d8b63408ce47537038e6e77f31f2f}{PASS}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},std::string\ PassWord,\ std::string\ ServerPass);}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_command_a326e99ae92f74cecce7abaf5bee33dd4}{PRVMSG}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},std::vector<std::string>target,\ std::string\ content);}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_command_a7e1e7c254f358f7cb2c74091d34273a1}{JOIN}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},std::vector<std::string>channel,\ std::vector<std::string>key);}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_command_a9d51ceace626cf8e2551e1a3d5469c51}{PART}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},std::vector<std::string>channel,\ std::string\ reason);}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_command_a464867c3959794532b649939396a68dc}{TOPIC}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},std::string\ channel,\ std::string\ topic);}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_command_a28909b0ae4d5bb3eb17a2d73429e1431}{KICK}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},std::vector<std::string>channel,\ std::vector<std::string>user,\ std::string\ reason);}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_command_a198e443b44eb925ce23a51cadf9b32b1}{INVIT}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},std::string\ nickname,\ std::string\ channel);}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_command_aea96b2bb1c5650778dc305079ce68989}{QUIT}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},std::string\ reason);}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_command_a80655df45d6ce398b4e717f2a8356116}{USER}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},std::string\ UserName,\ std::string\ RealName);}
+\DoxyCodeLine{00075\ \};}
+\DoxyCodeLine{00076\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -49,6 +49,13 @@ void IRCCommandParser::parseJoin(t_content& parsed)
         keys = channels.substr(pos + 1);
         channels = channels.substr(0, pos);
     }
+    std::vector<std::string> pchannels;
+    pchannels = splitString(channels,',');
+    for (std::vector<std::string>::iterator it = pchannels.begin(); it != pchannels.end(); it++)
+    {
+        if (*it != "#")
+            std::cout << "should print error Here" << std::endl;
+    }
     parsed.channels = splitString(channels, ',');
 }
 
@@ -150,13 +157,78 @@ std::vector<std::string> IRCCommandParser::splitString(const std::string& str, c
     return tokens;
 }
 
+
+int IRCCommandVerify::Verify(int clientID, t_content content)
+{
+    switch (content.command) {
+    case JOIN: IRCCommandVerify::VerifyJoin(clientID,content); break;
+    case PART: IRCCommandVerify::VerifyPart(clientID,content); break;
+    case PRIVMSG: IRCCommandVerify::VerifyPrivmsg(clientID,content); break;
+    case KICK: IRCCommandVerify::VerifyKick(clientID,content); break;
+    case TOPIC: IRCCommandVerify::VerifyTopic(clientID,content); break;
+    case QUIT: IRCCommandVerify::VerifyQuit(clientID,content); break;
+    case NICK: IRCCommandVerify::VerifyNick(clientID,content); break;
+    case USER: IRCCommandVerify::VerifyUser(clientID,content); break;
+    case PASS: IRCCommandVerify::VerifyPass(clientID,content); break;
+    case INVITE: IRCCommandVerify::VerifyInvite(clientID,content); break;
+    default: std::cerr << "Unknown command." << std::endl;
+    }
+}
+
+int IRCCommandVerify::VerifyJoin(int clientID,t_content content){
+    std::cout << "the Command is Join " << std::endl;
+    return (1);
+};
+int IRCCommandVerify::VerifyPart(int clientID,t_content content){
+    return (1);
+};
+int IRCCommandVerify::VerifyPrivmsg(int clientID,t_content content){
+    return (1);
+};
+int IRCCommandVerify::VerifyKick(int clientID,t_content content){
+    return (1);
+};
+int IRCCommandVerify::VerifyTopic(int clientID,t_content content){
+    return (1);
+};
+int IRCCommandVerify::VerifyQuit(int clientID,t_content content){
+    return (1);
+};
+int IRCCommandVerify::VerifyNick(int clientID,t_content content){
+    return (1);
+};
+int IRCCommandVerify::VerifyUser(int clientID,t_content content){
+    return (1);
+};
+int IRCCommandVerify::VerifyPass(int clientID,t_content content){
+    return (1);
+};
+int IRCCommandVerify::VerifyInvite(int clientID,t_content content){
+    return (1);
+};
+
 //------------------------
 
-IRCControle::IRCControle(void){};
+IRCControle::IRCControle(void){
+    this->Clients = std::map<int, Client>(); //-> create a map of clients
+    this->Channels = std::map<int, Channel>(); //-> create a map of channels
+};
+
 IRCControle::~IRCControle(void){};
 
-int IRCControle::RunCommand(int fd, std::string Command)
+int IRCControle::RunCommand(int clientID, std::string Command)
 {
+    std::cout << Command << std::endl;
+    IRCCommandParser  Parse(Command);
+    t_content Content = Parse.parse();
+    if (Content.command == UNKNOWN)
+    {
+        std::cout << "The command is UNKNOWN" << std::endl;
+        return (421);
+    }
+    IRCCommandVerify::Verify(clientID,Content);
+        // ClientERR(Content.command,421);
+    
     return (0);
 }
 
@@ -168,7 +240,7 @@ void IRCControle::addClient(int id)
     User.setrealName("");
     User.setuserId(id);
     User.setState(false);
-    this->ClientIds[id] = User;
+    this->Clients[id] = User;
 }
 
 void IRCControle::addChannel(int id)
@@ -179,3 +251,63 @@ void IRCControle::addChannel(int id)
     Chn.setMode(0);
     Chn.setUserLimits(0);
 }
+
+/*
+    this function will be used to delete a specifc channel
+    (the channel must be deleted when all members of this channel left)
+*/
+void IRCControle::removeChannel(int id)
+{
+    for(std::map<int,Channel>::iterator it = this->Channels.begin(); it != this->Channels.end(); it++)
+        if ((*it).first == id)
+            this->Channels.erase(it);
+}
+
+std::map<int,Channel> IRCControle::getChannelsList(void) const{
+    return (this->Channels);
+}
+std::map<int,Client> IRCControle::getClientsList(void) const{
+    return (this->Clients);
+}
+
+std::vector<int> IRCControle::getClientsIdslist() const{
+    std::vector<int> clientslist;
+    if (this->getClientsList().size() > 0)
+    {
+        for (std::map<int,Client>::iterator it = (this->getClientsList()).begin(); it != (this->getClientsList()).end(); it++)
+            clientslist.push_back((*it).first);
+        return (clientslist);
+    }
+    return (clientslist);
+}
+
+std::vector<int> IRCControle::getChannelsIdsList() const{
+    std::vector<int> channellist;
+    if (this->getChannelsList().size() > 0)
+    {
+        for (std::map<int,Channel>::iterator it = (this->getChannelsList()).begin(); it != (this->getChannelsList()).end(); it++)
+            channellist.push_back((*it).first);
+        return (channellist);
+    }
+    return (channellist);
+}
+
+
+int IRCControle::getChannelByName(std::string name) const{
+    for (std::map<int,Channel>::iterator it = (this->getChannelsList()).begin(); it != (this->getChannelsList()).end(); it++)
+    {
+        if ((*it).second.getChannelName() == name && name.length() > 0)
+            return ((*it).first);
+    }
+    return (-1);
+}
+
+int IRCControle::getClientByName(std::string name) const{
+    for (std::map<int,Client>::iterator it = (this->getClientsList()).begin(); it != (this->getClientsList()).end(); it++)
+    {
+        if ((*it).second.getnickName() == name && name.length() > 0)
+            return ((*it).first);
+    }
+    return (-1);
+}
+

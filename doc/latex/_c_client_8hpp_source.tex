@@ -1,0 +1,60 @@
+\doxysection{CClient.\+hpp}
+\hypertarget{_c_client_8hpp_source}{}\label{_c_client_8hpp_source}\index{inc/CClient.hpp@{inc/CClient.hpp}}
+\mbox{\hyperlink{_c_client_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ CCLIENT\_HPP}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ CCLIENT\_HPP}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <vector>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_client}{Client}}}
+\DoxyCodeLine{00010\ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_client_ab79ad95264939f089a2f0b8e0ca62d37}{id}};\ \textcolor{comment}{//-\/>\ client\ file\ descriptor}}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_client_a52cd0d4b2d8b0f984849c8a61eac9758}{IPadd}};\ \textcolor{comment}{//-\/>\ client\ ip\ address}}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_client_a74339a40a25e43a3ab241d1053f001c6}{data}};\ \textcolor{comment}{//\ recived\ string\ from\ the\ client}}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_client_abb45c8bc7742c5c0b2c80528b7b40b1e}{message}};\ \textcolor{comment}{//-\/>\ message\ received\ from\ the\ client}}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_client_ace2c675451e7ee11810d96525d3da215}{state}};}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_client_a2e301c3058563fea37161d30407e79ab}{userName}};}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_client_a5a2093b8de870220c80648ea9a8bacb9}{nickName}};}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_client_a6faef5e78b019ed61746b66b72227d8e}{realName}};}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ std::vector<int>\ \mbox{\hyperlink{class_client_a2ffaa8457369609cd0bcd0da4fff1990}{channelList}};\ \textcolor{comment}{//\ this\ can\ be\ optimal\ just\ in\ case\ user}}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ send\ a\ Command\ to\ intract\ with\ Channel\ so\ instad\ of\ iterate\ on\ all\ Channel\ Members\ i\ will\ simply\ check\ if\ id\ of\ channels\ is\ here\ (that\ mean\ is\ member)}}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ also\ can\ be\ good\ in\ case\ the\ user\ use\ command\ Quit\ that\ mean\ i\ need\ to\ check\ all\ Channels\ list\ if\ there\ is\ a\ memeber\ with\ this\ id\ to\ delete\ theme\ ,\ using\ }}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ this\ will\ be\ easy\ because\ just\ using\ id\ of\ channel\ here\ i\ will\ update\ member\ list\ }}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_client_ae51af7aa6b8f591496a8f6a4a87a14bf}{Client}}();\ \textcolor{comment}{//-\/>\ default\ constructor}}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_client_a840e519ca781888cbd54181572ebe3a7}{\string~Client}}();}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_client}{Client}}\&\mbox{\hyperlink{class_client_ad053d6a8d58047323bffdcdb298a90d1}{operator=}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{class_client}{Client}}\&\ obj);}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_client_a7e0fe4059994eddc71a32320c239f4c1}{GetFd}}()\{\textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_client_ab79ad95264939f089a2f0b8e0ca62d37}{id}};\}\ \textcolor{comment}{//-\/>\ getter\ for\ fd}}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_client_a09ad818fe6a488f262f402cf4f77d0f6}{SetFd}}(\textcolor{keywordtype}{int}\ fd)\{\textcolor{keywordtype}{id}\ =\ fd;\}\ \textcolor{comment}{//-\/>\ setter\ for\ fd}}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_client_ae0a18acf264384da614fb6f23a2c8f4b}{setIpAdd}}(std::string\ ipadd)\{\mbox{\hyperlink{class_client_a52cd0d4b2d8b0f984849c8a61eac9758}{IPadd}}\ =\ ipadd;\}\ \textcolor{comment}{//-\/>\ setter\ for\ ipadd}}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_client_aa50b44514ccd7f2994dafecc2d199d8e}{setMessage}}(std::string\ msg)\{\mbox{\hyperlink{class_client_abb45c8bc7742c5c0b2c80528b7b40b1e}{message}}\ =\ msg;\}\ \textcolor{comment}{//-\/>\ setter\ for\ message}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_client_a628e8e01efea3db565c8f0fe4ef40c0f}{getMessage}}()\{\textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_client_abb45c8bc7742c5c0b2c80528b7b40b1e}{message}};\}\ \textcolor{comment}{//-\/>\ getter\ for\ message}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/getters-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_client_a7b7fe39812c55175fb86f38cb0a506b3}{getstate}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_client_a2f4c7c5009b2c97b9c04b55c571c81da}{getuserName}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_client_a6b1e8043033f76f7f46446f4cecfd2c1}{getnickName}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ std::string\ \mbox{\hyperlink{class_client_a6ec829d6740a6a503c4b0559ebe69d02}{getrealName}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_client_af9bc75d714781be7afde876eeb870753}{getuserId}}(\textcolor{keywordtype}{void})\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ std::vector<int>\ \mbox{\hyperlink{class_client_aa2f1cbd47f90d3ee8feee13ea6a16492}{getChannelList}}(\textcolor{keywordtype}{void})\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_client_aa54872a3ba0fa0948208459f1b317655}{isChannelMemeber}}(\textcolor{keywordtype}{int}\ channel\_id)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{comment}{//-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/setters-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_client_acb00421026e2b86080c5d9995f08da19}{setState}}(\textcolor{keywordtype}{bool}\ \_state);}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_client_ad76085554efb43d22f6a47d93fec9f05}{setuserName}}(\textcolor{keyword}{const}\ std::string\ \&\mbox{\hyperlink{class_client_a2e301c3058563fea37161d30407e79ab}{userName}});}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_client_a6c20c7a32d8700fe14f8986dee09458f}{setnickName}}(\textcolor{keyword}{const}\ std::string\ \&\mbox{\hyperlink{class_client_a5a2093b8de870220c80648ea9a8bacb9}{nickName}});}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_client_ac0e22154871b0b5b389e86265b1a13cb}{setrealName}}(\textcolor{keyword}{const}\ std::string\ \&\mbox{\hyperlink{class_client_a6faef5e78b019ed61746b66b72227d8e}{realName}});}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_client_aec649ba7fbff94baa5b6538efc11a089}{setuserId}}(\textcolor{keywordtype}{int}\ fd);}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_client_a808c1133c3f04f881877dd6033804ecf}{givepermission}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_client_a1ffd2ae11238593953704e83aacee219}{takepermission}}(\textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_client_a3ae5889320927d426688912bd7980a87}{addChannelToList}}(\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00052\ \};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

@@ -1,0 +1,109 @@
+\doxysection{inc/irccontrole.hpp File Reference}
+\hypertarget{irccontrole_8hpp}{}\label{irccontrole_8hpp}\index{inc/irccontrole.hpp@{inc/irccontrole.hpp}}
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$map$>$}\newline
+{\ttfamily \#include $<$sstream$>$}\newline
+{\ttfamily \#include "{}CChannel.\+hpp"{}}\newline
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structs__content}{s\+\_\+content}}
+\item 
+class \mbox{\hyperlink{class_i_r_c_command_parser}{IRCCommand\+Parser}}
+\item 
+class \mbox{\hyperlink{class_i_r_c_command_verify}{IRCCommand\+Verify}}
+\item 
+class \mbox{\hyperlink{class_i_r_c_replay}{IRCReplay}}
+\item 
+class \mbox{\hyperlink{class_i_r_c_controle}{IRCControle}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \mbox{\hyperlink{structs__content}{s\+\_\+content}} \mbox{\hyperlink{irccontrole_8hpp_a4dc07c8e039d7fe24a5c9f5de734cae8}{t\+\_\+content}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352}{Command\+Type}} \{ \newline
+\mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a4925a399dab94b9b58f6d1b5cd246af7}{JOIN}}
+, \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a173f98c603042f6241b70157d56e385f}{PART}}
+, \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a4f82d41890373d4f9f31254e2c7be803}{PRIVMSG}}
+, \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a552dbfc018bbff8b37c76efea76ca893}{KICK}}
+, \newline
+\mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a3e8e9fa31579ebd1db3ffc0fc7528ddb}{TOPIC}}
+, \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a76bdc8adfd6c6463ab269ff4c06be9b4}{QUIT}}
+, \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a3e724a44d5e55b043a1c6ba83aa08bea}{NICK}}
+, \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352ae2d30a195cee6b2961cc2c23ea4b520b}{USER}}
+, \newline
+\mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a0afa825567e442a46d131be6c71cb40f}{PASS}}
+, \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352ad7fefe2c0ce6f89ca630dacf7436e01b}{INVITE}}
+, \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a6ce26a62afab55d7606ad4e92428b30c}{UNKNOWN}}
+ \}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\Hypertarget{irccontrole_8hpp_a4dc07c8e039d7fe24a5c9f5de734cae8}\index{irccontrole.hpp@{irccontrole.hpp}!t\_content@{t\_content}}
+\index{t\_content@{t\_content}!irccontrole.hpp@{irccontrole.hpp}}
+\doxysubsubsection{\texorpdfstring{t\_content}{t\_content}}
+{\footnotesize\ttfamily \label{irccontrole_8hpp_a4dc07c8e039d7fe24a5c9f5de734cae8} 
+typedef struct \mbox{\hyperlink{structs__content}{s\+\_\+content}} \mbox{\hyperlink{irccontrole_8hpp_a4dc07c8e039d7fe24a5c9f5de734cae8}{t\+\_\+content}}}
+
+
+
+\doxysubsection{Enumeration Type Documentation}
+\Hypertarget{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352}\index{irccontrole.hpp@{irccontrole.hpp}!CommandType@{CommandType}}
+\index{CommandType@{CommandType}!irccontrole.hpp@{irccontrole.hpp}}
+\doxysubsubsection{\texorpdfstring{CommandType}{CommandType}}
+{\footnotesize\ttfamily \label{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352} 
+enum \mbox{\hyperlink{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352}{Command\+Type}}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{JOIN@{JOIN}!irccontrole.hpp@{irccontrole.hpp}}\index{irccontrole.hpp@{irccontrole.hpp}!JOIN@{JOIN}}}\Hypertarget{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a4925a399dab94b9b58f6d1b5cd246af7}\label{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352} 
+JOIN&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PART@{PART}!irccontrole.hpp@{irccontrole.hpp}}\index{irccontrole.hpp@{irccontrole.hpp}!PART@{PART}}}\Hypertarget{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a173f98c603042f6241b70157d56e385f}\label{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352} 
+PART&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PRIVMSG@{PRIVMSG}!irccontrole.hpp@{irccontrole.hpp}}\index{irccontrole.hpp@{irccontrole.hpp}!PRIVMSG@{PRIVMSG}}}\Hypertarget{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a4f82d41890373d4f9f31254e2c7be803}\label{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352} 
+PRIVMSG&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{KICK@{KICK}!irccontrole.hpp@{irccontrole.hpp}}\index{irccontrole.hpp@{irccontrole.hpp}!KICK@{KICK}}}\Hypertarget{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a552dbfc018bbff8b37c76efea76ca893}\label{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352} 
+KICK&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{TOPIC@{TOPIC}!irccontrole.hpp@{irccontrole.hpp}}\index{irccontrole.hpp@{irccontrole.hpp}!TOPIC@{TOPIC}}}\Hypertarget{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a3e8e9fa31579ebd1db3ffc0fc7528ddb}\label{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352} 
+TOPIC&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{QUIT@{QUIT}!irccontrole.hpp@{irccontrole.hpp}}\index{irccontrole.hpp@{irccontrole.hpp}!QUIT@{QUIT}}}\Hypertarget{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a76bdc8adfd6c6463ab269ff4c06be9b4}\label{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352} 
+QUIT&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{NICK@{NICK}!irccontrole.hpp@{irccontrole.hpp}}\index{irccontrole.hpp@{irccontrole.hpp}!NICK@{NICK}}}\Hypertarget{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a3e724a44d5e55b043a1c6ba83aa08bea}\label{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352} 
+NICK&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{USER@{USER}!irccontrole.hpp@{irccontrole.hpp}}\index{irccontrole.hpp@{irccontrole.hpp}!USER@{USER}}}\Hypertarget{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352ae2d30a195cee6b2961cc2c23ea4b520b}\label{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352} 
+USER&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{PASS@{PASS}!irccontrole.hpp@{irccontrole.hpp}}\index{irccontrole.hpp@{irccontrole.hpp}!PASS@{PASS}}}\Hypertarget{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a0afa825567e442a46d131be6c71cb40f}\label{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352} 
+PASS&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{INVITE@{INVITE}!irccontrole.hpp@{irccontrole.hpp}}\index{irccontrole.hpp@{irccontrole.hpp}!INVITE@{INVITE}}}\Hypertarget{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352ad7fefe2c0ce6f89ca630dacf7436e01b}\label{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352} 
+INVITE&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{UNKNOWN@{UNKNOWN}!irccontrole.hpp@{irccontrole.hpp}}\index{irccontrole.hpp@{irccontrole.hpp}!UNKNOWN@{UNKNOWN}}}\Hypertarget{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352a6ce26a62afab55d7606ad4e92428b30c}\label{irccontrole_8hpp_a21e038f5b8958e203d28bc4f18472352} 
+UNKNOWN&\\
+\hline
+
+\end{DoxyEnumFields}

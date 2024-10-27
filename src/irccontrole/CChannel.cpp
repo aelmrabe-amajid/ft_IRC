@@ -14,6 +14,9 @@ std::string Channel::getCreationTime() const {
     return this->creationTime;
 }
 
+std::string Channel::getChannelName(void) const{
+    return (this->name);
+}
 std::string Channel::getTopic() const {
     return this->topic;
 }
@@ -26,16 +29,14 @@ int Channel::getChannelId() const {
     return this->id;
 }
 
-std::map<std::string, Client> Channel::getMembers() const {
-    return this->members;
+std::vector<int> Channel::getMembers() const{
+    return (this->members);
 }
-
-std::map<std::string, Client> Channel::getOperators() const {
-    return this->operators;
+std::vector<int> Channel::getOperators() const{
+    return (this->operators);
 }
-
-std::map<std::string, Client> Channel::getBanList() const {
-    return this->banList;
+std::vector<int> Channel::getBanList() const{
+    return (this->banlist);
 }
 
 void Channel::setCreator(const std::string& creator) {
@@ -52,14 +53,6 @@ void Channel::setTopic(const std::string& topic) {
 
 void Channel::setKey(const std::string& key) {
     this->key = key;
-}
-
-void Channel::addMember(const std::string& name, const Client& client) {
-    this->members[name] = client;
-}
-
-void Channel::removeMember(const std::string& name) {
-    this->members.erase(name);
 }
 
 void Channel::setChannelId(int id) {
@@ -81,92 +74,60 @@ void Channel::setUserLimits(int limits) {
 int Channel::getUserLimits() const {
     return this->limits;
 }
+void Channel::setChannelName(std::string _name){
+    this->name = _name;
+}
 
-// ---------------Commands---------------
+bool Channel::isMember(int clientId) const{
+    for(std::vector<int>::iterator it = (this->getMembers()).begin(); it != ((this->getMembers()).end()); it++)
+        if (*it == clientId)
+            return (true);
+    return (false);
+}
 
+bool Channel::isOperator(int clientId) const{
+    for(std::vector<int>::iterator it = (this->getOperators()).begin(); it != (this->getOperators()).end(); it++)
+        if (*it == clientId)
+            return (true);
+        return (false);
+}
 
-// ---------------Tools---------------
+bool Channel::isBaned(int clientId) const{
+    for(std::vector<int>::iterator it = (this->getBanList()).begin(); it != (this->getBanList()).end(); it++)
+        if (*it == clientId)
+            return (true);
+        return (false);
+}
 
-// void Tools::addClient(const int id)
-// {
-// 	Client user;
+void Channel::addMember(int clientId){
+    this->getMembers().push_back(clientId);
+}
 
-// 	user.setuserId(id);
-// 	user.setuserName("");
-// 	user.setrealName("");
-// 	user.setnickName("");
-// 	user.setState(true);
-// 	ClientIDs[id] = user;
-// }
+void Channel::givepermission(int clientId){
+    this->getOperators().push_back(clientId);
+}
 
-// Client& Tools::getClientById(int id)
-// {
-// 	std::map<int,Client>::iterator it = ClientIDs.find(id);
-// 	if(it != ClientIDs.end())
-// 		return (it->second);
-// 	else
-// 		throw(0);
-// }
+void Channel::takepermission(int clientId){
+    for (std::vector<int>::iterator it = (this->getOperators()).begin(); it != (this->getOperators()).end(); it++)
+        if (*it == clientId)
+            (this->getOperators().erase(it));
+}
 
-// /*
-// 	@brief : this function take NickName iterate in the map
-// 	if there is any element in the map have this NickName
-// 	we will return the key of this element
-// 	@return : key of element in map | -1 if not found
-// */
-// int Tools::getKey(std::string Nick)
-// {
-// 	std::map<int,Client>::iterator it = ClientIDs.begin();
-// 	while (it != ClientIDs.end())
-// 	{
-// 		if (it->second.getnickName() == Nick)
-// 			return (it->first);
-// 		it++;
-// 	}
-// 	return (-1);
-// }
+void Channel::removeMember(int clientId){
+    for (std::vector<int>::iterator it = (this->getMembers()).begin(); it != (this->getMembers()).end(); it++)
+        if (*it == clientId)
+            (this->getMembers().erase(it));
+    for (std::vector<int>::iterator it = (this->getOperators()).begin(); it != (this->getOperators()).end(); it++)
+        if (*it == clientId)
+            (this->getOperators().erase(it));
+}
 
-// void Tools::initTools(void)
-// {
+void Channel::banMember(int clientId){
+    this->removeMember(clientId);
+    (this->getBanList()).push_back(clientId);
+}
 
-// }
+void Channel::ubanMember(int clientId){
+    (this->getBanList()).push_back(clientId);
+}
 
-// char *Tools::NoUser::what() const{
-// 	return ("No User with This ID");
-// }
-
-// std::vector<std::string> MsgSplit(std::string Message)
-// {
-// 	std::vector<std::string> res;
-// 	size_t beggin = 0;
-// 	size_t end = Message.find(" ");
-// 	while(end != std::string::npos)
-// 	{
-// 		res.push_back(Message.substr(beggin, end - beggin));
-// 		while(Message[end] == ' ')
-// 			end++;
-// 		beggin = end;
-// 		end = Message.find(" ", beggin);
-// 	}
-// 	return res;
-// }
-
-// /*
-// 	this function following this Format
-// 	id : the client ID (is file Discriptor of the current client)
-	
-// 	Message : {Command, TextContent}
-// 		-> Command : In the case of Command The av[1] must be a valid Command
-// 			->Tookenis("Message");
-// 		-> TextContent : Any Thing else Not command.
-	
-// */
-// int Tools::DataParse(int id, std::string Message)
-// {
-// 	std::vector<std::string> Tookens = MsgSplit(Message);
-// 	if (Tookens.size() > 0)
-// 	{
-// 		if (Tookens.at(0) == )
-// 	}
-
-// }

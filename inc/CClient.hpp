@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+
 class Client
 {
 	private:
@@ -18,10 +19,10 @@ class Client
 		std::string realName;
 		std::vector<int> channelList;
 	public:
-	    Client(); //-> default constructor
+	    Client();
 		~Client();
 		Client&operator=(const Client& obj);
-	    int GetFd(){return id;} //-> getter for fd
+	    int GetFd(){return id;}
 	    void SetFd(int fd){id = fd;} //-> setter for fd
 	    void setIpAdd(std::string ipadd){IPadd = ipadd;} //-> setter for ipadd
 	    void setMessage(std::string msg){message = msg;} //-> setter for message
@@ -32,12 +33,16 @@ class Client
 		std::string getnickName() const;
 		std::string getrealName() const;
 		int getuserId(void) const;
+		std::vector<int> getChannelsList(void) const;
+		// int isChannelMemeber(int channel_id) const;
 		//----------setters-----------
 		void setState(bool _state);
 		void setuserName(const std::string &userName);
 		void setnickName(const std::string &nickName);
 		void setrealName(const std::string &realName);
 		void setuserId(int fd);
+		void addChannelid(int id);
+		void removeChannelid(int id);
 };
 
 #endif
