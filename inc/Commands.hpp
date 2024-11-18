@@ -185,10 +185,13 @@ class ModeCommand : public Command{
 		ModeCommand(int _clientID, const std::string& _message);
 		~ModeCommand();
 		void execute();
+		void modespliter();
 	private:
 		std::string message;
+		std::string channelname;
 		std::string adds;
 		std::string removed;
+		std::string ModeString;
 		std::string ModeParm;
 };
 

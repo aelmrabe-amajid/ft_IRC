@@ -259,6 +259,9 @@ Command *Command::createCommand(int clientID, const std::string& params, Command
         case USER:
             cmd = new UserCommand(clientID, params);
             break;
+        case MODE:
+            cmd = new ModeCommand(clientID, params);
+            break;
         default:
             cmd = new UnknownCommand(clientID, params);
             break;
@@ -655,11 +658,43 @@ ModeCommand::ModeCommand(int clientid, const std::string& _message) : Command(cl
     #channelname -l
 
     #channelname 
+
+    KICK #channel #user Message
+    MODE #channel +b #user 
+
+    -MODESTRING+MODESTRING
 */
+
+/*
+    +fkkf-kdkdo
+    
+    litko
+*/
+void ModeCommand::modespliter(){
+    bool add = false;
+    bool remove = false;
+    for(std::string::iterator it = this->ModeString.begin(); it != this->ModeString.end(); it++){
+        if (*it == '+'){
+            if (add == true)
+            add = true;
+        }else if (*it == '-'){
+            remove = true;
+        }
+    }
+}
+
 void ModeCommand::execute(){
     std::vector<std::string> parts;
 
     parts = splitParts(this->message, 3); // channelname modestring modeparam
+    if (parts.size() < 2)
+        return (DataControler::SendClientMessage(this->clientID, ERR_NEEDMOREPARAMS(this->prefix.nickname, this->prefix.hostname)));
+
+    std::vector<std::string> channelsName = split(parts[0],',');
+    if (channelsName.size() > 1)
+        return (DataControler::SendClientMessage(this->clientID, ERR_BADCHANNELNAME(this->prefix.nickname, this->prefix.hostname, parts[0])));
+    this->channelname = parts[0];
+    this->ModeString = parts[1]; 
 }
 
-ModeCommand::~ModeCommand
+ModeCommand::~ModeCommand(){}
