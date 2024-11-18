@@ -1,0 +1,11 @@
+{
+  "tasks": [
+    {
+      "type": "shell",
+      "command": "/usr/bin/make",
+      "args": [],
+      "label": "makelanch"
+    }
+  ],
+  "version": "2.0.0"
+}

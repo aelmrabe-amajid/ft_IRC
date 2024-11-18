@@ -65,6 +65,7 @@ std::vector<int>& DataControler::getChannelsMembers(const std::vector<std::strin
         uniqueMembers.insert(channelMembers.begin(), channelMembers.end());
     }
     members.assign(uniqueMembers.begin(), uniqueMembers.end());
+    // members.push_back()
     return members;
 }
 
@@ -131,9 +132,8 @@ void DataControler::modifyClientNickname(int fd, const std::string& newNickname)
 
 void DataControler::removeClient(int fd) {
     if (clientslist.find(fd) != clientslist.end()){
-        std::cout << "Client <" << fd << "> Disconnected" << std::endl;
-        // std::string nickname_lower = clientslist[fd].getNickName();
-        // nicknames.erase(nickname_lower);
+        std::string nickname_lower = clientslist[fd].getNickName();
+        nicknames.erase(nickname_lower);
         clientslist.erase(fd);
         close(fd);
     }

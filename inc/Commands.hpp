@@ -70,7 +70,7 @@ class JoinCommand : public Command {
 		void joinNewChannel(const std::string& channel);
 	    void execute();
 	private:
-    	std::string message;
+    	std::string message;// #ch key 
 		std::vector<std::string> channels;
 		std::vector<std::string> keys;
 		// std::string ignored;
@@ -153,28 +153,43 @@ class UnknownCommand : public Command {
 		// std::vector<int> ResponseCodes;
 };
 
-// class QuitCommand : public Command {
-// 	public:
-// 	    QuitCommand(int _clientID, const std::string& _message) : Command(_clientID, _message) {}
-// 	    bool parse();
-// 	    bool execute();
-// 	private:
-// 		std::string message;
-// 		std::vector<int> ResponseCodes;
-// };
+class QuitCommand : public Command {
+	public:
+		QuitCommand();
+	    QuitCommand(int _clientID, const std::string& _message);
+		~QuitCommand();
+	    void execute();
+	private:
+		std::string message;
+		// std::vector<int> ResponseCodes;
+};
 
-// class UserCommand : public Command {
-// 	public:
-// 	    UserCommand(int _clientID, const std::string& _message) : Command(_clientID, _message) {}
-// 	    bool parse();
-// 	    bool execute();
-// 	private:
-// 		std::string username;
-// 		std::string servername;
-// 		std::string hostname;
-// 		std::string realname;
-// 		std::vector<int> ResponseCodes;
-// };
+/*
+	USER username 0 * :realname
+*/
+class UserCommand : public Command {
+	public:
+		UserCommand();
+	    UserCommand(int _clientID, const std::string& _message);
+		~UserCommand();
+	    void execute();
+	private:
+		std::string message;
+		std::string username;
+		std::string realname;
+};
 
+class ModeCommand : public Command{
+	public:
+		ModeCommand();
+		ModeCommand(int _clientID, const std::string& _message);
+		~ModeCommand();
+		void execute();
+	private:
+		std::string message;
+		std::string adds;
+		std::string removed;
+		std::string ModeParm;
+};
 
 #endif // COMMANDS_HPP

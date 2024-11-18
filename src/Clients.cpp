@@ -3,7 +3,14 @@
 #include "../inc/Macros.hpp"
 
 Clients::Clients() : socketfd(-1), isRegistred(0) {}
-Clients::Clients(int socketfd) : socketfd(socketfd), isRegistred(0) {}
+Clients::Clients(int socketfd) : socketfd(socketfd), isRegistred(0) {
+    if (isRegistred == 0)
+    {
+        nickName = "default_" + std::to_string(socketfd);
+        userName = "default_" + std::to_string(socketfd);
+        realName = "default_" + std::to_string(socketfd);
+    }
+}
 
 Clients::~Clients() {}
 

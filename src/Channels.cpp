@@ -3,7 +3,7 @@
 Channels::Channels() {}
 Channels::Channels(std::string channelName) {
 	this->ChannelName = channelName;
-	this->Public = true; // without invit
+	this->Public = true; // 
 	this->Secret = false; // without key
     this->Topic = "";
 	this->TopicSet = false;
