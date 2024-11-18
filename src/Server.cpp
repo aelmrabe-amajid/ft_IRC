@@ -1,14 +1,14 @@
-#include "Server.hpp"
+#include "../inc/Server.hpp"
 
 void Server::ClearClients(int fd){ //-> clear the clients
 	for(size_t i = 0; i < fds.size(); i++){ //-> remove the client from the pollfd
 		if (fds[i].fd == fd)
 			{fds.erase(fds.begin() + i); break;}
 	}
-	for(size_t i = 0; i < clients.size(); i++){ //-> remove the client from the vector of clients
-		if (clients[i].GetFd() == fd)
-			{clients.erase(clients.begin() + i); break;}
-	}
+	// for(size_t i = 0; i < clients.size(); i++){ //-> remove the client from the vector of clients
+	// 	if (clients[i].GetFd() == fd)
+	// 		{clients.erase(clients.begin() + i); break;}
+	// }
 
 }
 
@@ -21,48 +21,113 @@ void Server::SignalHandler(int signum)
 }
 
 void	Server::CloseFds(){
-	for(size_t i = 0; i < clients.size(); i++){ //-> close all the clients
-		std::cout << RED << "Client <" << clients[i].GetFd() << "> Disconnected" << WHI << std::endl;
-		close(clients[i].GetFd());
-	}
+	DataControler::clearData(); //-> clear the data
+	// for(size_t i = 0; i < clients.size(); i++){ //-> close all the clients
+	// 	std::cout << RED << "Client <" << clients[i].GetFd() << "> Disconnected" << WHI << std::endl;
+	// 	close(clients[i].GetFd());
+	// }
+
 	if (SerSocketFd != -1){ //-> close the server socket
 		std::cout << RED << "Server <" << SerSocketFd << "> Disconnected" << WHI << std::endl;
 		close(SerSocketFd);
 	}
 }
 
+std::vector<std::string> MsgSplit(std::string Message)
+{
+	std::vector<std::string> res;
+	size_t beggin = 0;
+	size_t end = Message.find(" ");
+	while(end != std::string::npos)
+	{
+		// std::cout << beggin << " " << end << "\n";
+		res.push_back(Message.substr(beggin, end - beggin));
+		// std::cout << "message = " << Message << "\n";
+		std::cout << res.back() << "\n";
+		while(Message[end] == ' ')
+			end++;
+		// std::cout << end << "\n";
+		beggin = end;
+		end = Message.find(' ', beggin);
+	}
+	res.push_back(Message.substr(beggin, Message.size()));
+	return res;
+}
+
+// int main()
+// {
+
+// 	/*
+// 		IRCCommand::RunCommand(fd,Command)
+// 		{
+// 			IRCCommandParser parser(command);
+// 			res = IRCCommandVerify verify(fd,parser.parse());
+// 			if (res.state != VALIDE)
+// 				return (IRCReplay::ERR(fd,res));
+// 			return (IRCReplay::RPL(fd,res));
+// 		}
+// 	*/
+// 	std::string input = "JOIN #my_channel,#my_channel2,#my_channel3 1111,2222,3333,4444";
+// 	IRCCommandParser parser(input);
+// 	t_content result = parser.parse();
+// 	std::cout << "Command ID: " << result.command << std::endl;
+// 	for (std::vector<std::string>::iterator it = result.channels.begin(); it != result.channels.end(); it++)
+// 		std::cout << "channels: " << *it << std::endl;
+// 	for (std::vector<std::string>::iterator it = result.users.begin(); it != result.users.end(); it++)
+// 		std::cout << "users: " << *it << std::endl;
+//     // Output parsed data
+//     std::cout << "Message: " << result.message << std::endl;
+//     std::cout << "Reason: " << result.reason << std::endl;
+//     return 0;
+// }
+
 void Server::ReceiveNewData(int fd)
 {
-    char buff[1024]; //-> buffer for the received data
-    memset(buff, 0, sizeof(buff)); //-> clear the buffer
+    char Message[1024]; //-> buffer for the received data
+    memset(Message, 0, sizeof(Message)); //-> clear the buffer
 
-    ssize_t bytes = recv(fd, buff, sizeof(buff) - 1 , 0); //-> receive the data
+    ssize_t bytes = recv(fd, Message, sizeof(Message) - 1 , 0); //-> receive the data
 
     if(bytes <= 0){ //-> check if the client disconnected
-        std::cout << RED << "Client <" << fd << "> Disconnected" << WHI << std::endl;
-        ClearClients(fd); //-> clear the client
-        close(fd); //-> close the client socket
+		/*
+		 	Tools::removeClient(fd);
+		*/
+        // std::cout << RED << "Client <" << fd << "> Disconnected" << WHI << std::endl;
+		DataControler::removeClient(fd); //-> remove the client
+        // ClearClients(fd); //-> clear the client
+        // close(fd); //-> close the client socket
     }
 
     else{ //-> print the received data
-        buff[bytes] = '\0';
-        std::cout << YEL << "Client <" << fd << "> Data: " << WHI << buff;
+        Message[bytes] = '\0';
+        std::cout << YEL << "Client <" << fd << "> Data: " << WHI << Message;
         //here you can add your code to process the received data: parse, check, authenticate, handle the command, etc...
-
+		// std::cout << buff << std::endl;
         // Find the client and set the message
-        for(size_t i = 0; i < clients.size(); i++){
-            if (clients[i].GetFd() == fd){
-                clients[i].setMessage(std::string(buff));
-				std::cout << clients[i].getMessage() << std::endl;
-                break;
-            }
-        }
+		/*
+			int typeMessage;
+			typeMessage = Tool::DataParse(fd,Message)
+			if (typeMessage == COMMAND)
+			else if (typeMessage == FILE)
+			else if (typeMessage == TEXT)
+		*/
+		if (DataControler::isClient(fd)){
+			std::cout << Message << std::endl;
+			Command::HandleCommand(fd, Message);
+		}
+        // for(size_t i = 0; i < clients.size(); i++){
+        //     if (clients[i].GetFd() == fd){
+        //         clients[i].setMessage(std::string(Message));
+		// 		controle.RunCommand(fd,Message);
+		// 		// std::cout << clients[i].getMessage() << std::endl;
+        //         break;
+        //     }
+        // }
     }
 }
 
 void Server::AcceptNewClient()
 {
-	Client cli; //-> create a new client
 	struct sockaddr_in cliadd;
 	struct pollfd NewPoll;
 	socklen_t len = sizeof(cliadd);
@@ -78,11 +143,18 @@ void Server::AcceptNewClient()
 	NewPoll.events = POLLIN; //-> set the event to POLLIN for reading data
 	NewPoll.revents = 0; //-> set the revents to 0
 
-	cli.SetFd(incofd); //-> set the client file descriptor
-	cli.setIpAdd(inet_ntoa((cliadd.sin_addr))); //-> convert the ip address to string and set it
-	clients.push_back(cli); //-> add the client to the vector of clients
+	/*
+		class tools provide a addClient(int fd) // this method will create client class for you 
+		and will add client to map ClientIDs. 
+		cli = Tools::getClientByID(id)
+	*/
+	DataControler::addClient(incofd); //-> add the client to the map of clients
+	// cli.SetFd(incofd); //-> set the client file descriptor
+	// cli.setIpAdd(inet_ntoa((cliadd.sin_addr))); //-> convert the ip address to string and set it
+	// clients.push_back(cli); //-> add the client to the vector of clients
 	fds.push_back(NewPoll); //-> add the client socket to the pollfd
 
+	std::cout << incofd << inet_ntoa((cliadd.sin_addr)) << std::endl;
 	std::cout << GRE << "Client <" << incofd << "> Connected" << WHI << std::endl;
 }
 
@@ -96,6 +168,7 @@ void Server::SerSocket()
 	add.sin_port = htons(this->Port); //-> convert the port to network byte order (big endian)
 
 	SerSocketFd = socket(AF_INET, SOCK_STREAM, 0); //-> create the server socket
+	std::cout <<"the server socket " <<  SerSocketFd << std::endl;
 	if(SerSocketFd == -1) //-> check if the socket is created
 		throw(std::runtime_error("faild to create socket"));
 
@@ -117,8 +190,10 @@ void Server::SerSocket()
 void Server::ServerInit(int port, std::string passwd)
 {
 	this->Port = port; //-> set the server port
-    this->Passwd = passwd; //-> set the server password
 	SerSocket(); //-> create the server socket
+
+
+	DataControler::initData(passwd); //-> initialize the data
 
 	std::cout << GRE << "Server <" << SerSocketFd << "> Connected" << WHI << std::endl;
 	std::cout << "Waiting to accept a connection...\n";
@@ -140,14 +215,14 @@ void Server::ServerInit(int port, std::string passwd)
 	CloseFds(); //-> close the file descriptors when the server stops
 }
 
-void Server::SendData(int fd, std::string data)
-{
-    if (send(fd, data.c_str(), data.size(), 0) == -1) //-> send data to a registered client
-        throw(std::runtime_error("send() faild"));
-}
+// void Server::SendData(int fd, std::string data)
+// {
+//     if (send(fd, data.c_str(), data.size(), 0) == -1) //-> send data to a registered client
+//         throw(std::runtime_error("send() faild"));
+// }
 
-void Server::SendAll(std::string data)
-{
-    for(size_t i = 0; i < clients.size(); i++) //-> send data to all clients
-        SendData(clients[i].GetFd(), data);
-}
+// void Server::SendAll(std::string data)
+// {
+//     for(size_t i = 0; i < clients.size(); i++) //-> send data to all clients
+//         SendData(clients[i].GetFd(), data);
+// }
