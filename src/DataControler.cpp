@@ -3,11 +3,17 @@
 #include <unistd.h>
 #include <map>
 #include <set>
+#include <string>
+#include <ctime>
+
+#define BF_SIZE 1024
 
 std::map<int, Clients> DataControler::clientslist;
+std::map<int, std::string> DataControler::notcompleted;
 std::map<std::string, Channels> DataControler::channelslist;
 std::map<std::string, int> DataControler::nicknames;
 std::string DataControler::password;
+std::string DataControler::srv_date;
 
 void DataControler::clearData() {
     for (std::map<int, Clients>::iterator it = clientslist.begin(); it != clientslist.end(); ++it)
@@ -17,11 +23,14 @@ void DataControler::clearData() {
 }
 
 void DataControler::initData(std::string password) {
-    std::string WelcomeMessage = "Welcome to the IRC Server\n";
-    std::cout << WelcomeMessage;
+    time_t now = time(0);
+    DataControler::srv_date = ctime(&now);
     DataControler::password = password;
 }
 
+std::string DataControler::serverCreationDate() {
+    return srv_date;
+}
 
 std::string DataControler::transformCase(const std::string& str) {
     std::string result;
@@ -132,8 +141,10 @@ void DataControler::modifyClientNickname(int fd, const std::string& newNickname)
 
 void DataControler::removeClient(int fd) {
     if (clientslist.find(fd) != clientslist.end()){
-        std::string nickname_lower = clientslist[fd].getNickName();
-        nicknames.erase(nickname_lower);
+        if (clientslist[fd].getRegistrationStatus() == 1){
+            std::string nickname_lower = clientslist[fd].getNickName();
+            nicknames.erase(nickname_lower);
+        }
         clientslist.erase(fd);
         close(fd);
     }
@@ -158,6 +169,172 @@ bool DataControler::PasswordCheck(const std::string& password) {
 void DataControler::SendClientMessage(int socketfd, const std::string &message) {
     send(socketfd, message.c_str(), message.size(), 0);
 }
+
+
+std::string DataControler::UPRIFX(const std::string& nick) {
+    return ":" + nick + "!" + DataControler::getClient(nick)->getUserName() + "@" + DataControler::getClient(nick)->getHostName();
+}
+
+void DataControler::SendMsg(int clientid, std::string msg) {
+    msg += "\r\n";
+    int len = msg.size();
+    if (len > 1024)
+        std::cerr << "Warning: Message is too long" << std::endl;
+    if (len > 0 && send(clientid, msg.c_str(), len, 0) == -1)
+        std::cerr << "Error sendMsg(): " << strerror(errno) << std::endl;
+}
+
+void DataControler::SendMsg(const std::string &channelname, std::string msg) {
+    Channels *ch = DataControler::getChannel(channelname);
+    std::vector<int> clts = ch->getList(0);
+    for (std::vector<int>::iterator it = clts.begin(); it != clts.end(); it++) {
+        SendMsg(*it, msg);
+    }
+    clts.clear();
+    clts = ch->getList(1);
+    for (std::vector<int>::iterator it = clts.begin(); it != clts.end(); it++) {
+        SendMsg(*it, msg);
+    }
+}
+
+void DataControler::SendMsg(const std::string &channelname, const int &clientid, std::string msg) {
+    Channels *ch = DataControler::getChannel(channelname);
+    std::vector<int> clts = ch->getList(0);
+    for (std::vector<int>::iterator it = clts.begin(); it != clts.end(); it++) {
+        if (*it != clientid)
+            SendMsg(*it, msg);
+    }
+    clts.clear();
+    clts = ch->getList(1);
+    for (std::vector<int>::iterator it = clts.begin(); it != clts.end(); it++) {
+        if (*it != clientid)
+            SendMsg(*it, msg);
+    }
+}
+
+static std::vector<std::string> split(const std::string& str, char delimiter) {
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(str);
+    while (std::getline(tokenStream, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
+
+/*
+    if the client is already registered we expect 1 line command end with \r\n
+    if the client is not registered we expect 3 lines command end with \r\n
+
+    if line is not complete we will store it in a map and wait for completion key is the clientID
+*/
+void DataControler::ReadMsg(int clientID, char *buffer){
+    std::string  s_buff;
+
+    s_buff.clear();
+    s_buff.resize(BF_SIZE);
+    s_buff = buffer;
+    if (DataControler::notcompleted.find(clientID) != DataControler::notcompleted.end()) {
+        s_buff = DataControler::notcompleted[clientID] + s_buff;
+        DataControler::notcompleted.erase(clientID);
+    }
+    if (DataControler::isClient(clientID) == 0) {
+        if (s_buff.find("\n") != std::string::npos) {
+            std::vector<std::string> lines = split(s_buff, '\n');
+            if (lines.size() == 3) {
+                DataControler::Registre(clientID, lines);
+            }
+        }
+        else
+            DataControler::notcompleted[clientID] = s_buff;
+    } else {
+        if (s_buff.find("\n") != std::string::npos) {
+            std::vector<std::string> lines = split(s_buff, '\n');
+            if (lines.size() == 1) {
+                Command::HandleCommand(clientID, s_buff);
+            }
+        }
+        else
+            DataControler::notcompleted[clientID] = s_buff;
+    }
+
+}
+
+std::vector<std::string> DataControler::msgParse(std::string& _message) {
+    std::string message = _message;
+	std::string command;
+	std::string params;
+	size_t pos = 0;
+    std::vector<std::string> result;
+
+    if (_message.size() == 0)
+        return std::vector<std::string>();
+    if (message[message.size() - 1] == '\n' || message[message.size() - 1] == '\r')
+        message.pop_back();
+	while (pos < message.size() && message[pos] == ' ') {
+        pos++;
+    }
+    if (message[0] != '/')
+        return;
+    size_t command_end = message.find(' ', pos);
+    if (command_end == std::string::npos) {
+        command = message.substr(pos);
+        pos = message.size();
+    } else {
+        command = message.substr(pos, command_end - pos);
+        pos = command_end;
+    }
+    command = command.substr(1);
+    command = Command::transformCase(command);
+    result.push_back(command);
+	while (pos < message.size() && message[pos] == ' ')
+		pos++;
+    if (message.length() == pos) {
+        return result;
+    }
+	params = message.substr(pos);
+    result.push_back(params);
+    return result;
+}
+
+/*
+    * This function will be called when the client sends the registration commands
+    * Pass, Nick, User 
+*/
+void DataControler::Registre(int clientID, std::vector<std::string> &str) {
+    std::vector<std::string> msg;
+    std::string  nickname;
+
+    msg = DataControler::msgParse(str[0]);
+    if (msg.size() == 2 && msg[0] == "PASS") {
+        if (DataControler::PasswordCheck(msg[1]) == 0)
+            return (DataControler::SendMsg(clientID, RFC::ERR("*", ERR_PASSWDMISMATCH)));
+    }
+
+    msg = DataControler::msgParse(str[1]);
+    if (msg.size() == 2 && msg[0] == "NICK") {
+        if (DataControler::nicknamesUnique(msg[1]) == 0)
+            return (DataControler::SendMsg(clientID, RFC::ERR("*", ERR_NICKNAMEINUSE)));
+            //  checks if first character is a letter
+        if (!isalpha(msg[1][0]))
+            return (DataControler::SendMsg(clientID, RFC::ERR("*", ERR_ERRONEUSNICKNAME)));
+        //  checks if rest of characters is valid
+        std::string  special = "-[]\\`^{}";
+        for (unsigned long i = 1; i < str.size(); i++) {
+            if (isalnum(str[1][i])) {
+                continue ;
+            } else if (special.find(str[i]) == std::string::npos) {
+                DataControler::SendMsg(clientID, RFC::ERR("*", ERR_ERRONEUSNICKNAME));
+            }
+        }
+        nickname = msg[1];
+            DataControler::addNicknames(msg[1], clientID);
+            DataControler::getClient(clientID)->setNickName(msg[1]);
+    }
+    msg = DataControler::msgParse(str[2]);
+    if ()
+}
+
 
 //--------------------------------------
 /*
@@ -358,3 +535,15 @@ void DataControler::SendClientMessage(int socketfd, const std::string &message) 
 //     }
 //     return tokens;
 // }
+
+
+// void RFCResponse::init(){
+//     serverinfo.servername = "irc.localhost";
+//     serverinfo.serverversion = "1.0";
+//     std::time_t t = std::time(0);
+//     char *now = std::ctime(&t);
+//     serverinfo.servercreationdate = now;
+//     serverinfo.servermodes = "ol itkol lok";
+//     serverinfo.serverconfig = "CASEMAPPING=rfc1459 PREFIX=(o)@ CHANMODES=,k,l,ti CHANNELLEN=32 CHANLIMIT=#: CHANTYPES=# NICKLEN=9 USERLEN=9";
+// }
+

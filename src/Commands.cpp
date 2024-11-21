@@ -168,16 +168,23 @@ std::string Command::transformCase(std::string &str) {
     return str;
 }
 
-bool Command::basicCheck(int clientID, CommandID command) {
-    int reg = DataControler::getClient(clientID)->getRegistrationStatus();
-    if (reg == 0 && command != PASS && command != NICK)
-        return false;
-    return true;
-}
+// bool Command::basicCheck(int clientID, CommandID command) {
+//     int reg = DataControler::getClient(clientID)->getRegistrationStatus();
+//     if (reg == 0 && command != PASS && command != NICK)
+//         return false;
+//     return true;
+// }
 
-void Command::parse(std::string message) {
-    size_t len = message.length();
-    std::cout << "len: " << len << std::endl;
+/*
+   CommandID 
+   params;
+*/
+parsedCommand parse(int clientID, const std::string& _message) {
+    std::string message = _message;
+	std::string prefix = " ";
+	std::string command;
+	std::string params;
+	size_t pos = 0;
 }
 
 void Command::HandleCommand(int clientID, const std::string& _message) {
@@ -217,20 +224,20 @@ void Command::HandleCommand(int clientID, const std::string& _message) {
 		pos++;
 	CommandID commandId = getCommandId(command);
     if (message.length() == pos) {
-        if (commandId != QUIT)
-            return (DataControler::SendClientMessage(clientID, ERR_NEEDMOREPARAMS(" ", command)));
+        std::cout << "No params" << std::endl;
+        return;
+        // if (commandId != QUIT)
+        //     return (DataControler::SendClientMessage(clientID, ERR_NEEDMOREPARAMS(" ", command)));
     }
 	params = message.substr(pos);
-    std::cout << "params: " << params << std::endl;
-    std::cout << "commandId: " << commandId << std::endl;
 	if (commandId == UNKNOWN) {
 		std::cout << "Unknown command" << std::endl;
 		return ;
 	}
-    if (!Command::basicCheck(clientID, commandId)){
-        std::cout << "You Must Set NICK" << std::endl;
-        return ;
-    }
+    // if (!Command::basicCheck(clientID, commandId)){
+    //     std::cout << "You Must Set NICK" << std::endl;
+    //     return ;
+    // }
 	Command *cmd = Command::createCommand(clientID, params, commandId);
 	cmd->getPrefix(prefix, 1);
     cmd->execute();
@@ -355,6 +362,21 @@ JoinCommand::JoinCommand() : Command(0) {
 JoinCommand::JoinCommand(int clientID, const std::string& message) : Command(clientID) {
     this->command = JOIN;
     this->message = message;
+}
+
+/*
+ERR_NEEDMOREPARAMS (461) -> ERR_NEEDMOREPARAMS(nick, hostname) ":" + hostname + " 461 " + nick + " :Not enough parameters !\r\n"
+ERR_NOSUCHCHANNEL (403) -> ERR_NOSUCHCHANNEL(hostname, channel, nick) ":" + hostname + " 403 " + nick + " " + channel + " :No such channel\r\n"
+ERR_TOOMANYCHANNELS (405)
+ERR_BADCHANNELKEY (475)
+ERR_BANNEDFROMCHAN (474)
+ERR_CHANNELISFULL (471)
+ERR_INVITEONLYCHAN (473)
+ERR_BADCHANMASK (476)
+*/
+void JoinCommand::ERR(int ResponseCode){
+    switch (ResponseCode)
+    
 }
 
 /*
@@ -671,16 +693,17 @@ ModeCommand::ModeCommand(int clientid, const std::string& _message) : Command(cl
     litko
 */
 void ModeCommand::modespliter(){
-    bool add = false;
-    bool remove = false;
-    for(std::string::iterator it = this->ModeString.begin(); it != this->ModeString.end(); it++){
-        if (*it == '+'){
-            if (add == true)
-            add = true;
-        }else if (*it == '-'){
-            remove = true;
-        }
-    }
+    // bool add = false;
+    // bool remove = false;
+    // for(std::string::iterator it = this->ModeString.begin(); it != this->ModeString.end(); it++){
+    //     if (*it == '+'){
+    //         if (add == true)
+    //         add = true;
+    //     }else if (*it == '-'){
+    //         remove = true;
+    //     }
+    // }
+    (void)0;
 }
 
 void ModeCommand::execute(){

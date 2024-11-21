@@ -14,6 +14,10 @@ Clients::Clients(int socketfd) : socketfd(socketfd), isRegistred(0) {
 
 Clients::~Clients() {}
 
+std::string Clients::getHostName() const {
+    return hostName;
+}
+
 std::string Clients::getNickName() const {
     return nickName;
 }
@@ -57,6 +61,10 @@ void Clients::setNickName(const std::string &nickname) {
 
 void Clients::setUserName(const std::string &username) {
     this->userName = username;
+}
+
+void Clients::setHostName(const std::string &hostname) {
+    this->hostName = hostname;
 }
 
 void Clients::setRealName(const std::string &realname) {

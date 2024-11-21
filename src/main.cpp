@@ -1,13 +1,7 @@
 #include "../inc/Server.hpp"
 
-void f()
-{
-	system("leaks -q ircserv");
-}
-
 int main(int arg_num, char **args)
 {
-	atexit(f);
     if(arg_num != 3) //-> check the number of arguments
     {
         std::cerr << "Usage: " << args[0] << " <port> <password>" << std::endl;

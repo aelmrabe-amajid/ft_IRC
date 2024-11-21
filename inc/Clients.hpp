@@ -17,6 +17,7 @@ class Clients
 		std::string nickName;
 		std::string userName;
 		std::string realName;
+		std::string hostName;
 		int socketfd;
 		int isRegistred;  // 0 for not registred, 1 password verified, 2 nickname set 3 username set
 		std::vector<std::string> joinedChannels; // List of channels the client joined
@@ -31,6 +32,7 @@ class Clients
 		std::string getNickName() const;
 		std::string getUserName() const;
 		std::string getRealName() const;
+		std::string getHostName() const;
 		int getID() const;
 		std::vector<std::string> getJoinedChannels() const;
 		bool isClientInChannel(const std::string &channelName) const;
@@ -39,6 +41,7 @@ class Clients
 		void setNickName(const std::string &nickname);
 		void setUserName(const std::string &username);
 		void setRealName(const std::string &realname);
+		void setHostName(const std::string &hostname);
 		int getRegistrationStatus() const;
 		void joinChannel(const std::string &channelName);
 		void leaveChannel(const std::string &channelName);

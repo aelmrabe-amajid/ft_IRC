@@ -7,10 +7,11 @@
 #include "Clients.hpp"
 #include "Channels.hpp"
 #include "Commands.hpp"
-
+#include "RFC.hpp"
 class Clients;
 class Channels;
 class Command;
+
 
 class DataControler {
 public:
@@ -37,12 +38,21 @@ public:
     static void SendClientMessage(int socketfd, const std::string &message);
     static std::string transformCase(const std::string& str);
     static bool PasswordCheck(const std::string& password);
+    static std::string UPRIFX(const std::string& nick);
+    static std::string serverCreationDate();
+    static void SendMsg(int clientid, std::string msg);
+    static void SendMsg(const std::string &channelname, std::string msg);
+    static void SendMsg(const std::string &channelname, int clientid, std::string msg);
+    static void Registre(int clientID, std::vector<std::string> &str);
+    static void ReadMsg(int clientID, char *buffer);
+    static std::vector<std::string> msgParse(std::string &message);
 private:
     static std::map<int, Clients> clientslist;
     static std::map<std::string, Channels> channelslist;
     static std::map<std::string, int> nicknames;
+    static std::map<int, std::string> notcompleted; 
     static std::string password;
-    static std::string hostname;
+    static std::string srv_date;
 };
 
 

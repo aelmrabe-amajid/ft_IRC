@@ -27,20 +27,10 @@ enum CommandID {
     UNKNOWN
 };
 
-enum TokensType {
-	TY_CHANNEL,
-	TY_KEY,
-	TY_TARGET,
-	TY_MESSAGE,
-	TY_MODE,
-	TY_TOPIC,
-	TY_NICKNAME,
-	TY_PASSWORD,
-	TY_USERNAME,
-	TY_SERVERNAME,
-	TY_REALNAME,
-	TY_UNKNOWN
-};
+typedef struct MSGPARSED{
+	CommandID command;
+	std::string params;
+}MSGPARSED;
 
 // Base class for all commands
 class Command {
@@ -48,19 +38,18 @@ class Command {
 	    virtual ~Command() {}
 	    Command(int _clientID) : clientID(_clientID) {};
 	    virtual void execute() = 0;
-		static void parse(std::string message);
 	    static Command *createCommand(int clientID, const std::string& params, CommandID command);
-		void getPrefix(const std::string& prefix, int getMode);
 		static void HandleCommand(int clientID, const std::string& message);
 		static std::string transformCase(std::string &str);
-		static bool basicCheck(int clientID, CommandID command);
 		// int tokenLexerChecker(const std::string& token);
 	protected:
     	int clientID;
-    	PrefixBNF prefix;
     	CommandID command;
 };
 
+/*
+	
+*/
 class JoinCommand : public Command {
 	public:
 		JoinCommand();
@@ -68,6 +57,8 @@ class JoinCommand : public Command {
 	    JoinCommand(int _clientID, const std::string& _message);
 		void joinExistingChannel(const std::string& channel, const std::string& key);
 		void joinNewChannel(const std::string& channel);
+		void ERR(int ResponseCode);
+		void RPL(int ResponseCode);
 	    void execute();
 	private:
     	std::string message;// #ch key 
