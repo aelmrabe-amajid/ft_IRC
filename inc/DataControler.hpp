@@ -4,19 +4,19 @@
 #include <map>
 #include <vector>
 #include <string>
-#include "Clients.hpp"
-#include "Channels.hpp"
-#include "Commands.hpp"
-#include "RFC.hpp"
+#include "./Clients.hpp"
+#include "./Channels.hpp"
+#include "./Commands.hpp"
+// #include "./RFC.hpp"
+#include "./Macros.hpp"
 class Clients;
 class Channels;
 class Command;
 
-
 class DataControler {
-public:
-    static void clearData(); // Clear Data
-    static void initData(std::string password); // Initialize Data
+    public:
+        static void clearData(); // Clear Data
+        static void initData(std::string password); // Initialize Data
     // Maps Getters
     static Clients* getClient(int fd); // get Client Class by ID
     static Clients* getClient(const std::string& nickname); // get Client Class by Nickname
@@ -29,7 +29,7 @@ public:
     static bool channelnamesExist(const std::string& channelname); // Check if Channel Name is in the List
     static std::string getClientNickname(int fd); // Get Client Nickname
     // Maps Setters
-    static void addClient(int fd); // Add Client to the List
+    static void addClient(int fd, const std::string& hostname); // Add Client to the List
     static void addNicknames(const std::string& nickname, int clientID); // Add Nickname to the List
     static void modifyClientNickname(int fd, const std::string& newNickname); // Modify Client Nickname
     static void removeClient(int fd); // Remove Client from the List
@@ -38,22 +38,16 @@ public:
     static void SendClientMessage(int socketfd, const std::string &message);
     static std::string transformCase(const std::string& str);
     static bool PasswordCheck(const std::string& password);
-    static std::string UPRIFX(const std::string& nick);
+    static std::string UPREF(const std::string& nick);
     static std::string serverCreationDate();
     static void SendMsg(int clientid, std::string msg);
     static void SendMsg(const std::string &channelname, std::string msg);
     static void SendMsg(const std::string &channelname, int clientid, std::string msg);
-    static void Registre(int clientID, std::vector<std::string> &str);
-    static void ReadMsg(int clientID, char *buffer);
-    static std::vector<std::string> msgParse(std::string &message);
 private:
     static std::map<int, Clients> clientslist;
     static std::map<std::string, Channels> channelslist;
     static std::map<std::string, int> nicknames;
-    static std::map<int, std::string> notcompleted; 
     static std::string password;
     static std::string srv_date;
 };
-
-
 #endif // DATA_CONTROLER_HPP

@@ -44,6 +44,9 @@ public:
     void addClientIn(int Type, int client);
     void removeClientFrom(int Type, int client);
     int getClientType(int client) const; // -1 For NoMember, 0 for Members, 1 for Operators, 2 for Banned
+    std::string getMemberList();
+    std::string getChannelModes();
+    int getMemberLimit() const;
     
 	// CHANNEL FLAGS
     bool isPublic() const;
@@ -62,6 +65,8 @@ public:
 	void unbanClient(int clientid);
 	void kickClient(int clientid);
 
+    void setChannelMode(char mode, bool set);
+    void setChannelMode(char mode, bool set, std::string value);
     // CHANNEL OPERATIONS GETTERS
     bool isBanned(const int clientid) const;
     bool isOperator(const int clientid) const;

@@ -2,15 +2,8 @@
 #include "../inc/DataControler.hpp"
 #include "../inc/Macros.hpp"
 
-Clients::Clients() : socketfd(-1), isRegistred(0) {}
-Clients::Clients(int socketfd) : socketfd(socketfd), isRegistred(0) {
-    if (isRegistred == 0)
-    {
-        nickName = "default_" + std::to_string(socketfd);
-        userName = "default_" + std::to_string(socketfd);
-        realName = "default_" + std::to_string(socketfd);
-    }
-}
+Clients::Clients() : socketfd(-1) {};
+Clients::Clients(int socketfd) : socketfd(socketfd) {};
 
 Clients::~Clients() {}
 
@@ -43,20 +36,13 @@ void Clients::setRegistrationStatus(int status) {
 }
 
 void Clients::setNickName(const std::string &nickname) {
-    if (isRegistred == 1){
-        nickName = nickname;
-        userName = nickname;
-        realName = nickname;
-        isRegistred = 2;
-    }else if (isRegistred == 2){
+    if (nickname.length() > 9)
+        nickName = nickName.substr(0, 9);
+    if (isRegistred == 1)
         DataControler::modifyClientNickname(socketfd, nickname);
-        nickName = nickname;
-        userName = nickname;
-        realName = nickname;
-    }else {
-        DataControler::modifyClientNickname(socketfd, nickname);
-        nickName = nickname;
-    }
+    else
+        DataControler::addNicknames(nickname, socketfd);
+    nickName = nickname;
 }
 
 void Clients::setUserName(const std::string &username) {
@@ -76,13 +62,16 @@ int Clients::getRegistrationStatus() const {
 }
 
 void Clients::joinChannel(const std::string &channelName) {
-    joinedChannels.push_back(channelName);
+    std::string channelNameLower = DataControler::transformCase(channelName);
+    joinedChannels.push_back(channelNameLower);
 }
 
 void Clients::leaveChannel(const std::string &channelName) {
-    joinedChannels.erase(std::remove(joinedChannels.begin(), joinedChannels.end(), channelName), joinedChannels.end());
+    std::string channelNameLower = DataControler::transformCase(channelName);
+    joinedChannels.erase(std::remove(joinedChannels.begin(), joinedChannels.end(), channelNameLower), joinedChannels.end());
 }
 
 bool Clients::isClientInChannel(const std::string &channelName) const {
-    return std::find(joinedChannels.begin(), joinedChannels.end(), channelName) != joinedChannels.end();
+    std::string channelNameLower = DataControler::transformCase(channelName);
+    return std::find(joinedChannels.begin(), joinedChannels.end(), channelNameLower) != joinedChannels.end();
 }

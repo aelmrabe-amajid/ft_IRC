@@ -3,25 +3,18 @@
 #include <bitset>
 
 static CommandID getCommandId(const std::string& command) {
-    if (command == "JOIN") return JOIN;
-    if (command == "USER") return USER;
     if (command == "PASS") return PASS;
     if (command == "NICK") return NICK;
+    if (command == "USER") return USER;
+    if (command == "JOIN") return JOIN;
     if (command == "QUIT") return QUIT;
-
     if (command == "MODE") return MODE;
     if (command == "PART") return PART;
     if (command == "PRIVMSG") return PRIVMSG;
     if (command == "TOPIC") return TOPIC;
+    if (command == "PONG") return PONG;
     return UNKNOWN;
 }
-
-// static std::string trim(const std::string& str) {
-//     size_t first = str.find_first_not_of(' ');
-//     if (first == std::string::npos) return "";
-//     size_t last = str.find_last_not_of(' ');
-//     return str.substr(first, last - first + 1);
-// }
 
 static std::vector<std::string> split(const std::string& str, char delimiter) {
     std::vector<std::string> tokens;
@@ -33,16 +26,7 @@ static std::vector<std::string> split(const std::string& str, char delimiter) {
     return tokens;
 }
 
-/*
-    split by space and take parts number in consideration
-    also if part start with : it will be considered as one part at the end of the string
-    take in consideration that the part can splited by one or more space
-    return vector of strings of the parts of the string
-    if parts number is 4 and you find 5 parts it's ok  you will return vector of 5 strings
-    if parts number is 4 and you find 1 parts and 2 parts are trailing it's ok you will return vector of 2 strings
-    if parts number is 4 and you find 1 parts and 1 parts are trailing it's ok you will return vector of 1 strings
-*/
-std::vector<std::string> splitParts(const std::string& str, int parts) {
+static std::vector<std::string> splitParts(const std::string& str, int parts) {
     std::vector<std::string> tokens;
     std::istringstream tokenStream(str);
     std::string token;
@@ -68,178 +52,132 @@ std::vector<std::string> splitParts(const std::string& str, int parts) {
         tokens.push_back(token);
     }
     return tokens;
-}
-
-void Command::getPrefix(const std::string& prefix, int getMode)
-{
-    if (getMode == 1)
-    {
-        this->prefix.nickname = DataControler::getClient(clientID)->getNickName();
-        this->prefix.username = DataControler::getClient(clientID)->getUserName();
-        this->prefix.hostname = HOSTNAME;
-    }
-    if (getMode == 2)
-    {
-        std::string trimmedPrefix = prefix.substr(1);
-        std::vector<std::string> parts = split(trimmedPrefix, '!');
-        if (parts.size() == 2) {
-            this->prefix.nickname = parts[0];
-            std::vector<std::string> userHost = split(parts[1], '@');
-            if (userHost.size() == 2) {
-                this->prefix.username = userHost[0];
-                this->prefix.hostname = userHost[1];
-            }
-        } else {
-            std::vector<std::string> userHost = split(trimmedPrefix, '@');
-            if (userHost.size() == 2) {
-                this->prefix.nickname = userHost[0];
-                this->prefix.hostname = userHost[1];
-            }
-        }
-    }
-}
-
-// bool DataParser::getCommandProperties(int& maxp, int& minp)
-// {
-//     msg.command = DataParser::commandId();
-// }
-
-// void DataParser::clearMessage() {
-//     msg.prefix.clear();
-//     msg.command.clear();
-//     msg.params.clear();
-//     msg.extra.clear();
-//     msg.trailing.clear();
-// }
-
-
-
-// bool DataParser::parseMessage(const int _clientID, const std::string& message)
-// {
-//     MessageBNF new_msg;
-//     std::istringstream stream(message);
-//     std::string token;
-//     std::string prefix;
-//     std::string parm;
-
-//     msg = new_msg;
-//     clientID = _clientID;
-//     size_t pos = 0;
-//     int maxp = 0;
-//     int minp = 0;
-
-    // if (message[0] == ':') {
-    //     pos = message.find(' ');
-    //     prefix = message.substr(0, pos);
-    //     pos++;
-    // }
-    // DataParser::getPrefix(prefix,1);
-
-
-    // while (pos < message.size() && message[pos] == ' ') {
-    //     pos++;
-    // }
-    // size_t command_end = message.find(' ', pos);
-    // token = message.substr(pos, command_end - pos);
-    // if (!DataParser::commandId(token)) {
-    //     DataParser::clearMessage();
-    //     return false;
-    // }
-    
-//     if (!DataParser::getCommandProperties(msg.command, maxp, minp)){
-//         DataParser::clearMessage();
-//         return false;
-//     }
-//     DataParser::getParamNumber(maxp, minp);
-//     pos = command_end;
-    
-//     while (pos < message.size() && message[pos] == ' ')
-//         pos++;
-//     parm = message.substr(pos);
-//     msg.params = DataParser::customSplit(parm, param_expected, msg.extra, msg.trailing);
-//     return msg;
-// }
-
+};
 
 std::string Command::transformCase(std::string &str) {
     for (size_t i = 0; i < str.length(); i++) {
-        str[i] = std::toupper(str[i]);
+        str[i] = static_cast<char>(std::toupper(str[i]));
     }
     return str;
 }
 
-// bool Command::basicCheck(int clientID, CommandID command) {
-//     int reg = DataControler::getClient(clientID)->getRegistrationStatus();
-//     if (reg == 0 && command != PASS && command != NICK)
-//         return false;
-//     return true;
-// }
-
-/*
-   CommandID 
-   params;
-*/
-parsedCommand parse(int clientID, const std::string& _message) {
-    std::string message = _message;
-	std::string prefix = " ";
-	std::string command;
-	std::string params;
+static std::vector<std::string> parse(const std::string& _message) {
+    std::string msg = _message;
+    std::vector<std::string> parse;
+    std::string commad;
 	size_t pos = 0;
+
+    if (msg[msg.size() - 1] == '\n' || msg[msg.size() - 1] == '\r')
+        msg.pop_back();
+	while (pos < msg.size() && msg[pos] == ' ')
+        pos++;
+    // if (msg[0] != '/')
+    //     return;
+    size_t command_end = msg.find(' ', pos);
+    if (command_end == std::string::npos) {
+        commad = msg.substr(pos);
+        pos = msg.size();
+    } else {
+        commad = msg.substr(pos, command_end - pos);
+        pos = command_end;
+    }
+    if (commad[0] == '/')
+        commad = commad.substr(1); // remove the /
+    parse.push_back(Command::transformCase(commad)); // Convert to Upper
+	while (pos < msg.size() && msg[pos] == ' ')
+		pos++;
+    if (msg.length() == pos) {
+        return parse;
+    }
+	parse.push_back(msg.substr(pos));
+    return (parse);
+}
+
+void Command::HandleCommand(int clientID, std::vector<std::string>& message) {
+    std::string password;
+    std::string nickname;
+    std::string _user;
+    for (std::vector<std::string>::iterator it = message.begin(); it != message.end(); ++it) {
+        std::vector<std::string> msg;
+        if ((*it).empty()){
+            std::string client = "*";
+            // DataControler::SendMsg(clientID,RFC::ERR("*",ERR_UNKNOWNCOMMAND));
+            DataControler::SendMsg(clientID,ERR_UNKNOWNCOMMAND(client," "));
+            DataControler::removeClient(clientID);
+            return;
+        }
+        msg = parse(*it);
+        CommandID commandId = getCommandId(msg[0]);
+        switch (commandId) {
+            case PASS:
+                password = msg[1];
+                break;
+            case NICK:
+                nickname = msg[1];
+                break;
+            case USER:
+                _user = msg[1];
+                break;
+            default:
+                // DataControler::SendMsg(clientID,RFC::ERR("*",ERR_UNKNOWNCOMMAND));
+                DataControler::removeClient(clientID);
+                return;
+        }
+    }
+
+    try {
+        Command *cmd = Command::createCommand(clientID, password, PASS);
+        cmd->execute();
+        delete cmd;
+    }catch (std::exception &e) {
+        DataControler::removeClient(clientID);
+        return;
+    }
+    try {
+        Command *cmd = Command::createCommand(clientID, nickname, NICK);
+        cmd->execute();
+        delete cmd;
+    }catch (std::exception &e){
+        DataControler::removeClient(clientID);
+        return;
+    }
+    try {
+        Command *cmd = Command::createCommand(clientID, _user, USER);
+        cmd->execute();
+        delete cmd;
+    }catch (std::exception &e){
+        DataControler::removeClient(clientID);
+        return;
+    }
+    Clients *cl = DataControler::getClient(clientID);
+    cl->setRegistrationStatus(1);
+    DataControler::SendMsg(clientID,RPL_WELCOME(user_id(cl->getNickName(),cl->getHostName()),cl->getNickName()));
+    DataControler::SendMsg(clientID,RPL_YOURHOST(cl->getNickName(),"localhost","1.0"));
+    DataControler::SendMsg(clientID,RPL_CREATED(cl->getNickName(),DataControler::serverCreationDate()));
+    DataControler::SendMsg(clientID,RPL_MYINFO(cl->getNickName(),"localhost","1.0","ol","itkol","lok"));
+    DataControler::SendMsg(clientID,RPL_ISUPPORT(cl->getNickName()," CASEMAPPING=rfc1459 CHANLIMIT=#:50 CHANMODES=k,l,ti CHANNELLEN=50 CHANTYPES=# NICKLEN=9 PREFIX=(o)@+ USERLEN=9 TOPICLEN=390"));
 }
 
 void Command::HandleCommand(int clientID, const std::string& _message) {
-	// std::istringstream iss(message);
-    std::string message = _message;
-	std::string prefix = " ";
-	std::string command;
-	std::string params;
-	size_t pos = 0;
+    std::vector<std::string> message = parse(_message);
 
-    // if (message[0] == ':') {
-    //     pos = message.find(' ');
-    //     prefix = message.substr(0, pos);
-    //     pos++;
-    // }
-    // remove CR, LF from end of the message
-    parse(message);
-    if (message[message.size() - 1] == '\n' || message[message.size() - 1] == '\r')
-        message.pop_back();
-	while (pos < message.size() && message[pos] == ' ') {
-        pos++;
-    }
-    if (message[0] != '/')
+    if (DataControler::isClient(clientID) == false)
         return;
-    size_t command_end = message.find(' ', pos);
-    if (command_end == std::string::npos) {
-        command = message.substr(pos);
-        pos = message.size();
-    } else {
-        command = message.substr(pos, command_end - pos);
-        pos = command_end;
-    }
-    command = command.substr(1);
-    command = Command::transformCase(command);
-    std::cout << "command: " << command << std::endl;
-	while (pos < message.size() && message[pos] == ' ')
-		pos++;
-	CommandID commandId = getCommandId(command);
-    if (message.length() == pos) {
-        std::cout << "No params" << std::endl;
+    if (DataControler::getClient(clientID)->getRegistrationStatus() == 0)
+        return (HandleCommand(clientID, message));
+    if (message.size() == 0)
+        return (DataControler::SendMsg(clientID,ERR_UNKNOWNCOMMAND(DataControler::getClientNickname(clientID)," ")));
+    CommandID commandId = getCommandId(message[0]);
+    if (commandId == PONG)
         return;
-        // if (commandId != QUIT)
-        //     return (DataControler::SendClientMessage(clientID, ERR_NEEDMOREPARAMS(" ", command)));
-    }
-	params = message.substr(pos);
-	if (commandId == UNKNOWN) {
-		std::cout << "Unknown command" << std::endl;
-		return ;
-	}
-    // if (!Command::basicCheck(clientID, commandId)){
-    //     std::cout << "You Must Set NICK" << std::endl;
-    //     return ;
-    // }
-	Command *cmd = Command::createCommand(clientID, params, commandId);
-	cmd->getPrefix(prefix, 1);
+	if (commandId == UNKNOWN)
+        return (DataControler::SendMsg(clientID,ERR_UNKNOWNCOMMAND(DataControler::getClientNickname(clientID),message[0])));
+    if (commandId == USER || commandId == PASS)
+        // return (DataControler::SendMsg(clientID,RFC::ERR(DataControler::getClientNickname(clientID),ERR_ALREADYREGISTRED)));
+        return (DataControler::SendMsg(clientID,ERR_ALREADYREGISTERED(DataControler::getClientNickname(clientID))));
+    if (message.size() == 1)
+        message.push_back("");
+	Command *cmd = Command::createCommand(clientID, message[1], commandId);
     cmd->execute();
     // Clients *cl = DataControler::getClient(clientID);
     // if (cmd->command == JOIN && cl->getJoinedChannels().size() > 0)
@@ -260,9 +198,9 @@ Command *Command::createCommand(int clientID, const std::string& params, Command
         case NICK:
             cmd = new NickCommand(clientID, params);
             break;
-        case QUIT:
-            cmd = new QuitCommand(clientID, params);
-            break;
+        // case QUIT:
+        //     cmd = new QuitCommand(clientID, params);
+        //     break;
         case USER:
             cmd = new UserCommand(clientID, params);
             break;
@@ -276,65 +214,13 @@ Command *Command::createCommand(int clientID, const std::string& params, Command
 	return cmd;
 }
 
-//------------------------------------------------------------
-/*
-* This function will verify the token char and return int based on Char included
-* @param token the token to be checked
-* @section Char Type BNF
-	letter      ::= 'a' ... 'z' | 'A' ... 'Z'
-	number      ::= '0' ... '9'
-	special     ::= '-' | '[' | ']' | '\' | '`' | '^' | '{' | '}'
-   	white   	::= <SPACE, NUL, CR, LF>
-    nochstring  ::= <white> | <BELL and comma (',')>
-* @Type Value
- 	Alpha 		: 1
- 	Number 		: 2
- 	Special 	: 4
- 	nonwhite 	: 8
- 	chstring 	: 16
-* @type
-	<channel>   ::=  # { 1 | 2 | 3 | 4 | 5 | 6 | 7 }
-	<nick> 		::=  1 { 1 | 2 | 3 | 4 | 5 | 6 | 7 }
-	<user>      ::=  1 { 1 | 2 | 3 | 4 | 5 | 6 | 7 }
-	* @return int value based on char type
-* @bug the function will not take in consideration the landing # or ! ... etc
-* @note deprecated see(lexicalToken) 
-*/
-int checkCharsType(std::string token)
-{
-	int Alpha = 0, Number = 0, Special = 0, nonwhite = 0, chstring = 0;
-	for (size_t i = 0; i < token.length(); i++)
-	{
-		if (isalpha(token[i]))
-			Alpha = 1;
-		else if (isdigit(token[i]))
-			Number = 2;
-		else if (token[i] == '-' || token[i] == '[' || token[i] == ']' || token[i] == '\\' || token[i] == '`' || token[i] == '^' || token[i] == '{' || token[i] == '}')
-			Special = 4;
-		else if (token[i] != ' ' && token[i] != '\0' && token[i] != '\n' && token[i] != '\r')
-			nonwhite = 8;
-		else if (token[i] != '\a' && token[i] != ',')
-			chstring = 16;
-	}
-	return (Alpha + Number + Special + nonwhite + chstring);
-}
-
-// type 1 for channel, 2 nick, 3 user, 4 realname
-// user min 1 max 9
-// nick min 1 max 9
-// channel min 3 max 50
-// thinking about regexr ^#[a-zA-Z0-9\-\[\]\\`^{}]{1,50}$
-bool checkTokenChar(const std::string& name, int type) {
-	int len = name.length();
-    if ((type == 1 && !(len >= 4 && len <= 50)) || 
-	(type == 2 && !(len >= 1 && len <= 9)) 
-	|| (type == 3 && !(len >= 1 && len <= 10)))
-        return false;
+static bool checkTokenChar(const std::string& name, int type) {
+	size_t len = name.length();
     if (type == 1 && name[0] != '#')
         return false;
 	if ((type == 2 || type == 3) && !isalpha(name[0]))
 		return false;
-    for (size_t i = 1; i < name.length(); ++i) {
+    for (size_t i = 1; i < len; ++i) {
         char c = name[i];
         if (!(
             (c >= 'a' && c <= 'z') ||
@@ -353,167 +239,6 @@ bool checkTokenChar(const std::string& name, int type) {
     return true;
 }
 
-//------------------------------------------------------------
-
-JoinCommand::~JoinCommand() {}
-JoinCommand::JoinCommand() : Command(0) {
-    this->command = JOIN;
-}
-JoinCommand::JoinCommand(int clientID, const std::string& message) : Command(clientID) {
-    this->command = JOIN;
-    this->message = message;
-}
-
-/*
-ERR_NEEDMOREPARAMS (461) -> ERR_NEEDMOREPARAMS(nick, hostname) ":" + hostname + " 461 " + nick + " :Not enough parameters !\r\n"
-ERR_NOSUCHCHANNEL (403) -> ERR_NOSUCHCHANNEL(hostname, channel, nick) ":" + hostname + " 403 " + nick + " " + channel + " :No such channel\r\n"
-ERR_TOOMANYCHANNELS (405)
-ERR_BADCHANNELKEY (475)
-ERR_BANNEDFROMCHAN (474)
-ERR_CHANNELISFULL (471)
-ERR_INVITEONLYCHAN (473)
-ERR_BADCHANMASK (476)
-*/
-void JoinCommand::ERR(int ResponseCode){
-    switch (ResponseCode)
-    
-}
-
-/*
-	channel name start with # and contain only letters and numbers or channel name length is less than 50 -> ERR_BADCHANMASK -> 1
-
-
-
-	channel exist -> 5
-	user already in the channel // ignore without error -> 6
-	user banned from the channel // ERR_BANNEDFROMCHAN -> 7
-	user reach the max number of channels -> ERR_TOOMANYCHANNELS -> 8
-	channel is full -> ERR_CHANNELISFULL -> 9
-	channel invite only -> ERR_INVITEONLYCHAN -> 10
-	channel key not match -> ERR_BADCHANNELKEY -> 11
-	channel join success -> RPL_TOPIC -> 12
-
-	chnamepattern = /#[a-zA-Z0-9][-[]]{1,50}/
-
-*/
-
-/*
-    already in the channel -> 1
-    banned from the channel -> 2
-    channel is full -> 3
-    user reach the max number of channels -> 4
-    invite only channel -> 5
-    bad channel key -> 6
-*/
-void JoinCommand::joinExistingChannel(const std::string& channel, const std::string& key) {
-    std::string chnameL = DataControler::transformCase(channel);
-    Channels *ch = DataControler::getChannel(channel);
-    std::string channel_name = "#" + ch->getChannelName();
-    Clients *cl = DataControler::getClient(clientID);
-    
-    if (cl->isClientInChannel(chnameL))
-        return;
-    if (ch->isBanned(clientID))
-        return(DataControler::SendClientMessage(clientID,ERR_BANNEDFROMCHAN(this->prefix.nickname, this->prefix.hostname, channel_name)));
-    if (ch->isFull())
-        return(DataControler::SendClientMessage(clientID,ERR_CHANNELISFULL(this->prefix.nickname, channel_name)));
-    if (cl->getJoinedChannels().size() >= CCHANLIMIT)
-        return(DataControler::SendClientMessage(clientID,ERR_TOOMANYCHANNELS(this->prefix.nickname, this->prefix.hostname)));
-    if (!ch->isPublic() && !ch->isInvited(clientID))
-        return(DataControler::SendClientMessage(clientID,ERR_INVITEONLYCHAN(this->prefix.nickname, channel_name)));
-    if (ch->isSecret() && !ch->isKeyValid(key))
-        return(DataControler::SendClientMessage(clientID,ERR_BADCHANNELKEY(this->prefix.nickname, this->prefix.hostname, channel_name)));
-    
-    ch->addClientIn(0, clientID);
-    cl->joinChannel(chnameL);
-    DataControler::SendClientMessage(clientID,RPL_JOIN(this->prefix.nickname, this->prefix.username, channel_name, this->prefix.hostname));
-    std::string topic = ch->getTopic();
-    if (topic.empty())
-        DataControler::SendClientMessage(clientID,RPL_NOTOPIC(this->prefix.hostname, this->prefix.nickname, channel_name));
-    else{
-        DataControler::SendClientMessage(clientID,RPL_TOPIC(this->prefix.hostname, this->prefix.nickname, channel_name, topic));
-        std::string time = ch->getTopicTime();
-        std::string setter = ch->getTopicSetter();
-        DataControler::SendClientMessage(clientID,RPL_TOPICWHOTIME(this->prefix.hostname, this->prefix.nickname, channel_name, setter, time));
-    }
-    std::string clients = ch->namReply();
-    DataControler::SendClientMessage(clientID,RPL_NAMREPLY(this->prefix.hostname, clients, channel_name, this->prefix.nickname));
-    DataControler::SendClientMessage(clientID,RPL_ENDOFNAMES(this->prefix.hostname, this->prefix.nickname, channel_name));
-}
-
-/*
-    user reach the max number of channels -> ERR_TOOMANYCHANNELS -> 1
-    channelname length is less than 50 -> ERR_BADCHANMASK -> 2
-*/
-void JoinCommand::joinNewChannel(const std::string& channel) {
-    Clients *cl = DataControler::getClient(clientID);
-    if (cl->getJoinedChannels().size() >= CCHANLIMIT)
-        return(DataControler::SendClientMessage(clientID,ERR_TOOMANYCHANNELS(this->prefix.nickname, this->prefix.hostname)));
-    if (channel.length() > 50)
-        return(DataControler::SendClientMessage(clientID,ERR_BADCHANMASK(this->prefix.nickname, this->prefix.hostname)));
-    Channels *ch = DataControler::addChannel(channel);
-    ch->addClientIn(1, clientID);
-    cl->joinChannel(DataControler::transformCase(channel));
-    DataControler::SendClientMessage(clientID,RPL_JOIN(this->prefix.nickname, this->prefix.username, channel, this->prefix.hostname));
-}
-/*
-	REPLAY::
-
-	ERR_NEEDMOREPARAMS              ERR_BANNEDFROMCHAN
-    ERR_INVITEONLYCHAN              ERR_BADCHANNELKEY
-    ERR_CHANNELISFULL               ERR_BADCHANMASK
-    ERR_NOSUCHCHANNEL               ERR_TOOMANYCHANNELS
-    ERR_TOOMANYTARGETS              ERR_UNAVAILRESOURCE
-    RPL_TOPIC
-
-	COMMAND SYNTAX
-
-	JOIN <channel>{,<channel>} [<key>{,<key>}]
-
-*/
-void JoinCommand::execute() {
-
-    std::istringstream stream(this->message);
-    std::string part;
-    std::vector<std::string> channels;
-    std::vector<std::string> keys;
-    Clients *cl = DataControler::getClient(this->clientID);
-    // size_t prev_pos = 0;
-    // int count = 0;
-
-	if (this->message.empty())
-		return (DataControler::SendClientMessage(clientID,ERR_NEEDMOREPARAMS(this->prefix.nickname, this->prefix.hostname)));
-    if (cl->getRegistrationStatus() == 1){
-        // std::string nickname = cl->getNickName();
-        return (DataControler::SendClientMessage(this->clientID, ERR_NOTREGISTERED(this->prefix.nickname, this->prefix.hostname)));
-    }
-
-	// Split the message into parts vector of channels and vector of keys if any additional will be saved in ignored
-	std::vector<std::string> parts = splitParts(this->message, 2);
-	if (parts.size() >= 1) {
-		channels = split(parts[0], ',');
-        if (parts.size() >= 2)
-			keys = split(parts[1], ',');
-		// if (!parts[1].empty())
-	}
-
-	for (size_t i = 0; i < channels.size(); i++) {
-		if (!checkTokenChar(channels[i], 1))
-			DataControler::SendClientMessage(clientID,ERR_BADCHANNELNAME(this->prefix.nickname, this->prefix.hostname, channels[i]));
-		else{
-		channels[i] = channels[i].substr(1);
-			if (DataControler::channelnamesExist(channels[i])){
-                if (keys.size() > i)
-                    joinExistingChannel(channels[i], keys[i]);
-                else
-                    joinExistingChannel(channels[i], "");
-            }
-			else
-				joinNewChannel(channels[i]);
-		}
-	}
-}
-
 //-----------------------------------------------------------
 
 PassCommand::PassCommand() : Command(0) {
@@ -522,23 +247,20 @@ PassCommand::PassCommand() : Command(0) {
 
 PassCommand::PassCommand(int clientID, const std::string& message) : Command(clientID) {
     this->command = PASS;
-    this->password = message;
+    this->psw = message;
 }
 
 void PassCommand::execute() {
-    std::cout << "PASS is " << this->password << std::endl;
     Clients *cl = DataControler::getClient(clientID);
-    if (cl->getRegistrationStatus() >= 1)
-        // std::cout << "Already Registered" << std::endl;
-        return (DataControler::SendClientMessage(clientID, ERR_ALREADYREGISTERED(" ", prefix.hostname)));
-    if (this->password.empty())
-        // std::cout << "Password Empty" << std::endl;
-        return (DataControler::SendClientMessage(clientID, ERR_NEEDMOREPARAMS(" ", prefix.hostname)));
-    if (!DataControler::PasswordCheck(this->password))
-        // std::cout << "Password NOT Matched" << std::endl;
-        return (DataControler::SendClientMessage(clientID, ERR_PASSWDMISMATCH(" ", prefix.hostname)));
-    cl->setRegistrationStatus(1);
-    DataControler::SendClientMessage(clientID, RPL_WELCOME(prefix.nickname, prefix.hostname));
+    std::vector<std::string> parts;
+    std::string cl_n = "*";
+    if (cl->getRegistrationStatus() == 1)
+        return (DataControler::SendMsg(clientID,ERR_ALREADYREGISTERED(DataControler::getClientNickname(clientID))));
+    if (this->psw.empty())
+        return (DataControler::SendMsg(clientID,ERR_NEEDMOREPARAMS(cl_n,"PASS")),throw std::invalid_argument(""));
+    parts = split(this->psw, ' ');
+    if (DataControler::PasswordCheck(this->psw) == false)
+        return (DataControler::SendMsg(clientID,ERR_PASSWDMISMATCH(cl_n)),throw std::invalid_argument(""));
 }
 
 PassCommand::~PassCommand() {}
@@ -559,13 +281,26 @@ NickCommand::NickCommand(int clientID, const std::string& message) : Command(cli
 
 void NickCommand::execute() {
     Clients *cl = DataControler::getClient(clientID);
-    if (nickname.empty())
-        return (DataControler::SendClientMessage(clientID, ERR_NONICKNAMEGIVEN(prefix.nickname, prefix.hostname)));
-    if (!checkTokenChar(this->nickname, 2))
-        return (DataControler::SendClientMessage(clientID, ERR_ERRONEUSNICKNAME(prefix.nickname, prefix.hostname)));
-    if (!DataControler::nicknamesUnique(this->nickname))
-        return (DataControler::SendClientMessage(clientID, ERR_NICKNAMEINUSE(prefix.nickname, prefix.hostname)));
-    cl->setNickName(this->nickname);
+
+    if (cl->getRegistrationStatus() == 0){
+        std::string cl_n = "*";
+        if (nickname.empty())
+            return (DataControler::SendMsg(clientID, ERR_NONICKNAMEGIVEN(cl_n)), throw std::invalid_argument(""));
+        if (!checkTokenChar(this->nickname, 2))
+            return (DataControler::SendMsg(clientID, ERR_ERRONEUSNICKNAME(cl_n,nickname)), throw std::invalid_argument(""));
+        if (DataControler::nicknamesUnique(this->nickname) == false)
+            return (DataControler::SendMsg(clientID, ERR_NICKNAMEINUSE(cl_n,nickname)), throw std::invalid_argument(""));
+        cl->setNickName(this->nickname);
+    }
+    else {
+        if (nickname.empty())
+            return (DataControler::SendMsg(clientID, ERR_NONICKNAMEGIVEN(cl->getNickName())));
+        if (!checkTokenChar(this->nickname, 2))
+            return (DataControler::SendMsg(clientID, ERR_ERRONEUSNICKNAME(cl->getNickName(),this->nickname)));
+        if (!DataControler::nicknamesUnique(this->nickname))
+            return (DataControler::SendMsg(clientID, ERR_NICKNAMEINUSE(cl->getNickName(),this->nickname)));
+        cl->setNickName(this->nickname);
+    }
 }
 
 //-----------------------------------------------------------
@@ -582,47 +317,8 @@ UnknownCommand::UnknownCommand(int clientID, const std::string& message) : Comma
 }
 
 void UnknownCommand::execute() {
-    DataControler::SendClientMessage(clientID, ERR_UNKNOWNCOMMAND(prefix.nickname, prefix.hostname, message));
+    return;
 }
-
-//-----------------------------------------------------------
-
-
-QuitCommand::QuitCommand() : Command(0) {
-    this->command = QUIT;
-}
-
-QuitCommand::QuitCommand(int clientID, const std::string& _messag) : Command(0){
-    this->clientID = clientID;
-    this->command = QUIT;
-    this->message = _messag;
-}
-
-void QuitCommand::execute(){
-    Clients *cl = DataControler::getClient(this->clientID);
-    if (cl->getJoinedChannels().size() > 0){
-        std::vector<std::string> _joinedchannels = cl->getJoinedChannels();
-        for (std::vector<std::string>::iterator it = _joinedchannels.begin(); it != _joinedchannels.end(); it++)
-        {
-            if(DataControler::getChannel(*it)->isOperator(this->clientID))
-            {
-                if(DataControler::getChannel(*it)->getList(1).size() == 1)
-                {
-                    DataControler::removeChannel(*it);
-                }else if(DataControler::getChannel(*it)->getList(1).size() > 1){
-                    // DataControler::getChannel(*it)->removeClientFrom(1, this->clientID);
-                    DataControler::getClient(clientID)->leaveChannel(*it);
-                }
-            }else if(DataControler::getChannel(*it)->isMember(this->clientID))
-                DataControler::getClient(clientID)->leaveChannel(*it);
-        }
-        DataControler::removeClient(this->clientID);
-    }
-}
-
-QuitCommand::~QuitCommand() {}
-
-
 
 // -----------------------------------------------------
 
@@ -637,87 +333,304 @@ UserCommand::~UserCommand(){}
 // userName 0 * :realname
 void UserCommand::execute(){
     std::vector<std::string> parts;
-    parts = splitParts(this->message, 4);
+    Clients *cl;
 
+    cl = DataControler::getClient(this->clientID);
+    if (cl->getRegistrationStatus() == 1)
+        return (DataControler::SendMsg(clientID,ERR_ALREADYREGISTERED(cl->getNickName())));
+    if (this->message.empty())
+        return (DataControler::SendMsg(clientID,ERR_NEEDMOREPARAMS(cl->getNickName(),"USER")),throw std::invalid_argument(""));
+    parts = splitParts(this->message, 4);
     if (parts.size() < 4)
-        return (DataControler::SendClientMessage(clientID,ERR_NEEDMOREPARAMS(this->prefix.nickname, this->prefix.hostname)));
+        return (DataControler::SendMsg(clientID,ERR_NEEDMOREPARAMS(cl->getNickName(),"USER")),throw std::invalid_argument(""));
     if (parts[1] != "0" || parts[2] != "*" || !checkTokenChar(parts[0],3))
         return;
-    Clients *cl = DataControler::getClient(clientID);
-    if (cl->getRegistrationStatus() == 3)
-        return (DataControler::SendClientMessage(clientID,ERR_ALREADYREGISTERED(this->prefix.nickname, this->prefix.hostname)));
     cl->setRealName(parts[3]);
     cl->setUserName(parts[0]);
-    cl->setRegistrationStatus(3);
 }
 
+//----------------------------------------------------------
+JoinCommand::~JoinCommand() {}
+JoinCommand::JoinCommand() : Command(0) {
+    this->command = JOIN;
+}
 
-// -----------------------------------------------------
+JoinCommand::JoinCommand(int clientID, const std::string& message) : Command(clientID) {
+    this->command = JOIN;
+    this->message = message;
+};
 
+#define CCHANLIMIT 10
+void JoinCommand::joinExistingChannel(const std::string& channel, const std::string& key) {
+    Channels *ch = DataControler::getChannel(channel);
+    Clients *cl = DataControler::getClient(clientID);
+    
+    if (cl->isClientInChannel(channel))
+        return;
+    if (ch->isBanned(clientID))
+        return (DataControler::SendMsg(clientID,ERR_BANNEDFROMCHAN(cl->getNickName(),ch->getChannelName())));
+    if (ch->isFull())
+        return (DataControler::SendMsg(clientID,ERR_CHANNELISFULL(cl->getNickName(),ch->getChannelName())));
+    if (cl->getJoinedChannels().size() >= CCHANLIMIT)
+        return;
+    if (!ch->isPublic() && !ch->isInvited(clientID))
+        return (DataControler::SendMsg(clientID,ERR_INVITEONLYCHAN(cl->getNickName(),ch->getChannelName())));
+    if (ch->isSecret() && !ch->isKeyValid(key))
+        return (DataControler::SendMsg(clientID,ERR_BADCHANNELKEY(cl->getNickName(),ch->getChannelName())));    
+    ch->addClientIn(0, clientID);
+    cl->joinChannel(channel);
+    // :peken2!peken2@127.0.0.1 JOIN :#ME
+    DataControler::SendMsg(ch->getChannelName(),RPL_JOIN(user_id(cl->getNickName(),cl->getUserName()),ch->getChannelName()));
+    DataControler::SendMsg(ch->getChannelName(),RPL_NAMREPLY(cl->getNickName(),"@",ch->getChannelName(),ch->getMemberList()));
+    DataControler::SendMsg(ch->getChannelName(),RPL_ENDOFNAMES(cl->getNickName(),ch->getChannelName()));
+    if (ch->getTopic().empty() == false)
+        DataControler::SendMsg(clientID,RPL_TOPIC(cl->getNickName(),ch->getChannelName(),ch->getTopic()));
+    else
+        DataControler::SendMsg(clientID,RPL_NOTOPIC(cl->getNickName(),ch->getChannelName()));
+};
+#define CHANLEN 50
 
-ModeCommand::ModeCommand() : Command(0) {};
-ModeCommand::ModeCommand(int clientid, const std::string& _message) : Command(clientid){
+void JoinCommand::joinNewChannel(const std::string& channel) {
+    Clients *cl = DataControler::getClient(clientID);
+    if (cl->getJoinedChannels().size() >= CCHANLIMIT)
+        return;
+    Channels *ch = DataControler::addChannel(channel);
+    ch->addClientIn(1, clientID);
+    cl->joinChannel(DataControler::transformCase(channel));
+    DataControler::SendMsg(clientID,RPL_JOIN(user_id(cl->getNickName(),cl->getUserName()),ch->getChannelName()));
+}
+
+void JoinCommand::execute() {
+
+    std::istringstream stream(this->message);
+    std::string part;
+    Clients *cl = DataControler::getClient(this->clientID);
+
+	if (this->message.empty())
+        return (DataControler::SendMsg(clientID,ERR_NEEDMOREPARAMS(cl->getNickName(),"JOIN")));
+	std::vector<std::string> parts = splitParts(this->message, 2);
+	if (parts.size() >= 1) {
+		channels = split(parts[0], ',');
+        if (parts.size() >= 2)
+			keys = split(parts[1], ',');
+	}
+	for (size_t i = 0; i < channels.size(); i++) {
+		if (!checkTokenChar(channels[i], 1) || channels[i].length() > CHANLEN)
+            DataControler::SendMsg(clientID,ERR_NOSUCHCHANNEL(cl->getNickName(),channels[i]));
+		else{
+            channels[i].erase(0,1);
+			if (DataControler::channelnamesExist(channels[i])){
+                if (keys.size() > i)
+                    joinExistingChannel(channels[i], keys[i]);
+                else
+                    joinExistingChannel(channels[i], "");
+            }
+			else
+				joinNewChannel(channels[i]);
+		}
+	}
+}
+//-----------------------------------------------------------
+
+ModeCommand::ModeCommand() : Command(0) {
+    this->command = MODE;
+}
+
+ModeCommand::~ModeCommand() {}
+
+ModeCommand::ModeCommand(int clientID, const std::string& _message) : Command(clientID) {
     this->command = MODE;
     this->message = _message;
+};
+
+void ModeCommand::fillModeInfos(){
+    size_t						pos;
+
+	// TARGET
+	pos = this->message.find(" ");
+	if (pos == std::string::npos)
+	{
+        this->target = this->message.substr(0);
+		return ;
+	}
+	else
+	{
+        this->target = this->message.substr(0, pos);
+        this->message.erase(0, pos + 1);
+	}
+
+	// MODE
+	pos = this->message.find(" ");
+	if (pos == std::string::npos)
+	{
+		this->mode = this->message.substr(0);
+		return ;
+	}
+	else
+	{
+		this->mode = this->message.substr(0, pos);
+		this->message.erase(0, pos + 1);
+	}
+
+    while (!this->message.empty()) {
+        pos = this->message.find(' ');
+        if (pos == std::string::npos) {
+            this->params.push_back(this->message);
+            break;
+        }
+        std::string param = this->message.substr(0, pos);
+        if (param[0] == ':') {
+            this->params.push_back(this->message);
+            break;
+        }
+        this->params.push_back(param);
+        this->message.erase(0, pos + 1);
+    }
 }
 
-/*
-    message : 
-    i t k o l
-    MODE #channelname +i // add 
-    MODE #channelname -i // remove
+typedef struct ModeInfo{
+    bool set;
+    int  type;
+    std::string param;
+}ModeInfo;
 
-    #channelname +i 
-    #channelname +t
-    #channelname +k password
-    #channelname +o nickname
-    #channelname +l limit
+#define MAXMODS 10
+#define KEYLEN 50
 
-    #channelname -i
-    #channelname -t
-    #channelname -k
-    #channelname -o nickname
-    #channelname -l
-
-    #channelname 
-
-    KICK #channel #user Message
-    MODE #channel +b #user 
-
-    -MODESTRING+MODESTRING
-*/
-
-/*
-    +fkkf-kdkdo
-    
-    litko
-*/
-void ModeCommand::modespliter(){
-    // bool add = false;
-    // bool remove = false;
-    // for(std::string::iterator it = this->ModeString.begin(); it != this->ModeString.end(); it++){
-    //     if (*it == '+'){
-    //         if (add == true)
-    //         add = true;
-    //     }else if (*it == '-'){
-    //         remove = true;
-    //     }
-    // }
-    (void)0;
+static bool isvalid(std::string &parm, int ty){
+    if (ty == 0){
+        for (size_t i = 0; i < parm.size(); i++){
+            if (!isnumber(static_cast<int>(parm[i])))
+                return (false);
+        };
+        return (true);
+    }
+    for (size_t i = 0; i < parm.size(); i++){
+        if (!isalpha(static_cast<int>(parm[i])))
+            return (false);
+        };
+    return (true);
 }
 
 void ModeCommand::execute(){
-    std::vector<std::string> parts;
+    Clients *cl = DataControler::getClient(clientID);
 
-    parts = splitParts(this->message, 3); // channelname modestring modeparam
-    if (parts.size() < 2)
-        return (DataControler::SendClientMessage(this->clientID, ERR_NEEDMOREPARAMS(this->prefix.nickname, this->prefix.hostname)));
-
-    std::vector<std::string> channelsName = split(parts[0],',');
-    if (channelsName.size() > 1)
-        return (DataControler::SendClientMessage(this->clientID, ERR_BADCHANNELNAME(this->prefix.nickname, this->prefix.hostname, parts[0])));
-    this->channelname = parts[0];
-    this->ModeString = parts[1]; 
+    fillModeInfos();
+    if (this->target[0] == '#')
+        return (DataControler::SendMsg(clientID,ERR_NOSUCHCHANNEL(cl->getNickName(),this->target)));
+    std::string channel = this->target.erase(0,1);
+    if (DataControler::channelnamesExist(channel) == false)
+        return (DataControler::SendMsg(clientID,ERR_NOSUCHCHANNEL(cl->getNickName(),this->target)));
+    Channels *ch = DataControler::getChannel(channel);
+    if (this->mode.empty() == true){
+        if (ch->isMember(clientID) == false && ch->isOperator(clientID) == false)
+            return (DataControler::SendMsg(clientID,ERR_NOTONCHANNEL(cl->getNickName(),ch->getChannelName())));
+        return (DataControler::SendMsg(clientID,RPL_CHANNELMODEIS(cl->getNickName(),ch->getChannelName(),ch->getChannelModes())));
+    }
+    if (ch->isOperator(clientID) == false)
+        return (DataControler::SendMsg(clientID,ERR_CHANOPRIVSNEEDED(cl->getNickName(),ch->getChannelName())));
+    std::vector<ModeInfo> modes;
+    bool set = true;
+	size_t arg = 0;
+    std::string s_mode;
+    if (!this->mode.empty())
+        for (size_t i = 0; i < this->mode.size(); i++) {
+            if (this->mode[i] == '+') {
+                set = true;
+                continue;
+            } else if (this->mode[i] == '-') {
+                set = false;
+                continue;
+            }
+            ModeInfo mode_info;
+            mode_info.set = set;
+            mode_info.type = mode[i];
+            if ((mode[i] == 'k' || mode[i] == 'o' || mode[i] == 'l') && set && arg < params.size())
+                mode_info.param = params[arg++];
+            if (mode[i] == 'o' && !set && arg < params.size())
+                mode_info.param = params[arg++];
+            modes.push_back(mode_info);
+        };
+    for (size_t i = 0; i < modes.size() && i < MAXMODS; i++) {
+        char c = static_cast <char>(modes[i].type);
+        (modes[i].set ? s_mode = "+"  : s_mode = "-" );
+        s_mode += c;
+        if (modes[i].type == 'i' || modes[i].type == 't'){
+            ch->setChannelMode(c, modes[i].set);
+            DataControler::SendMsg(ch->getChannelName(),MODE_CHANNELMSG(ch->getChannelName(),s_mode));
+        }
+        else if (modes[i].type == 'k'){
+            if (modes[i].set){
+                if (modes[i].param.empty() || modes[i].param.size() > KEYLEN)
+                    continue;
+                if (!isvalid(modes[i].param,1))
+                    DataControler::SendMsg(this->clientID, ERR_INVALIDMODEPARAM(cl->getNickName(),ch->getChannelName(),s_mode,modes[i].param));
+            }
+            ch->setChannelMode(c, modes[i].set, modes[i].param);
+            DataControler::SendMsg(ch->getChannelName(),MODE_CHANNELMSG(ch->getChannelName(),s_mode));
+        }
+        else if (modes[i].type == 'l'){
+            if (modes[i].set){
+                if (modes[i].param.empty() || std::stoi(modes[i].param) < 0 || !isvalid(modes[i].param,0))
+                    continue;
+                if (std::stoi(modes[i].param) < ch->getMemberLimit())
+                    modes[i].param = std::to_string(ch->getMemberLimit());
+            }
+            ch->setChannelMode(c, modes[i].set, modes[i].param);
+            DataControler::SendMsg(ch->getChannelName(),MODE_CHANNELMSG(ch->getChannelName(),s_mode + " " + modes[i].param));
+        }
+        else if (modes[i].type == 'o'){
+            if (modes[i].param.empty())
+                continue;
+            if (DataControler::isClient(modes[i].param) == false){
+                DataControler::SendMsg(this->clientID, ERR_NOSUCHNICK(cl->getNickName(),modes[i].param));
+                continue;
+            }
+            int id = DataControler::getClient(modes[i].param)->getID();
+            if (ch->isMember(id) == false && ch->isOperator(id) == false){
+                DataControler::SendMsg(this->clientID, ERR_NOTONCHANNEL(cl->getNickName(),ch->getChannelName()));
+                continue;
+            }
+            if (modes[i].set){
+                if (ch->isOperator(id) == true)
+                    continue;
+                ch->addClientIn(1, id);
+                DataControler::SendMsg(ch->getChannelName(),MODE_CHANNELMSG(ch->getChannelName(),s_mode + " " + modes[i].param));
+            }
+            else if (modes[i].set == false){
+                if (ch->isOperator(id) == false)
+                    continue;
+                ch->removeClientFrom(1,id);
+                ch->addClientIn(0,id);
+                DataControler::SendMsg(ch->getChannelName(),MODE_CHANNELMSG(ch->getChannelName(),s_mode + " " + modes[i].param));
+            }
+        }
+        else
+            DataControler::SendMsg(this->clientID, ERR_UMODEUNKNOWNFLAG(cl->getNickName()));
+    }
 }
 
-ModeCommand::~ModeCommand(){}
+//-----------------------------------------------------------
+
+QuitCommand::QuitCommand() : Command(0) {
+    this->command = QUIT;
+}
+
+QuitCommand::~QuitCommand() {}
+
+QuitCommand::QuitCommand(int clientID, const std::string& message) : Command(clientID) {
+    this->command = QUIT;
+    this->message = message;
+}
+
+void QuitCommand::execute() {
+    Clients *cl = DataControler::getClient(clientID);
+    if (cl->getRegistrationStatus() == 0)
+        return;
+    std::vector<std::string> parts = splitParts(this->message, 1);
+    if (parts.size() < 1)
+        DataControler::SendMsg(clientID,RPL_QUIT(cl->getNickName(),"Leaving ..."));
+    else
+        DataControler::SendMsg(clientID,RPL_QUIT(cl->getNickName(),parts[0]));
+    DataControler::removeClient(clientID);
+}

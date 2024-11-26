@@ -99,8 +99,6 @@ class Server //-> class for server
 		static void SignalHandler(int signum); //-> signal handler
 		void CloseFds(); //-> close file descriptors
 		void ClearClients(int fd); //-> clear clients
-		void SendData(int fd, std::string data); //-> send data to a registered client
-		void SendAll(std::string data); //-> send data to all clients
 };
 
 

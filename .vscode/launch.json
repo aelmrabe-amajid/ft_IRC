@@ -10,7 +10,7 @@
 			"request": "launch",
 			"MIMode": "lldb",
 			"program": "${workspaceFolder}/ircserv",
-			"args": ["10000", "0002"],
+			"args": ["99999", "0002"],
 			"cwd": "${workspaceFolder}",
 			"preLaunchTask": "makelanch"
 		}

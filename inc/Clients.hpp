@@ -33,16 +33,16 @@ class Clients
 		std::string getUserName() const;
 		std::string getRealName() const;
 		std::string getHostName() const;
+		
 		int getID() const;
 		std::vector<std::string> getJoinedChannels() const;
 		bool isClientInChannel(const std::string &channelName) const;
 		void setRegistrationStatus(int status);
-
 		void setNickName(const std::string &nickname);
 		void setUserName(const std::string &username);
 		void setRealName(const std::string &realname);
 		void setHostName(const std::string &hostname);
-		int getRegistrationStatus() const;
+		int  getRegistrationStatus() const;
 		void joinChannel(const std::string &channelName);
 		void leaveChannel(const std::string &channelName);
 };

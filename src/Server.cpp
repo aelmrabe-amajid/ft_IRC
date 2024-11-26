@@ -3,7 +3,7 @@
 void Server::ClearClients(int fd){ //-> clear the clients
 	for(size_t i = 0; i < fds.size(); i++){ //-> remove the client from the pollfd
 		if (fds[i].fd == fd)
-			{fds.erase(fds.begin() + i); break;}
+			{fds.erase(fds.begin() + static_cast<std::vector<struct pollfd>::difference_type>(i)); break;}
 	}
 	// for(size_t i = 0; i < clients.size(); i++){ //-> remove the client from the vector of clients
 	// 	if (clients[i].GetFd() == fd)
@@ -33,26 +33,26 @@ void	Server::CloseFds(){
 	}
 }
 
-std::vector<std::string> MsgSplit(std::string Message)
-{
-	std::vector<std::string> res;
-	size_t beggin = 0;
-	size_t end = Message.find(" ");
-	while(end != std::string::npos)
-	{
-		// std::cout << beggin << " " << end << "\n";
-		res.push_back(Message.substr(beggin, end - beggin));
-		// std::cout << "message = " << Message << "\n";
-		std::cout << res.back() << "\n";
-		while(Message[end] == ' ')
-			end++;
-		// std::cout << end << "\n";
-		beggin = end;
-		end = Message.find(' ', beggin);
-	}
-	res.push_back(Message.substr(beggin, Message.size()));
-	return res;
-}
+// std::vector<std::string> MsgSplit(std::string Message)
+// {
+// 	std::vector<std::string> res;
+// 	size_t beggin = 0;
+// 	size_t end = Message.find(" ");
+// 	while(end != std::string::npos)
+// 	{
+// 		// std::cout << beggin << " " << end << "\n";
+// 		res.push_back(Message.substr(beggin, end - beggin));
+// 		// std::cout << "message = " << Message << "\n";
+// 		std::cout << res.back() << "\n";
+// 		while(Message[end] == ' ')
+// 			end++;
+// 		// std::cout << end << "\n";
+// 		beggin = end;
+// 		end = Message.find(' ', beggin);
+// 	}
+// 	res.push_back(Message.substr(beggin, Message.size()));
+// 	return res;
+// }
 
 // int main()
 // {
@@ -81,6 +81,24 @@ std::vector<std::string> MsgSplit(std::string Message)
 //     return 0;
 // }
 
+static std::vector<std::string> MsgSplit(std::string Message){
+	std::vector<std::string> res;
+	size_t beggin = 0;
+	size_t end = Message.find_first_of("\r\n");
+	while(end != std::string::npos)
+	{
+		res.push_back(Message.substr(beggin, end - beggin));
+		beggin = end + 1;
+		if (Message[end] == '\r' && beggin < Message.size() && Message[beggin] == '\n')
+			beggin++;
+		end = Message.find_first_of("\r\n", beggin);
+	}
+	if (beggin < Message.size())
+		res.push_back(Message.substr(beggin, Message.size() - beggin));
+	return res;
+}
+
+std::map<int, std::vector<std::string> > inputsMap;
 void Server::ReceiveNewData(int fd)
 {
     char Message[1024]; //-> buffer for the received data
@@ -94,10 +112,10 @@ void Server::ReceiveNewData(int fd)
 		*/
         // std::cout << RED << "Client <" << fd << "> Disconnected" << WHI << std::endl;
 		DataControler::removeClient(fd); //-> remove the client
+		inputsMap.erase(fd);
         // ClearClients(fd); //-> clear the client
         // close(fd); //-> close the client socket
     }
-
     else{ //-> print the received data
         Message[bytes] = '\0';
         std::cout << YEL << "Client <" << fd << "> Data: " << WHI << Message;
@@ -111,18 +129,29 @@ void Server::ReceiveNewData(int fd)
 			else if (typeMessage == FILE)
 			else if (typeMessage == TEXT)
 		*/
-		if (DataControler::isClient(fd)){
-			std::cout << Message << std::endl;
-			Command::HandleCommand(fd, Message);
+		// if (DataControler::isClient(fd)){
+		// 	Command::HandleCommand(fd, Message);
+		if (DataControler::getClient(fd)->getRegistrationStatus() == 1)
+		{
+			std::vector<std::string> res = MsgSplit(Message);
+			for (size_t i = 0; i < res.size(); i++)
+				Command::HandleCommand(fd, res[i]);
+			res.clear();
 		}
-        // for(size_t i = 0; i < clients.size(); i++){
-        //     if (clients[i].GetFd() == fd){
-        //         clients[i].setMessage(std::string(Message));
-		// 		controle.RunCommand(fd,Message);
-		// 		// std::cout << clients[i].getMessage() << std::endl;
-        //         break;
-        //     }
-        // }
+		else {
+			std::vector<std::string> res = MsgSplit(Message);
+			for (size_t i = 0; i < res.size(); i++){
+				if (inputsMap[fd].size() < 3)
+					inputsMap[fd].push_back(res[i]);
+				else
+					break;
+			}
+			if (inputsMap[fd].size() == 3){
+				Command::HandleCommand(fd, inputsMap[fd]);
+				inputsMap[fd].clear();
+			}
+			res.clear();
+		}
     }
 }
 
@@ -132,7 +161,8 @@ void Server::AcceptNewClient()
 	struct pollfd NewPoll;
 	socklen_t len = sizeof(cliadd);
 
-	int incofd = accept(SerSocketFd, (sockaddr *)&(cliadd), &len); //-> accept the new client
+	int incofd = accept(SerSocketFd, reinterpret_cast<sockaddr *>(&cliadd), &len); //-> accept the new client
+	// int incofd = accept(SerSocketFd, (sockaddr *)&(cliadd), &len); //-> accept the new client
 	if (incofd == -1)
 		{std::cout << "accept() failed" << std::endl; return;}
 
@@ -148,7 +178,8 @@ void Server::AcceptNewClient()
 		and will add client to map ClientIDs. 
 		cli = Tools::getClientByID(id)
 	*/
-	DataControler::addClient(incofd); //-> add the client to the map of clients
+	// DataControler::addClient(incofd); //-> add the client to the map of clients
+	DataControler::addClient(incofd,inet_ntoa((cliadd.sin_addr))); //-> add the client to the map of new clients
 	// cli.SetFd(incofd); //-> set the client file descriptor
 	// cli.setIpAdd(inet_ntoa((cliadd.sin_addr))); //-> convert the ip address to string and set it
 	// clients.push_back(cli); //-> add the client to the vector of clients
@@ -176,7 +207,9 @@ void Server::SerSocket()
 		throw(std::runtime_error("faild to set option (SO_REUSEADDR) on socket"));
 	if (fcntl(SerSocketFd, F_SETFL, O_NONBLOCK) == -1) //-> set the socket option (O_NONBLOCK) for non-blocking socket
 		throw(std::runtime_error("faild to set option (O_NONBLOCK) on socket"));
-	if (bind(SerSocketFd, (struct sockaddr *)&add, sizeof(add)) == -1) //-> bind the socket to the address
+	if (bind(SerSocketFd, reinterpret_cast<struct sockaddr *>(&add), sizeof(add)) == -1) //-> bind the socket to the address
+	// if (bind(SerSocketFd, (struct sockaddr *)&add, sizeof(add)) == -1) //-> bind the socket to the address
+
 		throw(std::runtime_error("faild to bind socket"));
 	if (listen(SerSocketFd, SOMAXCONN) == -1) //-> listen for incoming connections and making the socket a passive socket
 		throw(std::runtime_error("listen() faild"));
@@ -200,8 +233,10 @@ void Server::ServerInit(int port, std::string passwd)
 
 	while (Server::Signal == false){ //-> run the server until the signal is received
 
-		if((poll(&fds[0],fds.size(),-1) == -1) && Server::Signal == false) //-> wait for an event
+		if((poll(&fds[0], static_cast<nfds_t>(fds.size()), -1) == -1) && Server::Signal == false) //-> wait for an event
 			throw(std::runtime_error("poll() faild"));
+		// if((poll(&fds[0],fds.size(),-1) == -1) && Server::Signal == false) //-> wait for an event
+		// 	throw(std::runtime_error("poll() faild"));
 
 		for (size_t i = 0; i < fds.size(); i++){ //-> check all file descriptors
 			if (fds[i].revents & POLLIN){ //-> check if there is data to read

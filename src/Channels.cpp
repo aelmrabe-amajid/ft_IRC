@@ -156,9 +156,11 @@ bool Channels::isJoined(const int clientid) const {
     return isMember(clientid) || isOperator(clientid);
 }
 
-
 bool Channels::isFull() const {
-    return Members.size() >= CHANLIMIT;
+    int limit = static_cast<int>(Members.size()) + static_cast<int>(Operators.size());
+    if (this->MemberLimit == 0)
+        return false;
+    return limit >= this->MemberLimit;
 }
 
 bool Channels::isKeyValid(const std::string& key) const {
@@ -194,4 +196,64 @@ const std::string Channels::getTopicSetter() const{
 // (<setat> is a unix timestamp). Sent after
 const std::string Channels::getTopicTime() const{
     return TopicTime;
+}
+
+
+std::string Channels::getMemberList(){
+    std::string clients = "";
+    for (size_t i = 0; i < Operators.size(); i++)
+        clients += "@" + DataControler::getClientNickname(Operators[i]) + " ";
+    for (size_t i = 0; i < Members.size(); i++)
+        clients += DataControler::getClientNickname(Members[i]) + " ";
+    return clients;
+}
+
+std::string Channels::getChannelModes(){
+    std::string modes = "";
+    if (isPublic() == false)
+        modes += "i";
+    if (isSecret())
+        modes += "k";
+    if (isTopicSet())
+        modes += "t";
+    if (isLimitSet())
+        modes += "l ";
+    if (modes.empty() == false)
+        modes = "+" + modes;
+    return modes;
+}
+
+// void Channels::setChannelMode(char mode, bool set){
+//     switch (mode, set) {
+//         case 'i' : set ? Public = false : Public = true; break;
+//         case 't' : set ? TopicSet = true : TopicSet = false; break;
+//     }
+// }
+
+// void Channels::setChannelMode(char mode, bool set, std::string value){
+//     switch (mode, set) {
+//         case 'k' : set ? (Secret = true, Key = value) : (Secret = false, Key = ""); break;
+//         case 'l' : set ? (LimitSet = true, MemberLimit = std::stoi(value)) : (LimitSet = false, MemberLimit = 0); break;
+//     }
+// }
+
+void Channels::setChannelMode(char mode, bool set){
+    if (mode == 'i') {
+        set ? Public = false : Public = true;
+    } else if (mode == 't') {
+        set ? TopicSet = true : TopicSet = false;
+    }
+}
+
+void Channels::setChannelMode(char mode, bool set, std::string value){
+    if (mode == 'k') {
+        set ? (Secret = true, Key = value) : (Secret = false, Key = "");
+    } else if (mode == 'l') {
+        set ? (LimitSet = true, MemberLimit = std::stoi(value)) : (LimitSet = false, MemberLimit = 0);
+    }
+}
+
+
+int Channels::getMemberLimit() const {
+    return (this->MemberLimit);
 }

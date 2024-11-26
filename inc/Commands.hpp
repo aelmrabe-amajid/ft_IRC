@@ -6,31 +6,22 @@
 #include <sstream>
 #include <iostream>
 #include "DataControler.hpp"
+#include <exception>
 #include <map>
 
-typedef struct PrefixBNF {
-    std::string nickname;
-    std::string username;
-    std::string hostname;
-}PrefixBNF;
-
 enum CommandID {
+    PASS,
+    NICK,
+    USER,
     JOIN,
     PART,
     PRIVMSG,
     MODE,
     TOPIC,
-    NICK,
-    PASS,
     QUIT,
-    USER,
+	PONG,
     UNKNOWN
 };
-
-typedef struct MSGPARSED{
-	CommandID command;
-	std::string params;
-}MSGPARSED;
 
 // Base class for all commands
 class Command {
@@ -40,77 +31,12 @@ class Command {
 	    virtual void execute() = 0;
 	    static Command *createCommand(int clientID, const std::string& params, CommandID command);
 		static void HandleCommand(int clientID, const std::string& message);
+		static void HandleCommand(int clientID, std::vector<std::string>& message);
 		static std::string transformCase(std::string &str);
-		// int tokenLexerChecker(const std::string& token);
 	protected:
     	int clientID;
     	CommandID command;
 };
-
-/*
-	
-*/
-class JoinCommand : public Command {
-	public:
-		JoinCommand();
-		~JoinCommand();
-	    JoinCommand(int _clientID, const std::string& _message);
-		void joinExistingChannel(const std::string& channel, const std::string& key);
-		void joinNewChannel(const std::string& channel);
-		void ERR(int ResponseCode);
-		void RPL(int ResponseCode);
-	    void execute();
-	private:
-    	std::string message;// #ch key 
-		std::vector<std::string> channels;
-		std::vector<std::string> keys;
-		// std::string ignored;
-		// std::vector<int> ResponseCodes;
-};
-
-// class PartCommand : public Command {
-// 	public:
-// 	    PartCommand(int _clientID, const std::string& _message) : Command(_clientID, _message) {}
-// 	    bool parse();
-// 	    bool execute();
-// 	private:
-// 		std::vector<std::string> channels;
-// 		std::string trailing;
-// 		std::vector<int> ResponseCodes;
-// };
-
-// class PrivmsgCommand : public Command {
-// 	public:
-// 	    PrivmsgCommand(int _clientID, const std::string& _message) : Command(_clientID, _message) {}
-// 	    bool parse();
-// 	    bool execute();
-// 	private:
-// 		std::string target;
-// 		std::string message;
-// 		std::vector<int> ResponseCodes;
-// };
-
-// class ModeCommand : public Command {
-// 	public:
-// 	    ModeCommand(int _clientID, const std::string& _message) : Command(_clientID, _message) {}
-// 	    bool parse();
-// 	    bool execute();
-// 	private:
-// 		std::string target;
-// 		std::string mode;
-// 		std::vector<int> ResponseCodes;
-// };
-
-// class TopicCommand : public Command {
-// 	public:
-// 	    TopicCommand(int _clientID, const std::string& _message) : Command(_clientID, _message) {}
-// 	    bool parse();
-// 	    bool execute();
-// 	private:
-// 		std::string channel;
-// 		std::string topic;
-// 		std::vector<int> ResponseCodes;
-// };
 
 class NickCommand : public Command {
 	public:
@@ -129,7 +55,7 @@ class PassCommand : public Command {
 	    void execute();
 		~PassCommand();
 	private:
-		std::string password;
+		std::string psw;
 		// std::vector<int> ResponseCodes;
 };
 
@@ -139,17 +65,6 @@ class UnknownCommand : public Command {
 	    UnknownCommand(int _clientID, const std::string& _message);
 	    void execute();
 		~UnknownCommand();
-	private:
-		std::string message;
-		// std::vector<int> ResponseCodes;
-};
-
-class QuitCommand : public Command {
-	public:
-		QuitCommand();
-	    QuitCommand(int _clientID, const std::string& _message);
-		~QuitCommand();
-	    void execute();
 	private:
 		std::string message;
 		// std::vector<int> ResponseCodes;
@@ -170,20 +85,54 @@ class UserCommand : public Command {
 		std::string realname;
 };
 
-class ModeCommand : public Command{
+
+class JoinCommand : public Command {
+	public:
+		JoinCommand();
+		~JoinCommand();
+	    JoinCommand(int _clientID, const std::string& _message);
+		void joinExistingChannel(const std::string& channel, const std::string& key);
+		void joinNewChannel(const std::string& channel);
+		void ERR(int ResponseCode);
+		void RPL(int ResponseCode);
+	    void execute();
+	private:
+    	std::string message;
+		std::vector<std::string> channels;
+		std::vector<std::string> keys;
+};
+
+typedef struct ModeString{
+    bool i;
+    bool t;
+    bool k;
+    bool o;
+    bool l;
+}ModeString;
+
+class ModeCommand : public Command {
 	public:
 		ModeCommand();
-		ModeCommand(int _clientID, const std::string& _message);
 		~ModeCommand();
-		void execute();
-		void modespliter();
+	    ModeCommand(int _clientID, const std::string& _message);
+		void fillModeInfos();
+	    void execute();
 	private:
 		std::string message;
-		std::string channelname;
-		std::string adds;
-		std::string removed;
-		std::string ModeString;
-		std::string ModeParm;
+		std::string	target;
+		std::string	mode;
+		std::vector<std::string> params;
+};
+
+class QuitCommand : public Command {
+	public:
+		QuitCommand();
+		~QuitCommand();
+		QuitCommand(int _clientID, const std::string& _message);
+		void execute();
+	private:
+		std::string message;
+		std::string params;
 };
 
 #endif // COMMANDS_HPP
