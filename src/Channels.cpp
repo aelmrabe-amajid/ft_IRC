@@ -53,14 +53,12 @@ void Channels::addClientIn(int Type, int client) {
     switch (Type) {
         case 0:
             Members.push_back(client);
-            MemberCount++;
             break;
         case 1:
             Operators.push_back(client);
             break;
         case 2:
             Banned.push_back(client);
-            MemberCount--;
             break;
     }
 }
@@ -70,11 +68,9 @@ void Channels::removeClientFrom(int Type, int client) {
     switch (Type) {
         case 0:
             list = &Members;
-            MemberCount--;
             break;
         case 1:
             list = &Operators;
-            MemberCount--;
             break;
         case 2:
             list = &Banned;
