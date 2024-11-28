@@ -64,7 +64,7 @@ void Channels::addClientIn(int Type, int client) {
 }
 
 void Channels::removeClientFrom(int Type, int client) {
-    std::vector<int>* list = nullptr;
+    std::vector<int>* list;
     switch (Type) {
         case 0:
             list = &Members;
@@ -256,4 +256,42 @@ void Channels::setChannelMode(char mode, bool set, std::string value){
 
 int Channels::getMemberLimit() const {
     return (this->MemberLimit);
+}
+
+int Channels::getMemberCount() const {
+    return (this->MemberCount);
+}
+
+std::vector<int> Channels::PendingInvitesFrom(int clientid) {
+    std::vector<int> invites;
+    for (std::map<int,int>::iterator it = InviteList.begin(); it != InviteList.end(); ++it) {
+        if (it->second == clientid) {
+            invites.push_back(it->first);
+        }
+    }
+    return invites;
+}
+
+void Channels::RemovePendingInvitesFrom(int clientid) {
+    for (std::map<int,int>::iterator it = InviteList.begin(); it != InviteList.end(); ++it) {
+        if (it->second == clientid)
+            InviteList.erase(it);
+    }
+}
+
+void Channels::RemovePendingInvitesFromMembers() {
+    std::vector<int> operators = getList(1);
+    for (std::map<int,int>::iterator it = InviteList.begin(); it != InviteList.end(); ++it) {
+        if (std::find(operators.begin(), operators.end(), it->second) == operators.end())
+            InviteList.erase(it);
+    }
+}
+
+void Channels::InviteAccepted(int clientid) {
+    for (std::map<int,int>::iterator it = InviteList.begin(); it != InviteList.end(); ++it) {
+        if (it->first == clientid) {
+            InviteList.erase(it);
+            break;
+        }
+    }
 }

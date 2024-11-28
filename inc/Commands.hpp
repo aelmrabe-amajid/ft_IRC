@@ -135,4 +135,16 @@ class QuitCommand : public Command {
 		std::string params;
 };
 
+class PartCommand : public Command {
+	public:
+		PartCommand();
+		~PartCommand();
+		PartCommand(int _clientID, const std::string& _message);
+		void execute();
+	private:
+		std::string message;
+		std::vector<std::string> channels;
+		std::string reason;
+};
+
 #endif // COMMANDS_HPP

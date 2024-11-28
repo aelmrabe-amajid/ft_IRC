@@ -1,7 +1,7 @@
 #ifndef MACROS_HPP
 #define MACROS_HPP
 
-# define user_id(nickname, username) (":" + nickname + "!" + username + "@localhost")
+# define user_id(nickname, username) (":" + nickname + "!~" + username + "@localhost")
 
 # define RPL_WELCOME(user_id, nickname) (":localhost 001 " + nickname + " :Welcome to the Internet Relay Network " + user_id + "\r\n")
 # define RPL_YOURHOST(client, servername, version) (":localhost 002 " + client + " :Your host is " + servername + " (localhost), running version " + version + "\r\n")
@@ -11,17 +11,18 @@
 # define ERR_UNKNOWNCOMMAND(client, command) (":localhost 421 " + client + " " + command + " :Unknown command\r\n")
 // INVITE
 # define ERR_NEEDMOREPARAMS(client, command) (":localhost 461 " + client + " " + command + " :Not enough parameters.\r\n")
-# define ERR_NOSUCHCHANNEL(client, channel) (":localhost 403 " + client + " #" + channel + " :No such channel\r\n")
+# define ERR_NOSUCHCHANNEL(client, channel) (":localhost 403 " + client + channel + " :No such channel\r\n")
 # define ERR_NOTONCHANNEL(client, channel) (":localhost 442 " + client + " #" + channel + " :The user is not on this channel.\r\n")
 # define ERR_USERONCHANNEL(client, nick, channel) (":localhost 443 " + client + " " + nick + " #" + channel + " :Is already on channel\r\n")
 # define RPL_INVITING(user_id, client, nick, channel) (user_id + " 341 " + client + " " + nick + " #" + channel + "\r\n")
 # define RPL_INVITE(user_id, invited, channel) (user_id + " INVITE " + invited + " #" + channel + "\r\n")
 
 // JOIN
-# define RPL_JOIN(user_id, channel) (user_id + " JOIN :#" +  channel + "\r\n")
+# define RPL_JOIN(user_id, channel) (user_id + " JOIN #" + channel + "\r\n")
 # define ERR_BANNEDFROMCHAN(client, channel) ("474 " + client + " #" + channel + " :Cannot join channel (+b)\r\n")
 # define ERR_BADCHANNELKEY(client, channel) ("475 " + client + " #" + channel + " :Cannot join channel (+k)\r\n")
 # define ERR_INVITEONLYCHAN(client, channel) ("473 " + client + " #" + channel + " :Cannot join channel (+i)\r\n")
+# define ERR_BADCHANMASK(client, channel) ("476 " + client + " #" + channel + " :Bad Channel Mask\r\n")
 
 // KICK
 # define ERR_USERNOTINCHANNEL(client, nickname, channel) ("441 " + client + " " + nickname + " #" + channel + " :They aren't on that channel\r\n")
@@ -72,7 +73,7 @@
 # define RPL_PRIVMSG(nick, username, target, message) (":" + nick + "!" + username + "@localhost PRIVMSG " + target + " " + message + "\r\n")
 
 // TOPIC
-# define RPL_TOPIC(client, channel, topic) (":localhost 332 " + client + " #" + channel + " " + topic + "\r\n")
+# define RPL_TOPIC(client, channel, topic) (":localhost 332 " + client + " #" + channel + " :" + topic + "\r\n")
 # define RPL_NOTOPIC(client, channel) (":localhost 331 " + client + " #" + channel + " :No topic is set\r\n")
 
 // USER
