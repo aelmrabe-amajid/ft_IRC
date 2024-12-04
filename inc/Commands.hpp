@@ -14,11 +14,12 @@ enum CommandID {
     NICK,
     USER,
     JOIN,
-    PART,
-    PRIVMSG,
     MODE,
-    TOPIC,
     QUIT,
+    PART,
+	INVITE,
+    TOPIC,
+    PRIVMSG,
 	PONG,
     UNKNOWN
 };
@@ -102,14 +103,6 @@ class JoinCommand : public Command {
 		std::vector<std::string> keys;
 };
 
-typedef struct ModeString{
-    bool i;
-    bool t;
-    bool k;
-    bool o;
-    bool l;
-}ModeString;
-
 class ModeCommand : public Command {
 	public:
 		ModeCommand();
@@ -145,6 +138,18 @@ class PartCommand : public Command {
 		std::string message;
 		std::vector<std::string> channels;
 		std::string reason;
+};
+
+class InviteCommand : public Command {
+	public:
+		InviteCommand();
+		~InviteCommand();
+		InviteCommand(int _clientID, const std::string& _message);
+		void execute();
+	private:
+		std::string message;
+		std::string nickname;
+		std::string channel;
 };
 
 #endif // COMMANDS_HPP

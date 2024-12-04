@@ -81,11 +81,11 @@ public:
     const std::string getTopicSetter() const;
     const std::string getTopicTime() const;
     int getMemberCount() const;
-    void setMemberCount(int count);
     std::vector<int> PendingInvitesFrom(int clientid);
     void RemovePendingInvitesFrom(int clientid);
     void RemovePendingInvitesFromMembers();
     void InviteAccepted(int clientid);
+    void addInvite(int invited, int inviter);
 };
 
 #endif // CHANNELS_HPP

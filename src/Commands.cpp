@@ -3,16 +3,17 @@
 #include <bitset>
 
 static CommandID getCommandId(const std::string& command) {
-    if (command == "PASS") return PASS;
-    if (command == "NICK") return NICK;
-    if (command == "USER") return USER;
-    if (command == "JOIN") return JOIN;
-    if (command == "QUIT") return QUIT;
-    if (command == "MODE") return MODE;
-    if (command == "PART") return PART;
-    if (command == "PRIVMSG") return PRIVMSG;
-    if (command == "TOPIC") return TOPIC;
-    if (command == "PONG") return PONG;
+    if (command == "PASS")          return PASS;
+    if (command == "NICK")          return NICK;
+    if (command == "USER")          return USER;
+    if (command == "JOIN")          return JOIN;
+    if (command == "MODE")          return MODE;
+    if (command == "QUIT")          return QUIT;
+    if (command == "PART")          return PART;
+    if (command == "INVITE")        return INVITE;
+    if (command == "PRIVMSG")       return PRIVMSG;
+    if (command == "TOPIC")         return TOPIC;
+    if (command == "PONG")          return PONG;
     return UNKNOWN;
 }
 
@@ -209,6 +210,9 @@ Command *Command::createCommand(int clientID, const std::string& params, Command
             break;
         case PART:
             cmd = new PartCommand(clientID, params);
+            break;
+        case INVITE:
+            cmd = new InviteCommand(clientID, params);
             break;
         default:
             cmd = new UnknownCommand(clientID, params);
@@ -722,4 +726,40 @@ void PartCommand::execute() {
             cl->leaveChannel(ch->getChannelName());
         }
     }
+}
+
+//-----------------------------------------------------------
+
+InviteCommand::InviteCommand() : Command(0) {};
+
+InviteCommand::~InviteCommand() {}
+
+InviteCommand::InviteCommand(int clientID, const std::string& message) : Command(clientID) {
+    this->command = INVITE;
+    this->message = message;
+}
+
+void InviteCommand::execute() {
+    std::vector<std::string> parts;
+    Clients *cl = DataControler::getClient(clientID);
+    if (this->message.empty() == true)
+        return (DataControler::SendMsg(this->clientID,ERR_NEEDMOREPARAMS(cl->getNickName(),"INVITE")));
+    parts = splitParts(this->message, 2);
+    if (parts.size() < 2)
+        return (DataControler::SendMsg(this->clientID,ERR_NEEDMOREPARAMS(cl->getNickName(),"INVITE")));
+    if (DataControler::isClient(parts[0]) == false)
+        return (DataControler::SendMsg(this->clientID,ERR_NOSUCHNICK(cl->getNickName(),parts[0])));
+    if (parts[1][0] != '#' || DataControler::channelnamesExist(parts[1].substr(1,parts[1].length())) == false)
+        return (DataControler::SendMsg(this->clientID,ERR_NOSUCHCHANNEL(cl->getNickName(),parts[1])));
+    Channels *ch = DataControler::getChannel(parts[1].erase(0,1));
+    if (ch->isMember(clientID) == false && ch->isOperator(clientID) == false)
+        return (DataControler::SendMsg(this->clientID,ERR_NOTONCHANNEL(cl->getNickName(),ch->getChannelName())));
+    if (ch->isPublic() == false && ch->isOperator(clientID) == false)
+        return (DataControler::SendMsg(this->clientID,ERR_CHANOPRIVSNEEDED(cl->getNickName(),ch->getChannelName())));
+    if (ch->isInvited(DataControler::getClient(parts[0])->getID()))
+        return;
+    if (ch->isMember(DataControler::getClient(parts[0])->getID()))
+        return (DataControler::SendMsg(this->clientID,ERR_USERONCHANNEL(cl->getNickName(),parts[0],ch->getChannelName())));
+    ch->addInvite(DataControler::getClient(parts[0])->getID(),clientID);
+    DataControler::SendMsg(parts[0],RPL_INVITING(user_id(cl->getNickName(),cl->getUserName()),cl->getNickName(),parts[0],ch->getChannelName()));
 }

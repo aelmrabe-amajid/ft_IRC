@@ -1,4 +1,8 @@
-// {
+{
+	"files.associations": {
+		"vector": "cpp"
+	}
+} // {
 // 	"files.associations": {
 // 		"iosfwd": "cpp",
 // 		"__bit_reference": "cpp",

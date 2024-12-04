@@ -295,3 +295,7 @@ void Channels::InviteAccepted(int clientid) {
         }
     }
 }
+
+void Channels::addInvite(int invited, int inviter) {
+    InviteList[invited] = inviter;
+}
