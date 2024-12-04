@@ -18,6 +18,7 @@ enum CommandID {
     QUIT,
     PART,
 	INVITE,
+	KICK,
     TOPIC,
     PRIVMSG,
 	PONG,
@@ -150,6 +151,46 @@ class InviteCommand : public Command {
 		std::string message;
 		std::string nickname;
 		std::string channel;
+};
+
+
+class TopicCommand : public Command {
+	public:
+		TopicCommand();
+		~TopicCommand();
+		TopicCommand(int _clientID, const std::string& _message);
+		void execute();
+	private:
+		std::string message;
+		std::string channel;
+		std::string topic;
+};
+
+
+class PrivmsgCommand : public Command {
+	public:
+		PrivmsgCommand();
+		~PrivmsgCommand();
+		PrivmsgCommand(int _clientID, const std::string& _message);
+		void execute();
+	private:
+		std::string message;
+		std::string target;
+		std::string msg;
+};
+
+
+class KickCommand : public Command {
+	public:
+		KickCommand();
+		~KickCommand();
+		KickCommand(int _clientID, const std::string& _message);
+		void execute();
+	private:
+		std::string message;
+		std::string channel;
+		std::string nickname;
+		std::string reason;
 };
 
 #endif // COMMANDS_HPP

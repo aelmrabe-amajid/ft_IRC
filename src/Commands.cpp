@@ -11,6 +11,7 @@ static CommandID getCommandId(const std::string& command) {
     if (command == "QUIT")          return QUIT;
     if (command == "PART")          return PART;
     if (command == "INVITE")        return INVITE;
+    if (command == "KICK")          return KICK;
     if (command == "PRIVMSG")       return PRIVMSG;
     if (command == "TOPIC")         return TOPIC;
     if (command == "PONG")          return PONG;
@@ -213,6 +214,9 @@ Command *Command::createCommand(int clientID, const std::string& params, Command
             break;
         case INVITE:
             cmd = new InviteCommand(clientID, params);
+            break;
+        case KICK:
+            cmd = new KickCommand(clientID, params);
             break;
         default:
             cmd = new UnknownCommand(clientID, params);
@@ -663,25 +667,6 @@ PartCommand::PartCommand(int clientID, const std::string& message) : Command(cli
     this->message = message;
 }
 
-/*
-    1. Check Command Parameters is not empty
-    2. First part of Parameters is the channel name one or more
-    3. Second part of Parameters is the reason
-    4. channel is exist
-        4.1 client is member or operator of the channel
-            4.1.1 Member Count of the channel is 1 (Delete the channel and send RPL_PART to client)
-            4.1.2 Member Count of the channel is more than 1
-                4.1.2.1 client is the only operator of the channel
-                    Broadcast KICK message to all members of the channel with the reason : No operator left in the channel
-                    Send RPL_PART to the client
-                    Delete the channel (stop here);
-                4.1.2.2 client has a pending invite
-                    Remove the invite from the invite list
-            Send RPL_PART to the client
-            Broadcast PART message to all members of the channel
-        4.2 client is not a member or operator of the channel (Send ERR_NOTONCHANNEL)
-    5. channel is not exist (Send ERR_NOSUCHCHANNEL)
-*/
 void PartCommand::execute() {
     std::vector<std::string> parts;
     Clients *cl = DataControler::getClient(clientID);
@@ -762,4 +747,71 @@ void InviteCommand::execute() {
         return (DataControler::SendMsg(this->clientID,ERR_USERONCHANNEL(cl->getNickName(),parts[0],ch->getChannelName())));
     ch->addInvite(DataControler::getClient(parts[0])->getID(),clientID);
     DataControler::SendMsg(parts[0],RPL_INVITING(user_id(cl->getNickName(),cl->getUserName()),cl->getNickName(),parts[0],ch->getChannelName()));
+}
+
+//-----------------------------------------------------------
+
+/**
+ * @brief The KICK command can be used to request the forced removal of a user 
+ *  from a channel. It causes the <user> to be removed from the <channel> by force. 
+ *  If no comment is given, the server SHOULD use a default message instead.
+ * 
+ *  Parameters: <channel> <user> *( "," <user> ) [<comment>]
+ * 
+ * Numeric Replies:
+ * 
+ * ERR_NEEDMOREPARAMS (461)
+ * ERR_NOSUCHCHANNEL (403)
+ * ERR_CHANOPRIVSNEEDED (482)
+ * ERR_USERNOTINCHANNEL (441)
+ * ERR_NOTONCHANNEL (442)
+ * 
+ * Example:
+ * Client's request : KICK #Finnish John :Speaking English
+ * 
+ * Server's Response: " Command to kick John from #Finnish using "Speaking English" 
+ * 						as the reason (comment)."
+ *
+ * @param server
+ * @param cmd_infos Structure w/ prefix, command name and message
+ */
+KickCommand::KickCommand() : Command(0) {};
+KickCommand::~KickCommand() {};
+KickCommand::KickCommand(int clientID, const std::string& message) : Command(clientID) {
+    this->command = KICK;
+    this->message = message;
+};
+
+void KickCommand::execute(){
+    std::vector<std::string> parts;
+    Clients *cl = DataControler::getClient(clientID);
+    if (this->message.empty() == true)
+        return (DataControler::SendMsg(this->clientID,ERR_NEEDMOREPARAMS(cl->getNickName(),"KICK")));
+    parts = splitParts(this->message, 3);
+    if (parts.size() < 2)
+        return (DataControler::SendMsg(this->clientID,ERR_NEEDMOREPARAMS(cl->getNickName(),"KICK")));
+    if (parts[0][0] != '#')
+        return (DataControler::SendMsg(this->clientID,ERR_NOSUCHCHANNEL(cl->getNickName(),parts[0])));
+    parts[0].erase(0,1);
+    if (DataControler::channelnamesExist(parts[0]) == false)
+        return (DataControler::SendMsg(this->clientID,ERR_NOSUCHCHANNEL(cl->getNickName(),parts[0])));
+    Channels *ch = DataControler::getChannel(parts[0]);
+    if (ch->isMember(clientID) == false && ch->isOperator(clientID) == false)
+        return (DataControler::SendMsg(this->clientID,ERR_NOTONCHANNEL(cl->getNickName(),ch->getChannelName())));
+    if (ch->isOperator(clientID) == false)
+        return (DataControler::SendMsg(this->clientID,ERR_CHANOPRIVSNEEDED(cl->getNickName(),ch->getChannelName())));
+    std::vector<std::string> users = split(parts[1], ',');
+    std::string comment = parts[2];
+    if (comment.empty())
+        comment = "No Reason ...";
+    for (size_t i = 0; i < users.size(); i++) {
+        if (DataControler::isClient(users[i]) == false)
+            return (DataControler::SendMsg(this->clientID,ERR_NOSUCHNICK(cl->getNickName(),users[i])));
+        if (ch->isMember(DataControler::getClient(users[i])->getID()) == false)
+            return (DataControler::SendMsg(this->clientID,ERR_USERNOTINCHANNEL(cl->getNickName(),users[i],ch->getChannelName())));
+        if (DataControler::getClient(users[i])->getID() == clientID)
+            return (DataControler::SendMsg(this->clientID,ERR_NOTONCHANNEL(cl->getNickName(),ch->getChannelName())));
+        ch->removeClientFrom(1,DataControler::getClient(users[i])->getID());
+        DataControler::SendMsg(ch->getChannelName(),RPL_KICK(user_id(cl->getNickName(),cl->getUserName()),ch->getChannelName(),users[i],comment));
+    }
 }
