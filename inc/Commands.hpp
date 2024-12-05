@@ -190,5 +190,4 @@ class PrivmsgCommand : public Command {
 		std::string msg;
 };
 
-
 #endif // COMMANDS_HPP

@@ -2,6 +2,7 @@
 
 static void f(void){
 	system("leaks -q ircserv");
+	system("lsof -c ircserv");
 }
 
 
