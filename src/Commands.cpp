@@ -157,7 +157,7 @@ void Command::HandleCommand(int clientID, std::vector<std::string>& message) {
     DataControler::SendMsg(clientID,RPL_YOURHOST(cl->getNickName(),"localhost","1.0"));
     DataControler::SendMsg(clientID,RPL_CREATED(cl->getNickName(),DataControler::serverCreationDate()));
     DataControler::SendMsg(clientID,RPL_MYINFO(cl->getNickName(),"localhost","1.0","ol","itkol","lok"));
-    DataControler::SendMsg(clientID,RPL_ISUPPORT(cl->getNickName()," CASEMAPPING=rfc1459 CHANLIMIT=#:50 CHANMODES=k,l,ti CHANNELLEN=50 CHANTYPES=# NICKLEN=9 PREFIX=(o)@+ USERLEN=9 TOPICLEN=390"));
+    DataControler::SendMsg(clientID,RPL_ISUPPORT(cl->getNickName()," CASEMAPPING=rfc1459 CHANLIMIT=#:50 CHANMODES=k,l,ti CHANNELLEN=50 CHANTYPES=# NICKLEN=9 PREFIX=(o)@+ USERLEN=9 TOPICLEN=255"));
 }
 
 void Command::HandleCommand(int clientID, const std::string& _message) {
@@ -175,15 +175,11 @@ void Command::HandleCommand(int clientID, const std::string& _message) {
 	if (commandId == UNKNOWN)
         return (DataControler::SendMsg(clientID,ERR_UNKNOWNCOMMAND(DataControler::getClientNickname(clientID),message[0])));
     if (commandId == USER || commandId == PASS)
-        // return (DataControler::SendMsg(clientID,RFC::ERR(DataControler::getClientNickname(clientID),ERR_ALREADYREGISTRED)));
         return (DataControler::SendMsg(clientID,ERR_ALREADYREGISTERED(DataControler::getClientNickname(clientID))));
     if (message.size() == 1)
         message.push_back("");
 	Command *cmd = Command::createCommand(clientID, message[1], commandId);
     cmd->execute();
-    // Clients *cl = DataControler::getClient(clientID);
-    // if (cmd->command == JOIN && cl->getJoinedChannels().size() > 0)
-    //     std::cout << cl->getJoinedChannels().at(0) << std::endl;
 	delete cmd;
 }
 
@@ -217,6 +213,12 @@ Command *Command::createCommand(int clientID, const std::string& params, Command
             break;
         case KICK:
             cmd = new KickCommand(clientID, params);
+            break;
+        case TOPIC:
+            cmd = new TopicCommand(clientID, params);
+            break;
+        case PRIVMSG:
+            cmd = new PrivmsgCommand(clientID, params);
             break;
         default:
             cmd = new UnknownCommand(clientID, params);
@@ -644,15 +646,42 @@ QuitCommand::QuitCommand(int clientID, const std::string& message) : Command(cli
     this->message = message;
 }
 
+
 void QuitCommand::execute() {
     Clients *cl = DataControler::getClient(clientID);
-    if (cl->getRegistrationStatus() == 0)
-        return;
-    std::vector<std::string> parts = splitParts(this->message, 1);
-    if (parts.size() < 1)
-        DataControler::SendMsg(clientID,RPL_QUIT(cl->getNickName(),"Leaving ..."));
+    std::vector<Channels*> channels;
+    std::vector<std::string> joinedChannels = cl->getJoinedChannels();
+    std::string reason;
+    if (this->message.empty())
+        reason = "Quit: ";
     else
-        DataControler::SendMsg(clientID,RPL_QUIT(cl->getNickName(),parts[0]));
+        reason = "Quit: " + this->message;
+    if (joinedChannels.size() > 0){
+        for (std::vector<std::string>::iterator it = joinedChannels.begin(); it != joinedChannels.end(); ++it) {
+            Channels *ch = DataControler::getChannel(*it);
+            channels.push_back(ch);
+        }
+        for (size_t i = 0; i < channels.size(); i++){
+            if (channels[i]->isOperator(clientID) == true){
+                std::vector<int> members = channels[i]->getList(0);
+                std::string n_reason = ":No operator left in the channel";
+                std::string ch_n = channels[i]->getChannelName();
+                for (std::vector<int>::iterator it = members.begin(); it != members.end(); ++it) {
+                    Clients *_cl = DataControler::getClient(*it);
+                    DataControler::SendMsg(_cl->getID(),RPL_PART(user_id(_cl->getNickName(),_cl->getUserName()),ch_n,n_reason));
+                    _cl->leaveChannel(channels[i]->getChannelName());
+                }
+                DataControler::removeChannel(channels[i]->getChannelName());
+            }
+            else{
+                if (channels[i]->isMember(clientID) == true){
+                    DataControler::SendMsg(channels[i]->getChannelName(),RPL_PART(user_id(cl->getNickName(),cl->getUserName()),channels[i]->getChannelName(),reason));
+                    channels[i]->removeClientFrom(channels[i]->isOperator(clientID),clientID);
+                }
+            }
+        }
+    }
+    DataControler::SendMsg(clientID,RPL_QUIT(cl->getNickName(),reason));
     DataControler::removeClient(clientID);
 }
 
@@ -697,7 +726,7 @@ void PartCommand::execute() {
                 std::string ch_n = ch->getChannelName();
                 for (std::vector<int>::iterator it = members.begin(); it != members.end(); ++it) {
                     Clients *_cl = DataControler::getClient(*it);
-                    DataControler::SendMsg(ch->getChannelName(),RPL_PART(user_id(_cl->getNickName(),_cl->getUserName()),ch_n,n_reason));
+                    DataControler::SendMsg(_cl->getID(),RPL_PART(user_id(_cl->getNickName(),_cl->getUserName()),ch_n,n_reason));
                     _cl->leaveChannel(ch->getChannelName());
                 }
                 cl->leaveChannel(ch->getChannelName());
@@ -813,5 +842,155 @@ void KickCommand::execute(){
             return (DataControler::SendMsg(this->clientID,ERR_NOTONCHANNEL(cl->getNickName(),ch->getChannelName())));
         ch->removeClientFrom(1,DataControler::getClient(users[i])->getID());
         DataControler::SendMsg(ch->getChannelName(),RPL_KICK(user_id(cl->getNickName(),cl->getUserName()),ch->getChannelName(),users[i],comment));
+    }
+}
+
+//-----------------------------------------------------------
+
+TopicCommand::TopicCommand() : Command(0) {};
+TopicCommand::~TopicCommand() {};
+TopicCommand::TopicCommand(int clientID, const std::string& message) : Command(clientID) {
+    this->command = TOPIC;
+    this->message = message;
+};
+
+#define TOPICLEN 255
+void TopicCommand::execute(){
+    std::vector<std::string> parts;
+    Clients *cl = DataControler::getClient(clientID);
+    if (this->message.empty() == true)
+        return (DataControler::SendMsg(this->clientID,ERR_NEEDMOREPARAMS(cl->getNickName(),"TOPIC")));
+    parts = splitParts(this->message, 2);
+    if (parts.size() < 1)
+        return (DataControler::SendMsg(this->clientID,ERR_NEEDMOREPARAMS(cl->getNickName(),"TOPIC")));
+    if (parts[0][0] != '#')
+        return (DataControler::SendMsg(this->clientID,ERR_NOSUCHCHANNEL(cl->getNickName(),parts[0])));
+    parts[0].erase(0,1);
+    if (DataControler::channelnamesExist(parts[0]) == false)
+        return (DataControler::SendMsg(this->clientID,ERR_NOSUCHCHANNEL(cl->getNickName(),parts[0])));
+    Channels *ch = DataControler::getChannel(parts[0]);
+    if (ch->isMember(clientID) == false && ch->isOperator(clientID) == false)
+        return (DataControler::SendMsg(this->clientID,ERR_NOTONCHANNEL(cl->getNickName(),ch->getChannelName())));
+    if (ch->isTopicSet() == true && ch->isOperator(clientID) == false)
+        return (DataControler::SendMsg(this->clientID,ERR_CHANOPRIVSNEEDED(cl->getNickName(),ch->getChannelName())));
+    if (parts.size() == 1)
+        return (DataControler::SendMsg(this->clientID,RPL_TOPIC(cl->getNickName(),ch->getChannelName(),ch->getTopic())));
+    if (parts[1].size() > TOPICLEN)
+        parts[1] = parts[1].substr(0,TOPICLEN);
+    if (ch->isOperator(clientID) == false)
+        return (DataControler::SendMsg(this->clientID,ERR_CHANOPRIVSNEEDED(cl->getNickName(),ch->getChannelName())));
+    if (parts[1][0] == ':')
+        parts[1].erase(0,1);
+    ch->setTopic(clientID,parts[1]);
+    DataControler::SendMsg(ch->getChannelName(),RPL_TOPIC(cl->getNickName(),ch->getChannelName(),ch->getTopic()));
+}
+
+//-----------------------------------------------------------
+
+PrivmsgCommand::PrivmsgCommand() : Command(0) {};
+PrivmsgCommand::~PrivmsgCommand() {};
+PrivmsgCommand::PrivmsgCommand(int clientID, const std::string& message) : Command(clientID) {
+    this->command = PRIVMSG;
+    this->message = message;
+};
+
+/**
+ * @brief PRIVMSG is used to send private messages between users, as well as to
+   send messages to channels.  <msgtarget> is usually the nickname of
+   the recipient of the message, or a channel name.
+   
+   Parameters: <msgtarget> <text to be sent>
+
+   The <msgtarget> parameter may also be a host mask (#<mask>) or server
+   mask ($<mask>).  In both cases the server will only send the PRIVMSG
+   to those who have a server or host matching the mask.  The mask MUST
+   have at least 1 (one) "." in it and no wildcards following the last
+   ".".  This requirement exists to prevent people sending messages to
+   "#*" or "$*", which would broadcast to all users.  Wildcards are the
+   '*' and '?'  characters.  This extension to the PRIVMSG command is
+   only available to operators.
+
+   Numeric Replies:
+    ERR_NOSUCHNICK (401) -OK
+    ERR_CANNOTSENDTOCHAN (404)
+    ERR_TOOMANYTARGETS (407) 
+    ERR_NORECIPIENT (411) -OK
+    ERR_NOTEXTTOSEND (412) -OK
+    ERR_NOTOPLEVEL (413)
+    ERR_WILDTOPLEVEL (414)
+    RPL_AWAY (301)
+
+   @param server
+   @param client_fd User sending a msg
+   @param cmd_infos Structure w/ prefix, command name and message
+
+   EXAMPLES :
+   Examples:
+
+   :Angel!wings@irc.org PRIVMSG Wiz :Are you receiving this message ?
+    ; Message from Angel to Wiz.
+
+   PRIVMSG Angel :yes I'm receiving it !
+	; Command to send a message to Angel.
+
+   PRIVMSG jto@tolsun.oulu.fi :Hello !
+	; Command to send a message to a user on server tolsun.oulu.fi with
+    username of "jto".
+
+   PRIVMSG kalt%millennium.stealth.net@irc.stealth.net :Are you a frog?
+   	; Message to a user on server irc.stealth.net with username of "kalt", 
+	and connected from the host millennium.stealth.net.
+
+   PRIVMSG kalt%millennium.stealth.net :Do you like cheese?
+    ; Message to a user on the local server with username of "kalt", and
+    connected from the host millennium.stealth.net.
+
+   PRIVMSG Wiz!jto@tolsun.oulu.fi :Hello !
+   	; Message to the user with nickname Wiz who is connected from the host
+    tolsun.oulu.fi and has the username "jto".
+
+   PRIVMSG $*.fi :Server tolsun.oulu.fi rebooting.
+    ; Message to everyone on a server which has a name matching *.fi.
+
+   PRIVMSG #*.edu :NSFNet is undergoing work, expect interruptions
+    ; Message to all users who come from a host which has a name matching *.edu.
+
+	useful link : https://irssi.org/documentation/help/msg/
+   https://modern.ircdocs.horse/#errnosuchnick-401
+   http://abcdrfc.free.fr/rfc-vf/rfc1459.html (errors)
+   https://askubuntu.com/questions/855881/irssi-where-do-private-messages-go (how to use IRSSI)
+   https://datatracker.ietf.org/doc/html/rfc2812#section-3.3 RFC DE REFERENCE
+ * 
+ */
+void PrivmsgCommand::execute() {
+    std::vector<std::string> parts;
+    Clients *cl = DataControler::getClient(clientID);
+    if (this->message.empty() == true)
+        return (DataControler::SendMsg(this->clientID,ERR_NEEDMOREPARAMS(cl->getNickName(),"PRIVMSG")));
+    parts = splitParts(this->message, 2);
+    if (parts.size() < 2)
+        return (DataControler::SendMsg(this->clientID,ERR_NEEDMOREPARAMS(cl->getNickName(),"PRIVMSG")));
+    this->target = split(parts[0], ',');
+    for (size_t i = 0; i < this->target.size(); i++) {
+        if (this->target[i][0] == '#'){
+            if (DataControler::channelnamesExist(this->target[i].substr(1,this->target[i].length())) == false){
+                    DataControler::SendMsg(this->clientID,ERR_NOSUCHCHANNEL(cl->getNickName(),this->target[i]));
+                    continue;
+            }
+            Channels *ch = DataControler::getChannel(this->target[i].erase(0,1));
+            if (ch->isMember(clientID) == false && ch->isOperator(clientID) == false){
+                DataControler::SendMsg(this->clientID,ERR_CANNOTSENDTOCHAN(cl->getNickName(),ch->getChannelName()));
+                continue;
+            }
+            DataControler::SendMsg(ch->getChannelName(),this->clientID,RPL_PRIVMSG(user_id(cl->getNickName(),cl->getUserName()), "#" + ch->getChannelName(),parts[1]));
+        }
+        else{
+            if (DataControler::isClient(this->target[i]) == false){
+                DataControler::SendMsg(this->clientID,ERR_NOSUCHNICK(cl->getNickName(),this->target[i]));
+                continue;
+            }
+            Clients *_cl = DataControler::getClient(this->target[i]);
+            DataControler::SendMsg(_cl->getID(),RPL_PRIVMSG(user_id(cl->getNickName(),cl->getUserName()),_cl->getNickName(),parts[1]));
+        }
     }
 }

@@ -95,8 +95,6 @@ class JoinCommand : public Command {
 	    JoinCommand(int _clientID, const std::string& _message);
 		void joinExistingChannel(const std::string& channel, const std::string& key);
 		void joinNewChannel(const std::string& channel);
-		void ERR(int ResponseCode);
-		void RPL(int ResponseCode);
 	    void execute();
 	private:
     	std::string message;
@@ -153,6 +151,19 @@ class InviteCommand : public Command {
 		std::string channel;
 };
 
+class KickCommand : public Command {
+	public:
+		KickCommand();
+		~KickCommand();
+		KickCommand(int _clientID, const std::string& _message);
+		void execute();
+	private:
+		std::string message;
+		std::string channel;
+		std::string nickname;
+		std::string reason;
+};
+
 
 class TopicCommand : public Command {
 	public:
@@ -175,22 +186,9 @@ class PrivmsgCommand : public Command {
 		void execute();
 	private:
 		std::string message;
-		std::string target;
+		std::vector<std::string> target;
 		std::string msg;
 };
 
-
-class KickCommand : public Command {
-	public:
-		KickCommand();
-		~KickCommand();
-		KickCommand(int _clientID, const std::string& _message);
-		void execute();
-	private:
-		std::string message;
-		std::string channel;
-		std::string nickname;
-		std::string reason;
-};
 
 #endif // COMMANDS_HPP
