@@ -814,11 +814,15 @@ void KickCommand::execute(){
     for (size_t i = 0; i < users.size(); i++) {
         if (DataControler::isClient(users[i]) == false)
             return (DataControler::SendMsg(this->clientID,ERR_NOSUCHNICK(cl->getNickName(),users[i])));
-        if (ch->isMember(DataControler::getClient(users[i])->getID()) == false)
+        std::cout << users[i] << std::endl;
+        if (ch->isMember(DataControler::getClient(users[i])->getID()) == false && ch->isOperator(DataControler::getClient(users[i])->getID()) == false)
             return (DataControler::SendMsg(this->clientID,ERR_USERNOTINCHANNEL(cl->getNickName(),users[i],ch->getChannelName())));
         if (DataControler::getClient(users[i])->getID() == clientID)
             return (DataControler::SendMsg(this->clientID,ERR_NOTONCHANNEL(cl->getNickName(),ch->getChannelName())));
-        ch->removeClientFrom(1,DataControler::getClient(users[i])->getID());
+        if (ch->isMember(DataControler::getClient(users[i])->getID()))
+            ch->removeClientFrom(0,DataControler::getClient(users[i])->getID());
+        else
+            ch->removeClientFrom(1,DataControler::getClient(users[i])->getID());
         DataControler::SendMsg(ch->getChannelName(),RPL_KICK(user_id(cl->getNickName(),cl->getUserName()),ch->getChannelName(),users[i],comment));
     }
 }
