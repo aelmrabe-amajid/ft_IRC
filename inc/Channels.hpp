@@ -17,6 +17,7 @@ private:
 
     std::vector<int> Members;
     std::vector<int> Operators;
+    std::map<int,bool> _Members;
     std::vector<int> Banned;
 	std::map<int,int> InviteList; // {Invited, Inviter}|{target, source}
 

@@ -223,20 +223,6 @@ std::string Channels::getChannelModes(){
     return modes;
 }
 
-// void Channels::setChannelMode(char mode, bool set){
-//     switch (mode, set) {
-//         case 'i' : set ? Public = false : Public = true; break;
-//         case 't' : set ? TopicSet = true : TopicSet = false; break;
-//     }
-// }
-
-// void Channels::setChannelMode(char mode, bool set, std::string value){
-//     switch (mode, set) {
-//         case 'k' : set ? (Secret = true, Key = value) : (Secret = false, Key = ""); break;
-//         case 'l' : set ? (LimitSet = true, MemberLimit = std::stoi(value)) : (LimitSet = false, MemberLimit = 0); break;
-//     }
-// }
-
 void Channels::setChannelMode(char mode, bool set){
     if (mode == 'i') {
         set ? Public = false : Public = true;

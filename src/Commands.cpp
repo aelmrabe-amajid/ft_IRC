@@ -133,6 +133,7 @@ void Command::HandleCommand(int clientID, std::vector<std::string>& message) {
         delete cmd;
     }catch (std::exception &e) {
         DataControler::removeClient(clientID);
+        delete cmd;
         return;
     }
     try {
@@ -437,7 +438,7 @@ void JoinCommand::execute() {
 			keys = split(parts[1], ',');
 	}
 	for (size_t i = 0; i < channels.size(); i++) {
-		if (!checkTokenChar(channels[i], 1) || channels[i].length() > CHANLEN){
+        if (!checkTokenChar(channels[i], 1) || channels[i].length() > CHANLEN || channels[i].length() < 2){
             if (channels[i][0] != '#')
                 DataControler::SendMsg(clientID,ERR_BADCHANMASK(cl->getNickName(),channels[i]));
             else
@@ -782,6 +783,7 @@ void InviteCommand::execute() {
 
 //-----------------------------------------------------------
 
+
 KickCommand::KickCommand() : Command(0) {};
 KickCommand::~KickCommand() {};
 KickCommand::KickCommand(int clientID, const std::string& message) : Command(clientID) {
@@ -811,18 +813,22 @@ void KickCommand::execute(){
     std::string comment = parts[2];
     if (comment.empty())
         comment = "No Reason ...";
+    Clients *_cl;
     for (size_t i = 0; i < users.size(); i++) {
         if (DataControler::isClient(users[i]) == false)
             return (DataControler::SendMsg(this->clientID,ERR_NOSUCHNICK(cl->getNickName(),users[i])));
-        std::cout << users[i] << std::endl;
-        if (ch->isMember(DataControler::getClient(users[i])->getID()) == false && ch->isOperator(DataControler::getClient(users[i])->getID()) == false)
+        _cl = DataControler::getClient(users[i]);
+        if (ch->isMember(_cl->getID()) == false && ch->isOperator(_cl->getID()) == false)
             return (DataControler::SendMsg(this->clientID,ERR_USERNOTINCHANNEL(cl->getNickName(),users[i],ch->getChannelName())));
-        if (DataControler::getClient(users[i])->getID() == clientID)
-            return (DataControler::SendMsg(this->clientID,ERR_NOTONCHANNEL(cl->getNickName(),ch->getChannelName())));
-        if (ch->isMember(DataControler::getClient(users[i])->getID()))
-            ch->removeClientFrom(0,DataControler::getClient(users[i])->getID());
-        else
-            ch->removeClientFrom(1,DataControler::getClient(users[i])->getID());
+        if (_cl->getID() == clientID)
+            return;
+        if (ch->isMember(_cl->getID()))
+            ch->removeClientFrom(0,_cl->getID());
+        else if (ch->isOperator(_cl->getID())){
+            ch->RemovePendingInvitesFrom(_cl->getID());
+            ch->removeClientFrom(1,_cl->getID());
+        }
+        DataControler::SendMsg(_cl->getID(),RPL_KICK(user_id(cl->getNickName(),cl->getUserName()),ch->getChannelName(),users[i],comment));
         DataControler::SendMsg(ch->getChannelName(),RPL_KICK(user_id(cl->getNickName(),cl->getUserName()),ch->getChannelName(),users[i],comment));
     }
 }
@@ -836,7 +842,7 @@ TopicCommand::TopicCommand(int clientID, const std::string& message) : Command(c
     this->message = message;
 };
 
-#define TOPICLEN 255
+
 void TopicCommand::execute(){
     std::vector<std::string> parts;
     Clients *cl = DataControler::getClient(clientID);
@@ -908,4 +914,6 @@ void PrivmsgCommand::execute() {
         }
     }
 }
+
+//-----------------------------------------------------------
 

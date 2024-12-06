@@ -13,14 +13,13 @@
 class Clients
 {
 	private:
-		// Client Data
 		std::string nickName;
 		std::string userName;
 		std::string realName;
 		std::string hostName;
 		int socketfd;
-		int isRegistred;  // 0 for not registred, 1 password verified, 2 nickname set 3 username set
-		std::vector<std::string> joinedChannels; // List of channels the client joined
+		int isRegistred;
+		std::vector<std::string> joinedChannels;
 		
 	public:
 		// CONSTRUCTOR AND DESTRUCTOR
