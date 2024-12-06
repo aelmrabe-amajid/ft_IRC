@@ -791,6 +791,9 @@ KickCommand::KickCommand(int clientID, const std::string& message) : Command(cli
     this->message = message;
 };
 
+/*
+    KCIK 
+*/
 void KickCommand::execute(){
     std::vector<std::string> parts;
     Clients *cl = DataControler::getClient(clientID);
@@ -820,11 +823,18 @@ void KickCommand::execute(){
         _cl = DataControler::getClient(users[i]);
         if (ch->isMember(_cl->getID()) == false && ch->isOperator(_cl->getID()) == false)
             return (DataControler::SendMsg(this->clientID,ERR_USERNOTINCHANNEL(cl->getNickName(),users[i],ch->getChannelName())));
-        if (_cl->getID() == clientID)
+        if (_cl->getID() == clientID){
+            // return (DataControler::SendMsg(this->clientID,self_kick));
             return;
-        if (ch->isMember(_cl->getID()))
+        }
+        if (ch->isMember(_cl->getID())){
+            // std::cout << "trying to delete member" << std::endl;
             ch->removeClientFrom(0,_cl->getID());
+            _cl->leaveChannel(ch->getChannelName());
+        }
         else if (ch->isOperator(_cl->getID())){
+            // std::cout << "trying to delete operator" << std::endl; 
+            _cl->leaveChannel(ch->getChannelName());
             ch->RemovePendingInvitesFrom(_cl->getID());
             ch->removeClientFrom(1,_cl->getID());
         }
@@ -914,6 +924,4 @@ void PrivmsgCommand::execute() {
         }
     }
 }
-
 //-----------------------------------------------------------
-
