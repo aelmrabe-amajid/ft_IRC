@@ -146,15 +146,29 @@ void DataControler::modifyClientNickname(int fd, const std::string& newNickname)
     nicknames[nickname_lower] = fd;
 }
 
-void DataControler::removeClient(int fd) {
-    if (clientslist.find(fd) != clientslist.end()){
-        if (clientslist[fd].getNickName() != "") {
-            std::string nickname_lower = clientslist[fd].getNickName();
+void DataControler::removeClient(int fd, int flag) {
+    if (DataControler::isClient(fd) == false)
+        return;
+    Clients *_cl = DataControler::getClient(fd);
+    if (_cl->getRegistrationStatus() == 0){
+        if (_cl->getNickName() != ""){
+            std::string nickname_lower = transformCase(_cl->getNickName());
             nicknames.erase(nickname_lower);
         }
         clientslist.erase(fd);
         close(fd);
+        return;
     }
+    if (flag){
+        Command *cmd = Command::createCommand(fd,"leaving...",QUIT);
+        cmd->execute();
+        delete cmd;
+    }
+    std::string nickname_lower = transformCase(_cl->getNickName());
+    nicknames.erase(nickname_lower);
+    clientslist.erase(fd);
+    close(fd);
+    return;
 }
 
 Channels *DataControler::addChannel(const std::string& channelname) {

@@ -4,7 +4,7 @@ OBJDIR = build/obj
 DEPDIR = build/dep
 OBJS = $(SRCS:src/%.cpp=$(OBJDIR)/%.o)
 DEPS = $(SRCS:src/%.cpp=$(DEPDIR)/%.d)
-VRB = -Wall -Wextra -Werror -std=c++98 
+VRB = -Wall -Wextra -Werror -g -std=c++98 
 CFLAGS = $(VRB) -std=c++98 -I $(INC)
 CPP = c++
 NAME = ircserv

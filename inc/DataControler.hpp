@@ -32,7 +32,7 @@ class DataControler {
     static void addClient(int fd, const std::string& hostname); // Add Client to the List
     static void addNicknames(const std::string& nickname, int clientID); // Add Nickname to the List
     static void modifyClientNickname(int fd, const std::string& newNickname); // Modify Client Nickname
-    static void removeClient(int fd); // Remove Client from the List
+    static void removeClient(int fd, int flag); // Remove Client from the List
     static Channels *addChannel(const std::string& channelname); // Add Channel to the List
     static void removeChannel(const std::string& channelname); // Remove Channel from the List
     static void SendClientMessage(int socketfd, const std::string &message);

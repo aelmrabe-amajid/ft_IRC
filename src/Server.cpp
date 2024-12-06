@@ -111,7 +111,7 @@ void Server::ReceiveNewData(int fd)
 		 	Tools::removeClient(fd);
 		*/
         // std::cout << RED << "Client <" << fd << "> Disconnected" << WHI << std::endl;
-		DataControler::removeClient(fd); //-> remove the client
+		DataControler::removeClient(fd,true); //-> remove the client
 		inputsMap.erase(fd);
         // ClearClients(fd); //-> clear the client
         // close(fd); //-> close the client socket

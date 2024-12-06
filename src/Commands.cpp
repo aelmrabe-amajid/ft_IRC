@@ -105,7 +105,7 @@ void Command::HandleCommand(int clientID, std::vector<std::string>& message) {
             std::string client = "*";
             // DataControler::SendMsg(clientID,RFC::ERR("*",ERR_UNKNOWNCOMMAND));
             DataControler::SendMsg(clientID,ERR_UNKNOWNCOMMAND(client," "));
-            DataControler::removeClient(clientID);
+            DataControler::removeClient(clientID,false);
             return;
         }
         msg = parse(*it);
@@ -122,7 +122,7 @@ void Command::HandleCommand(int clientID, std::vector<std::string>& message) {
                 break;
             default:
                 // DataControler::SendMsg(clientID,RFC::ERR("*",ERR_UNKNOWNCOMMAND));
-                DataControler::removeClient(clientID);
+                DataControler::removeClient(clientID,false);
                 return;
         }
     }
@@ -132,7 +132,7 @@ void Command::HandleCommand(int clientID, std::vector<std::string>& message) {
         cmd->execute();
         delete cmd;
     }catch (std::exception &e) {
-        DataControler::removeClient(clientID);
+        DataControler::removeClient(clientID,false);
         delete cmd;
         return;
     }
@@ -141,7 +141,7 @@ void Command::HandleCommand(int clientID, std::vector<std::string>& message) {
         cmd->execute();
         delete cmd;
     }catch (std::exception &e){
-        DataControler::removeClient(clientID);
+        DataControler::removeClient(clientID,false);
         delete cmd;
         return;
     }
@@ -150,7 +150,7 @@ void Command::HandleCommand(int clientID, std::vector<std::string>& message) {
         cmd->execute();
         delete cmd;
     }catch (std::exception &e){
-        DataControler::removeClient(clientID);
+        DataControler::removeClient(clientID,false);
         delete cmd;
         return;
     }
@@ -160,7 +160,7 @@ void Command::HandleCommand(int clientID, std::vector<std::string>& message) {
     DataControler::SendMsg(clientID,RPL_YOURHOST(cl->getNickName(),"localhost","1.0"));
     DataControler::SendMsg(clientID,RPL_CREATED(cl->getNickName(),DataControler::serverCreationDate()));
     DataControler::SendMsg(clientID,RPL_MYINFO(cl->getNickName(),"localhost","1.0","ol","itkol","lok"));
-    DataControler::SendMsg(clientID,RPL_ISUPPORT(cl->getNickName()," CASEMAPPING=rfc1459 CHANLIMIT=#:50 CHANMODES=k,l,ti CHANNELLEN=50 CHANTYPES=# NICKLEN=9 PREFIX=(o)@+ USERLEN=9 TOPICLEN=255"));
+    DataControler::SendMsg(clientID,RPL_ISUPPORT(cl->getNickName()," CASEMAPPING=rfc1459 CHANLIMIT=#:200 CHANMODES=k,l,ti CHANNELLEN=200 CHANTYPES=# NICKLEN=9 PREFIX=(o)@+ USERLEN=9 TOPICLEN=255"));
 }
 
 void Command::HandleCommand(int clientID, const std::string& _message) {
@@ -400,8 +400,6 @@ void JoinCommand::joinExistingChannel(const std::string& channel, const std::str
         return (DataControler::SendMsg(clientID,ERR_BADCHANNELKEY(cl->getNickName(),ch->getChannelName())));    
     ch->addClientIn(0, clientID);
     cl->joinChannel(channel);
-    // :peken2!peken2@127.0.0.1 JOIN :#ME
-    
     DataControler::SendMsg(ch->getChannelName(),RPL_JOIN(user_id(cl->getNickName(),cl->getUserName()),ch->getChannelName()));
     DataControler::SendMsg(clientID,RPL_NAMREPLY(cl->getNickName(),"@",ch->getChannelName(),ch->getMemberList()));
     DataControler::SendMsg(clientID,RPL_ENDOFNAMES(cl->getNickName(),ch->getChannelName()));
@@ -628,6 +626,8 @@ void ModeCommand::execute(){
             else if (modes[i].set == false){
                 if (ch->isOperator(id) == false)
                     continue;
+                if (ch->getList(1).size() == 1)
+                    continue;
                 ch->removeClientFrom(1,id);
                 ch->addClientIn(0,id);
                 DataControler::SendMsg(ch->getChannelName(),MODE_CHANNELMSG(ch->getChannelName(),s_mode + " " + modes[i].param));
@@ -648,7 +648,6 @@ QuitCommand::QuitCommand(int clientID, const std::string& message) : Command(cli
     this->command = QUIT;
     this->message = message;
 }
-
 
 void QuitCommand::execute() {
     Clients *cl = DataControler::getClient(clientID);
@@ -685,7 +684,7 @@ void QuitCommand::execute() {
         }
     }
     DataControler::SendMsg(clientID,RPL_QUIT(cl->getNickName(),reason));
-    DataControler::removeClient(clientID);
+    DataControler::removeClient(clientID,false);
 }
 
 //-----------------------------------------------------------
@@ -851,7 +850,6 @@ TopicCommand::TopicCommand(int clientID, const std::string& message) : Command(c
     this->command = TOPIC;
     this->message = message;
 };
-
 
 void TopicCommand::execute(){
     std::vector<std::string> parts;
