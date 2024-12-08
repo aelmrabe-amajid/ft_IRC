@@ -383,15 +383,13 @@ void JoinCommand::joinExistingChannel(const std::string& channel, const std::str
     Clients *cl = DataControler::getClient(clientID);
     
     if (cl->isClientInChannel(channel))
-    {
-        std::cout << "Already in channel" << std::endl;
         return;
-    }
+    // Remember to remove this option of BANNED
     if (ch->isBanned(clientID))
         return (DataControler::SendMsg(clientID,ERR_BANNEDFROMCHAN(cl->getNickName(),ch->getChannelName())));
     if (ch->isFull())
         return (DataControler::SendMsg(clientID,ERR_CHANNELISFULL(cl->getNickName(),ch->getChannelName())));
-    if (cl->getJoinedChannels().size() >= CCHANLIMIT)
+    if (cl->getJoinedChannels().size() >= CHANLIMIT)
         return;
     if (!ch->isPublic() && !ch->isInvited(clientID))
         return (DataControler::SendMsg(clientID,ERR_INVITEONLYCHAN(cl->getNickName(),ch->getChannelName())));
@@ -406,13 +404,12 @@ void JoinCommand::joinExistingChannel(const std::string& channel, const std::str
         DataControler::SendMsg(clientID,RPL_TOPIC(cl->getNickName(),ch->getChannelName(),ch->getTopic()));
 };
 
-#define CHANLEN 50
-
 void JoinCommand::joinNewChannel(const std::string& channel) {
-    std::cout << "Joining new channel" << std::endl;
     Clients *cl = DataControler::getClient(clientID);
-    if (cl->getJoinedChannels().size() >= CCHANLIMIT)
+    if (cl->getJoinedChannels().size() >= CHANLIMIT){
+        DataControler::SendMsg(clientID,ERR_TOOMANYCHANNELS(cl->getNickName()));
         return;
+    }
     Channels *ch = DataControler::addChannel(channel);
     ch->addClientIn(1, clientID);
     cl->joinChannel(DataControler::transformCase(channel));
@@ -435,23 +432,47 @@ void JoinCommand::execute() {
 			keys = split(parts[1], ',');
 	}
 	for (size_t i = 0; i < channels.size(); i++) {
-        if (!checkTokenChar(channels[i], 1) || channels[i].length() > CHANLEN || channels[i].length() < 2){
+        if (!checkTokenChar(channels[i], 1) ||  channels[i].length() < 2){
             if (channels[i][0] != '#')
                 DataControler::SendMsg(clientID,ERR_BADCHANMASK(cl->getNickName(),channels[i]));
             else
                 DataControler::SendMsg(clientID,ERR_BADCHANMASK(cl->getNickName(),channels[i].erase(0,1)));
         }
-		else{
+        else {
             channels[i].erase(0,1);
-			if (DataControler::channelnamesExist(channels[i])){
-                if (keys.size() > i)
-                    joinExistingChannel(channels[i], keys[i]);
+            std::string channel_name = "";
+            if (channels[i].size() > CHANNELLEN)
+                channel_name = channels[i].substr(0, CHANNELLEN);
+            if(DataControler::channelnamesExist(channels[i]) || (channel_name.size() > 0  && DataControler::channelnamesExist(channel_name))){
+                if (channel_name.size() > 0)
+                    channels[i] = channel_name;
+                if (keys.size() > 1)
+                    joinExistingChannel(channels[i],keys[i]);
                 else
-                    joinExistingChannel(channels[i], "");
+                    joinExistingChannel(channels[i],"");
             }
-			else
-				joinNewChannel(channels[i]);
-		}
+            else{
+                if (channel_name.size() > 0)
+                    channels[i] = channel_name;
+                joinNewChannel(channels[i]);
+            }
+        }
+        // if (channels[i].size() > CHANNELLEN){
+        //     DataControler::SendMsg(clientID,ERR_NOSUCHCHANNEL(cl->getNickName(),channels[i]));
+        //     continue;
+        // }
+		// else{
+        //     channels[i].erase(0,1);
+		// 	if (DataControler::channelnamesExist(channels[i])){
+        //         if (keys.size() > i)
+        //             joinExistingChannel(channels[i], keys[i]);
+        //         else
+        //             joinExistingChannel(channels[i], "");
+        //     }
+		// 	else{
+		// 		joinNewChannel(channels[i]);
+        //     }
+		// }
 	}
 }
 //-----------------------------------------------------------
@@ -571,12 +592,18 @@ void ModeCommand::execute(){
             ch->setChannelMode(c, modes[i].set);
             DataControler::SendMsg(ch->getChannelName(),MODE_CHANNELMSG(ch->getChannelName(),s_mode));
         }
+        /*
+            The Key Must Have a Valide form 
+            @details : https://modern.ircdocs.horse/#key-channel-mode
+        */
         else if (modes[i].type == 'k'){
             if (modes[i].set){
-                if (modes[i].param.empty() || modes[i].param.size() > KEYLEN)
+                if (modes[i].param.empty() || modes[i].param.size() > KEYLEN || !isvalid(modes[i].param, 1)){
+                    if (modes[i].param.empty())
+                        modes[i].param = "";
+                    DataControler::SendMsg(clientID, ERR_INVALIDKEY(cl->getNickName(), ch->getChannelName()));
                     continue;
-                if (!isvalid(modes[i].param,1))
-                    DataControler::SendMsg(this->clientID, ERR_INVALIDMODEPARAM(cl->getNickName(),ch->getChannelName(),s_mode,modes[i].param));
+                } 
             }
             ch->setChannelMode(c, modes[i].set, modes[i].param);
             DataControler::SendMsg(ch->getChannelName(),MODE_CHANNELMSG(ch->getChannelName(),s_mode));
