@@ -25,7 +25,6 @@ enum CommandID {
     UNKNOWN
 };
 
-// Base class for all commands
 class Command {
 	public:
 	    virtual ~Command() {}
@@ -58,7 +57,6 @@ class PassCommand : public Command {
 		~PassCommand();
 	private:
 		std::string psw;
-		// std::vector<int> ResponseCodes;
 };
 
 class UnknownCommand : public Command {
@@ -69,12 +67,8 @@ class UnknownCommand : public Command {
 		~UnknownCommand();
 	private:
 		std::string message;
-		// std::vector<int> ResponseCodes;
 };
 
-/*
-	USER username 0 * :realname
-*/
 class UserCommand : public Command {
 	public:
 		UserCommand();

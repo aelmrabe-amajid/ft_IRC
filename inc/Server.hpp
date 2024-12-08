@@ -3,40 +3,6 @@
 #define SERVER_HPP
 
 
-// class Server{
-
-// 	private:
-
-// 		int Port;
-// 		int SerSocketFd;
-// 		static bool Signal;
-// 		std::vector<struct pollfd> fds;
-// 		std::string Passwd;
-
-// 	public:
-// 		// CONSTRUCTOR AND DESTRUCTOR
-// 		Server(){SerSocketFd = -1;}
-// 		~Server();
-
-// 		// SERVER LANUCH AND KILL
-// 		void ServerInit(int port, std::string passwd); //-> server initialization
-// 		void SerSocket(); //-> server socket creation
-// 		void ServerKill(); //-> server kill
-
-// 		// CLIENT CONNECT AND DISCONNECT
-// 		void ClientConnect();
-// 		void ClientDisconnect(int fd);
-
-// 		// MESSAGE SENDING AND RECEIVING
-// 		void SendToClient(int fd, std::string data);
-// 		void SendToAll(std::string data);
-
-// 		// CLIENT INTERACTION
-// 		void CommandHandler(std::string command, int fd);
-
-// };
-
-
 #include <sys/socket.h> //-> for socket()
 #include <sys/types.h> //-> for socket()
 #include <netinet/in.h> //-> for sockaddr_in
@@ -53,29 +19,6 @@
 //-------------------------------------------------------//
 #include "./DataControler.hpp"
 
-// #include "./channels/channels.hpp"
-// class Client //-> class for client
-// {
-// private:
-//     int Fd; //-> client file descriptor
-//     std::string IPadd; //-> client ip address
-//     std::string data; // recived string from the client
-//     std::string message; //-> message received from the client
-// public:
-//     Client(){}; //-> default constructor
-//     int GetFd(){return Fd;} //-> getter for fd
-
-//     void SetFd(int fd){Fd = fd;} //-> setter for fd
-//     void setIpAdd(std::string ipadd){IPadd = ipadd;} //-> setter for ipadd
-//     void setMessage(std::string msg){message = msg;} //-> setter for message
-//     std::string getMessage(){return message;} //-> getter for message
-// };
-
-
-/*
-	Class Server will Be The General Class will Include Multiple Channels Class Instances Also Clients Class Instances
-	All The Commands or Operations Will Be Encapsulated in Commands Class. so 3 Classes Will Be Used inside Server Class
-*/
 class Server //-> class for server
 {
 	private:

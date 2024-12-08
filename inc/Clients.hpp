@@ -22,17 +22,13 @@ class Clients
 		std::vector<std::string> joinedChannels;
 		
 	public:
-		// CONSTRUCTOR AND DESTRUCTOR
 		Clients();
 		Clients(int socketfd);
 		~Clients();
-
-		// BASIC METHODS
 		std::string getNickName() const;
 		std::string getUserName() const;
 		std::string getRealName() const;
 		std::string getHostName() const;
-		
 		int getID() const;
 		std::vector<std::string> getJoinedChannels() const;
 		bool isClientInChannel(const std::string &channelName) const;

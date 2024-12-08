@@ -378,7 +378,6 @@ JoinCommand::JoinCommand(int clientID, const std::string& message) : Command(cli
     this->message = message;
 };
 
-#define CCHANLIMIT 10
 void JoinCommand::joinExistingChannel(const std::string& channel, const std::string& key) {
     Channels *ch = DataControler::getChannel(channel);
     Clients *cl = DataControler::getClient(clientID);
@@ -470,8 +469,6 @@ ModeCommand::ModeCommand(int clientID, const std::string& _message) : Command(cl
 
 void ModeCommand::fillModeInfos(){
     size_t						pos;
-
-	// TARGET
 	pos = this->message.find(" ");
 	if (pos == std::string::npos)
 	{
@@ -483,8 +480,6 @@ void ModeCommand::fillModeInfos(){
         this->target = this->message.substr(0, pos);
         this->message.erase(0, pos + 1);
 	}
-
-	// MODE
 	pos = this->message.find(" ");
 	if (pos == std::string::npos)
 	{
@@ -512,15 +507,6 @@ void ModeCommand::fillModeInfos(){
         this->message.erase(0, pos + 1);
     }
 }
-
-typedef struct ModeInfo{
-    bool set;
-    int  type;
-    std::string param;
-}ModeInfo;
-
-#define MAXMODS 10
-#define KEYLEN 50
 
 static bool isvalid(std::string &parm, int ty){
     if (ty == 0){
@@ -558,7 +544,7 @@ void ModeCommand::execute(){
     bool set = true;
 	size_t arg = 0;
     std::string s_mode;
-    if (!this->mode.empty())
+    if (!this->mode.empty()){
         for (size_t i = 0; i < this->mode.size(); i++) {
             if (this->mode[i] == '+') {
                 set = true;
@@ -572,10 +558,11 @@ void ModeCommand::execute(){
             mode_info.type = mode[i];
             if ((mode[i] == 'k' || mode[i] == 'o' || mode[i] == 'l') && set && arg < params.size())
                 mode_info.param = params[arg++];
-            if (mode[i] == 'o' && !set && arg < params.size())
+            else if (mode[i] == 'o' && !set && arg < params.size())
                 mode_info.param = params[arg++];
             modes.push_back(mode_info);
         };
+    }
     for (size_t i = 0; i < modes.size() && i < MAXMODS; i++) {
         char c = static_cast <char>(modes[i].type);
         (modes[i].set ? s_mode = "+"  : s_mode = "-" );

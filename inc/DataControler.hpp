@@ -7,7 +7,6 @@
 #include "./Clients.hpp"
 #include "./Channels.hpp"
 #include "./Commands.hpp"
-// #include "./RFC.hpp"
 #include "./Macros.hpp"
 class Clients;
 class Channels;

@@ -19,12 +19,12 @@ private:
     std::vector<int> Operators;
     std::map<int,bool> _Members;
     std::vector<int> Banned;
-	std::map<int,int> InviteList; // {Invited, Inviter}|{target, source}
+	std::map<int,int> InviteList;
 
-    bool Public; // true for public, false for private
-    bool Secret; // false for visible without key, true for key
-    bool TopicSet; // false everyone can set topic, true only operators can set topic
-    bool LimitSet; // false no limit, true limit is set
+    bool Public; 
+    bool Secret; 
+    bool TopicSet;
+    bool LimitSet;
 
     std::string Key;
     std::string Topic;
