@@ -5,16 +5,12 @@ void Server::ClearClients(int fd){ //-> clear the clients
 		if (fds[i].fd == fd)
 			{fds.erase(fds.begin() + static_cast<std::vector<struct pollfd>::difference_type>(i)); break;}
 	}
-	// for(size_t i = 0; i < clients.size(); i++){ //-> remove the client from the vector of clients
-	// 	if (clients[i].GetFd() == fd)
-	// 		{clients.erase(clients.begin() + i); break;}
-	// }
-
 }
 
 bool Server::Signal = false; //-> initialize the static boolean
 void Server::SignalHandler(int signum)
 {
+	std::cout << "signal is : " << signum << std::endl;
 	(void)signum;
 	std::cout << std::endl << "Signal Received!" << std::endl;
 	Server::Signal = true; //-> set the static boolean to true to stop the server
@@ -22,64 +18,11 @@ void Server::SignalHandler(int signum)
 
 void	Server::CloseFds(){
 	DataControler::clearData(); //-> clear the data
-	// for(size_t i = 0; i < clients.size(); i++){ //-> close all the clients
-	// 	std::cout << RED << "Client <" << clients[i].GetFd() << "> Disconnected" << WHI << std::endl;
-	// 	close(clients[i].GetFd());
-	// }
-
 	if (SerSocketFd != -1){ //-> close the server socket
 		std::cout << RED << "Server <" << SerSocketFd << "> Disconnected" << WHI << std::endl;
 		close(SerSocketFd);
 	}
 }
-
-// std::vector<std::string> MsgSplit(std::string Message)
-// {
-// 	std::vector<std::string> res;
-// 	size_t beggin = 0;
-// 	size_t end = Message.find(" ");
-// 	while(end != std::string::npos)
-// 	{
-// 		// std::cout << beggin << " " << end << "\n";
-// 		res.push_back(Message.substr(beggin, end - beggin));
-// 		// std::cout << "message = " << Message << "\n";
-// 		std::cout << res.back() << "\n";
-// 		while(Message[end] == ' ')
-// 			end++;
-// 		// std::cout << end << "\n";
-// 		beggin = end;
-// 		end = Message.find(' ', beggin);
-// 	}
-// 	res.push_back(Message.substr(beggin, Message.size()));
-// 	return res;
-// }
-
-// int main()
-// {
-
-// 	/*
-// 		IRCCommand::RunCommand(fd,Command)
-// 		{
-// 			IRCCommandParser parser(command);
-// 			res = IRCCommandVerify verify(fd,parser.parse());
-// 			if (res.state != VALIDE)
-// 				return (IRCReplay::ERR(fd,res));
-// 			return (IRCReplay::RPL(fd,res));
-// 		}
-// 	*/
-// 	std::string input = "JOIN #my_channel,#my_channel2,#my_channel3 1111,2222,3333,4444";
-// 	IRCCommandParser parser(input);
-// 	t_content result = parser.parse();
-// 	std::cout << "Command ID: " << result.command << std::endl;
-// 	for (std::vector<std::string>::iterator it = result.channels.begin(); it != result.channels.end(); it++)
-// 		std::cout << "channels: " << *it << std::endl;
-// 	for (std::vector<std::string>::iterator it = result.users.begin(); it != result.users.end(); it++)
-// 		std::cout << "users: " << *it << std::endl;
-//     // Output parsed data
-//     std::cout << "Message: " << result.message << std::endl;
-//     std::cout << "Reason: " << result.reason << std::endl;
-//     return 0;
-// }
 
 static std::vector<std::string> MsgSplit(std::string Message){
 	std::vector<std::string> res;
@@ -98,48 +41,52 @@ static std::vector<std::string> MsgSplit(std::string Message){
 	return res;
 }
 
-std::map<int, std::vector<std::string> > inputsMap;
+int Server::handleMsg(int fd)
+{
+	char Message[1024]; //-> buffer for the received data
+    memset(Message, 0, sizeof(Message)); //-> clear the buffer
+    ssize_t bytes = recv(fd, Message, sizeof(Message) - 1 , 0); //-> receive the data
+	std::cout << YEL << "Client <" << fd << "> Data: " << WHI << Message;
+    if(bytes <= 0){ //-> check if the client disconnected
+		DataControler::removeClient(fd,true);
+		inputsMap.erase(fd);
+		inputs.erase(fd);
+    }
+	else if (Message[bytes - 1] != '\n'){
+		if (inputs.find(fd) != inputs.end()){
+			inputs[fd] += Message;
+		}
+		else{
+			inputs[fd] = Message;
+		}
+	}
+	else {
+		if (inputs.find(fd) != inputs.end()){
+			inputs[fd] += Message;
+		}else{
+			inputs[fd] = Message;
+		}
+		return (1);
+	}
+	return (0);
+}
+
 void Server::ReceiveNewData(int fd)
 {
-    char Message[1024]; //-> buffer for the received data
-    memset(Message, 0, sizeof(Message)); //-> clear the buffer
-
-    ssize_t bytes = recv(fd, Message, sizeof(Message) - 1 , 0); //-> receive the data
-
-    if(bytes <= 0){ //-> check if the client disconnected
-		/*
-		 	Tools::removeClient(fd);
-		*/
-        // std::cout << RED << "Client <" << fd << "> Disconnected" << WHI << std::endl;
-		DataControler::removeClient(fd,true); //-> remove the client
-		inputsMap.erase(fd);
-        // ClearClients(fd); //-> clear the client
-        // close(fd); //-> close the client socket
-    }
-    else{ //-> print the received data
-        Message[bytes] = '\0';
-        std::cout << YEL << "Client <" << fd << "> Data: " << WHI << Message;
-        //here you can add your code to process the received data: parse, check, authenticate, handle the command, etc...
-		// std::cout << buff << std::endl;
-        // Find the client and set the message
-		/*
-			int typeMessage;
-			typeMessage = Tool::DataParse(fd,Message)
-			if (typeMessage == COMMAND)
-			else if (typeMessage == FILE)
-			else if (typeMessage == TEXT)
-		*/
-		// if (DataControler::isClient(fd)){
-		// 	Command::HandleCommand(fd, Message);
+	int flag = handleMsg(fd);
+    if (flag == 1){
+        std::string &Message = inputs[fd];
 		if (DataControler::getClient(fd)->getRegistrationStatus() == 1)
 		{
 			std::vector<std::string> res = MsgSplit(Message);
+			inputs.erase(fd);
 			for (size_t i = 0; i < res.size(); i++)
 				Command::HandleCommand(fd, res[i]);
 			res.clear();
 		}
 		else {
 			std::vector<std::string> res = MsgSplit(Message);
+			inputs.erase(fd);
 			for (size_t i = 0; i < res.size(); i++){
 				if (inputsMap[fd].size() < 3)
 					inputsMap[fd].push_back(res[i]);
@@ -155,6 +102,7 @@ void Server::ReceiveNewData(int fd)
     }
 }
 
+
 void Server::AcceptNewClient()
 {
 	struct sockaddr_in cliadd;
@@ -162,7 +110,6 @@ void Server::AcceptNewClient()
 	socklen_t len = sizeof(cliadd);
 
 	int incofd = accept(SerSocketFd, reinterpret_cast<sockaddr *>(&cliadd), &len); //-> accept the new client
-	// int incofd = accept(SerSocketFd, (sockaddr *)&(cliadd), &len); //-> accept the new client
 	if (incofd == -1)
 		{std::cout << "accept() failed" << std::endl; return;}
 
@@ -172,19 +119,8 @@ void Server::AcceptNewClient()
 	NewPoll.fd = incofd; //-> add the client socket to the pollfd
 	NewPoll.events = POLLIN; //-> set the event to POLLIN for reading data
 	NewPoll.revents = 0; //-> set the revents to 0
-
-	/*
-		class tools provide a addClient(int fd) // this method will create client class for you 
-		and will add client to map ClientIDs. 
-		cli = Tools::getClientByID(id)
-	*/
-	// DataControler::addClient(incofd); //-> add the client to the map of clients
 	DataControler::addClient(incofd,inet_ntoa((cliadd.sin_addr))); //-> add the client to the map of new clients
-	// cli.SetFd(incofd); //-> set the client file descriptor
-	// cli.setIpAdd(inet_ntoa((cliadd.sin_addr))); //-> convert the ip address to string and set it
-	// clients.push_back(cli); //-> add the client to the vector of clients
 	fds.push_back(NewPoll); //-> add the client socket to the pollfd
-
 	std::cout << incofd << inet_ntoa((cliadd.sin_addr)) << std::endl;
 	std::cout << GRE << "Client <" << incofd << "> Connected" << WHI << std::endl;
 }
@@ -196,6 +132,7 @@ void Server::SerSocket()
 	struct pollfd NewPoll;
 	add.sin_family = AF_INET; //-> set the address family to ipv4
 	add.sin_addr.s_addr = INADDR_ANY; //-> set the address to any local machine address
+	// THIS IS USED FOR binding to all available ip addresses (interface)
 	add.sin_port = htons(this->Port); //-> convert the port to network byte order (big endian)
 
 	SerSocketFd = socket(AF_INET, SOCK_STREAM, 0); //-> create the server socket
@@ -208,12 +145,9 @@ void Server::SerSocket()
 	if (fcntl(SerSocketFd, F_SETFL, O_NONBLOCK) == -1) //-> set the socket option (O_NONBLOCK) for non-blocking socket
 		throw(std::runtime_error("faild to set option (O_NONBLOCK) on socket"));
 	if (bind(SerSocketFd, reinterpret_cast<struct sockaddr *>(&add), sizeof(add)) == -1) //-> bind the socket to the address
-	// if (bind(SerSocketFd, (struct sockaddr *)&add, sizeof(add)) == -1) //-> bind the socket to the address
-
 		throw(std::runtime_error("faild to bind socket"));
 	if (listen(SerSocketFd, SOMAXCONN) == -1) //-> listen for incoming connections and making the socket a passive socket
 		throw(std::runtime_error("listen() faild"));
-
 	NewPoll.fd = SerSocketFd; //-> add the server socket to the pollfd
 	NewPoll.events = POLLIN; //-> set the event to POLLIN for reading data
 	NewPoll.revents = 0; //-> set the revents to 0
@@ -224,20 +158,13 @@ void Server::ServerInit(int port, std::string passwd)
 {
 	this->Port = port; //-> set the server port
 	SerSocket(); //-> create the server socket
-
-
 	DataControler::initData(passwd); //-> initialize the data
-
 	std::cout << GRE << "Server <" << SerSocketFd << "> Connected" << WHI << std::endl;
 	std::cout << "Waiting to accept a connection...\n";
-
 	while (Server::Signal == false){ //-> run the server until the signal is received
 
 		if((poll(&fds[0], static_cast<nfds_t>(fds.size()), -1) == -1) && Server::Signal == false) //-> wait for an event
 			throw(std::runtime_error("poll() faild"));
-		// if((poll(&fds[0],fds.size(),-1) == -1) && Server::Signal == false) //-> wait for an event
-		// 	throw(std::runtime_error("poll() faild"));
-
 		for (size_t i = 0; i < fds.size(); i++){ //-> check all file descriptors
 			if (fds[i].revents & POLLIN){ //-> check if there is data to read
 				if (fds[i].fd == SerSocketFd)
@@ -247,17 +174,5 @@ void Server::ServerInit(int port, std::string passwd)
 			}
 		}
 	}
-	CloseFds(); //-> close the file descriptors when the server stops
+	CloseFds();
 }
-
-// void Server::SendData(int fd, std::string data)
-// {
-//     if (send(fd, data.c_str(), data.size(), 0) == -1) //-> send data to a registered client
-//         throw(std::runtime_error("send() faild"));
-// }
-
-// void Server::SendAll(std::string data)
-// {
-//     for(size_t i = 0; i < clients.size(); i++) //-> send data to all clients
-//         SendData(clients[i].GetFd(), data);
-// }

@@ -20,7 +20,7 @@ class Clients
 		int socketfd;
 		int isRegistred;
 		std::vector<std::string> joinedChannels;
-		
+		std::map<std::string, std::vector<int> >RecivedInvites;
 	public:
 		Clients();
 		Clients(int socketfd);
@@ -40,6 +40,10 @@ class Clients
 		int  getRegistrationStatus() const;
 		void joinChannel(const std::string &channelName);
 		void leaveChannel(const std::string &channelName);
+		void leaveChannel(void);
+		std::map<std::string, std::vector<int> >getRecivedInvites(void);
+		void PendingInvite(std::string channel_name, int clientID, int type);
+		// void addInvite(std::string &channel_name);
 };
 
 #endif // CLIENTS_HPP

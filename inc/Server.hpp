@@ -27,7 +27,8 @@ class Server //-> class for server
 		static bool Signal; //-> static boolean for signal
 
 		// std::vector<Client> clients; //-> vector of clients
-		
+		std::map<int, std::string> inputs;
+		std::map<int, std::vector<std::string> >inputsMap;
 		std::vector<struct pollfd> fds; //-> vector of pollfd
 		std::string Passwd; //-> server password
 	public:
@@ -36,6 +37,7 @@ class Server //-> class for server
 		void SerSocket(); //-> server socket creation
 		void AcceptNewClient(); //-> accept new client
 		void ReceiveNewData(int fd); //-> receive new data from a registered client
+		int handleMsg(int fd);
 
 		// std::vector<Client> &GetClients(){return clients;} //-> getter for clients
 		

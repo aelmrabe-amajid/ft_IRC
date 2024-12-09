@@ -109,11 +109,11 @@ std::string DataControler::getClientNickname(int fd){
     return clientslist[fd].getNickName();
 }
 
-/*
-    channelnames are unique and case-insensitive so we will use std::find
-*/
 bool DataControler::channelnamesExist(const std::string& channelname) {
     std::string ch_lower = transformCase(channelname);
+    // i need to check this late
+    // if (ch_lower.size() > CHANNELLEN)
+    //     return (false);
     if (channelslist.find(ch_lower) != channelslist.end())
         return true; 
     return false;
@@ -234,3 +234,7 @@ void DataControler::SendMsg(const std::string &channelname, int clientid, std::s
             SendMsg(*it, msg);
     }
 }
+
+// void DataControler::RemovePendingInvite(int clientID){
+
+// }

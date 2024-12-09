@@ -1,23 +1,3 @@
-15:17 <#ME> Topic: ""
-15:17 <#ME> Topic: ""
-15:17 <#ME> Topic: :
-15:17 <#ME> Topic: :
-
-
-Client <4> Data: TOPIC #ME
-[outgoing]: :localhost 332 peken #ME :HI TOPIC
-Client <4> Data: TOPIC #ME ""
-[outgoing]: :localhost 332 peken #ME :""
-[outgoing]: :localhost 332 peken #ME :""
-[outgoing]: :localhost 332 peken #ME :""
-[outgoing]: :localhost 332 peken #ME :""
-Client <4> Data: TOPIC #ME
-[outgoing]: :localhost 332 peken #ME :""
-Client <4> Data: PONG localhost
-Client <5> Data: PONG localhost
-Client <4> Data: TOPIC #ME ::
-[outgoing]: :localhost 332 peken #ME ::
-[outgoing]: :localhost 332 peken #ME ::
-[outgoing]: :localhost 332 peken #ME ::
-[outgoing]: :localhost 332 peken #ME ::
-Client <6> Data: PONG localhost
+CTL Z
+INVITE UPDATING AFTER ACCEPTING
+STOI

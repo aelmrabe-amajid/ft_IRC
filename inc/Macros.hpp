@@ -3,9 +3,9 @@
 
 # define user_id(nickname, username) (":" + nickname + "!" + username + "@localhost")
 
-# define TOPICLEN 255
-# define CHANLIMIT 10
 # define CHANNELLEN 32
+# define CHANLIMIT 10
+# define TOPICLEN 255
 # define MAXMODS 10
 # define KEYLEN 16
 # define MODES 10
@@ -52,19 +52,25 @@
 # define RPL_NICK(oclient, uclient, client) (":" + oclient + "!" + uclient + "@localhost NICK " +  client + "\r\n")
 # define RPL_PART(user_id, channel, reason) (user_id + " PART #" + channel + " " + (reason.empty() ? "." : reason ) + "\r\n")
 # define ERR_PASSWDMISMATCH(client) (":localhost 464 " + client + " :Password incorrect.\r\n")
-# define RPL_QUIT(user_id, reason) (user_id + " QUIT :Quit: " + reason + "\r\n")
+# define RPL_QUIT(user_id, reason) (user_id + " QUIT :" + reason + "\r\n")
 # define RPL_ERROR(user_id, reason) (user_id + " ERROR :" + reason + "\r\n")
 # define ERR_NOSUCHNICK(client, target) ("401 " + client + " " + target + " :No such nick/channel\r\n")
 # define RPL_PRIVMSG(nick, target, message) (nick + " PRIVMSG " + target + " " + message + "\r\n")
 # define RPL_TOPIC(client, channel, topic) (":localhost 332 " + client + " #" + channel + " :" + topic + "\r\n")
 # define ERR_ALREADYREGISTERED(client) (":localhost 462 " + client + " :You may not reregister.\r\n")
-
+# define ERR_CHNAME(client, chan_name) (":localhost 479 " + client + " #" + chan_name + " :Illegal channel name.\r\n" )
 
 typedef struct ModeInfo{
     bool set;
     int  type;
     std::string param;
 }ModeInfo;
+
+typedef struct s_Invite{
+    std::string channel_name;
+    int inviter;
+    int invited;
+}t_Invite;
 
 
 #endif 

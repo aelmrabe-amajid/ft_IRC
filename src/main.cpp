@@ -18,6 +18,7 @@ int main(int arg_num, char **args)
 	try{
 		signal(SIGINT, Server::SignalHandler); //-> catch the signal (ctrl + c)
 		signal(SIGQUIT, Server::SignalHandler); //-> catch the signal (ctrl + \)
+		signal(4,Server::SignalHandler);
 		ser.ServerInit(static_cast<int>(std::stoll(args[1])), args[2]); //-> initialize the server
 	}
 	catch(const std::exception& e){

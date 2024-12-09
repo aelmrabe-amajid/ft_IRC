@@ -42,6 +42,7 @@ class DataControler {
     static void SendMsg(int clientid, std::string msg);
     static void SendMsg(const std::string &channelname, std::string msg);
     static void SendMsg(const std::string &channelname, int clientid, std::string msg);
+    // static void RemovePendingInvite(int clientID);
 private:
     static std::map<int, Clients> clientslist;
     static std::map<std::string, Channels> channelslist;
