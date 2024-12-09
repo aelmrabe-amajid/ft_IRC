@@ -43,6 +43,7 @@ class Clients
 		void leaveChannel(void);
 		std::map<std::string, std::vector<int> >getRecivedInvites(void);
 		void PendingInvite(std::string channel_name, int clientID, int type);
+		bool isInvited(const std::string &channelName) const;
 		// void addInvite(std::string &channel_name);
 };
 

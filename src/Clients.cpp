@@ -94,38 +94,33 @@ std::map<std::string, std::vector<int> > Clients::getRecivedInvites(void){
     return (this->RecivedInvites);
 }
 
-/*
-    type 1 : getting invite to channel from clientID 
-    type 2 : joining channel and then remove all pending invites
-    type 3 : channel was deleted so delete all pending invites 
-    type 4 : remove pedding invite from joining channnelname from this client ( in cas inviter leave or downgraded)
-    type 5 : remove all pendding invite from this client
-*/
+bool Clients::isInvited(const std::string &channelName) const {
+    if (RecivedInvites.find(channelName) != RecivedInvites.end())
+        return true;
+    return false;
+}
+
 void Clients::PendingInvite(std::string channel_name, int ClientID, int type){
     if (type == 1) {
-        if (RecivedInvites.find(channel_name) != RecivedInvites.end()){
-            RecivedInvites[channel_name].push_back(ClientID);
-        }
+        if (RecivedInvites.find(channel_name) == RecivedInvites.end())
+            RecivedInvites[channel_name] = std::vector<int>();
+        RecivedInvites[channel_name].push_back(ClientID);
     }
     else if (type == 2 || type == 3){
-        if (RecivedInvites.find(channel_name) != RecivedInvites.end()){
-            RecivedInvites.erase(channel_name);
-        }
+        RecivedInvites.erase(channel_name);
     }
     else if (type == 4){
         if (RecivedInvites.find(channel_name) != RecivedInvites.end()){
-            std::vector<int> Inviters = RecivedInvites[channel_name];
-            for (std::vector<int>::iterator it = Inviters.begin(); it != Inviters.end(); it++){
-                if (*it == ClientID)
-                    Inviters.erase(it);
-            }
+            std::vector<int>& Inviters = RecivedInvites[channel_name];
+            Inviters.erase(std::remove(Inviters.begin(), Inviters.end(), ClientID), Inviters.end());
         }
     }
-    else if (type == 5 && RecivedInvites.size()){
+    else if (type == 5 && !RecivedInvites.empty()){
         Channels *ch;
-        for (std::map<std::string, std::vector<int> >::iterator it = RecivedInvites.begin(); it != RecivedInvites.end(); it++){
+        for (std::map<std::string, std::vector<int> >::iterator it = RecivedInvites.begin(); it != RecivedInvites.end(); ++it){
             ch = DataControler::getChannel(it->first);
-            ch->RmInvite(0,socketfd,0);
+            ch->RmInvite(0, socketfd, 0);
         }
+        RecivedInvites.clear();
     }
 }

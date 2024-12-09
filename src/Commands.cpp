@@ -297,7 +297,7 @@ NickCommand::NickCommand(int clientID, const std::string& message) : Command(cli
 
 void NickCommand::execute() {
     Clients *cl = DataControler::getClient(clientID);
-
+    std::cout << "im here" << std::endl;
     if (cl->getRegistrationStatus() == 0){
         std::string cl_n = "*";
         if (nickname.empty())
@@ -315,6 +315,14 @@ void NickCommand::execute() {
             return (DataControler::SendMsg(clientID, ERR_ERRONEUSNICKNAME(cl->getNickName(),this->nickname)));
         if (!DataControler::nicknamesUnique(this->nickname))
             return (DataControler::SendMsg(clientID, ERR_NICKNAMEINUSE(cl->getNickName(),this->nickname)));
+        DataControler::SendMsg(clientID,RPL_NICK(cl->getNickName(),cl->getNickName(),this->nickname));
+        std::vector<std::string> joinedChannels = cl->getJoinedChannels();
+
+        for (std::vector<std::string>::iterator it = joinedChannels.begin(); it != joinedChannels.end(); ++it) {
+            Channels *ch = DataControler::getChannel(*it);
+            if (ch->isMember(clientID) == true)
+                DataControler::SendMsg(ch->getChannelName(),RPL_NICK(cl->getNickName(),cl->getNickName(),this->nickname));
+        }
         cl->setNickName(this->nickname);
     }
 }
@@ -635,7 +643,7 @@ void ModeCommand::execute(){
             }
         }
         else
-            DataControler::SendMsg(this->clientID, ERR_UMODEUNKNOWNFLAG(cl->getNickName()) + " " + s_mode);
+            DataControler::SendMsg(this->clientID, ERR_UNKNOWNMODE(cl->getNickName(), s_mode));
     }
 }
 
@@ -737,9 +745,6 @@ void PartCommand::execute() {
                 DataControler::removeChannel(ch->getChannelName());
                 return;
             }
-            // if (ch->isPublic() == false && ch->isOperator(clientID) == true)
-            //     ch->getInviteMap().erase(clientID);
-            // if (ch->)
             ch->RmInvite(clientID,0,2);
             DataControler::SendMsg(ch->getChannelName(),RPL_PART(user_id(cl->getNickName(),cl->getUserName()),ch->getChannelName(),this->reason));
             ch->removeClientFrom(ch->isOperator(clientID),clientID);
@@ -776,13 +781,8 @@ void InviteCommand::execute() {
         return (DataControler::SendMsg(this->clientID,ERR_NOTONCHANNEL(cl->getNickName(),ch->getChannelName())));
     if (ch->isPublic() == false && ch->isOperator(clientID) == false)
         return (DataControler::SendMsg(this->clientID,ERR_CHANOPRIVSNEEDED(cl->getNickName(),ch->getChannelName())));
-    // Clients *_cl = DataControler::getClient(parts[0]);
-    // _cl->PendingInvite(ch->getChannelName(),clientID, 1); // adding Invite
-    // if (ch->isInvited(DataControler::getClient(parts[0])->getID()))
-    //     return;
     if (ch->isMember(DataControler::getClient(parts[0])->getID()))
         return (DataControler::SendMsg(this->clientID,ERR_USERONCHANNEL(cl->getNickName(),parts[0],ch->getChannelName())));
-    // ch->addInvite(DataControler::getClient(parts[0])->getID(),clientID);
     ch->AddInvite(clientID,DataControler::getClient(parts[0])->getID());
     DataControler::SendMsg(parts[0],RPL_INVITING(user_id(cl->getNickName(),cl->getUserName()),cl->getNickName(),parts[0],ch->getChannelName()));
 }
@@ -839,7 +839,7 @@ void KickCommand::execute(){
             // ch->RemovePendingInvitesFrom(_cl->getID());
             ch->removeClientFrom(1,_cl->getID());
         }
-        DataControler::SendMsg(_cl->getID(),RPL_KICK(user_id(cl->getNickName(),cl->getUserName()),ch->getChannelName(),users[i],comment));
+        // DataControler::SendMsg(_cl->getID(),RPL_KICK(user_id(cl->getNickName(),cl->getUserName()),ch->getChannelName(),users[i],comment));
         DataControler::SendMsg(ch->getChannelName(),RPL_KICK(user_id(cl->getNickName(),cl->getUserName()),ch->getChannelName(),users[i],comment));
     }
 }

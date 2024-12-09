@@ -317,18 +317,66 @@ int Channels::getMemberCount() const {
 
 
 
-void Channels::AddInvite(int inviter, int invited){
-    if (InviteList.find(inviter) != InviteList.end()){
-        for (std::vector<int>::iterator it = InviteList[inviter].begin(); it != InviteList[inviter].end(); it++){
-            if (*it == invited)
-                return;
+void Channels::AddInvite(int inviter, int invited) {
+    if (InviteList.find(inviter) == InviteList.end())
+        InviteList[inviter] = std::vector<int>();
+    if (std::find(InviteList[inviter].begin(), InviteList[inviter].end(), invited) == InviteList[inviter].end()) {
+        InviteList[inviter].push_back(invited);
+        Clients *cl = DataControler::getClient(invited);
+        cl->PendingInvite(this->ChannelName, inviter, 1);
+    }
+}
+
+// void Channels::AddInvite(int inviter, int invited){
+//     if (InviteList.find(inviter) != InviteList.end()){
+//         for (std::vector<int>::iterator it = InviteList[inviter].begin(); it != InviteList[inviter].end(); it++){
+//             if (*it == invited)
+//                 return;
+//         }
+//     }
+//     else
+//         InviteList[inviter].push_back(invited);
+//     Clients *cl = DataControler::getClient(invited);
+//     cl->PendingInvite(this->ChannelName,inviter,1);
+// };
+
+void Channels::RmInvite(int inviter, int invited, int type) {
+    if (type == 1 || type == 0) {
+        for (std::map<int, std::vector<int> >::iterator it = InviteList.begin(); it != InviteList.end(); ++it) {
+            std::vector<int>& invitedList = it->second;
+            invitedList.erase(std::remove(invitedList.begin(), invitedList.end(), invited), invitedList.end());
+        }
+        if (type == 1) {
+            Clients *cl = DataControler::getClient(invited);
+            cl->PendingInvite(this->ChannelName, 0, 2);
+        }
+    } else if (type == 2) {
+        if (InviteList.find(inviter) != InviteList.end()) {
+            Clients *cl;
+            std::vector<int>& invitedList = InviteList[inviter];
+            for (std::vector<int>::iterator it = invitedList.begin(); it != invitedList.end(); ++it) {
+                cl = DataControler::getClient(*it);
+                cl->PendingInvite(ChannelName, inviter, 4);
+            }
+            InviteList.erase(inviter);
+        }
+    } else if (type == 3) {
+        std::set<int> InvitedList;
+        for (std::map<int, std::vector<int> >::iterator it = InviteList.begin(); it != InviteList.end(); ++it) {
+            std::vector<int>& invitedList = it->second;
+            InvitedList.insert(invitedList.begin(), invitedList.end());
+        }
+        if (!InvitedList.empty()) {
+            Clients *cl;
+            for (std::set<int>::iterator it = InvitedList.begin(); it != InvitedList.end(); ++it) {
+                cl = DataControler::getClient(*it);
+                cl->PendingInvite(ChannelName, 0, 3);
+            }
         }
     }
-    else
-        InviteList[inviter].push_back(invited);
-    Clients *cl = DataControler::getClient(invited);
-    cl->PendingInvite(this->ChannelName,inviter,1);
-};
+}
+
+
 
 /*
     type 1 : when client invited Join Channel (remove all pending invites) | when client invited quit server 
@@ -342,46 +390,47 @@ void Channels::AddInvite(int inviter, int invited){
     ChannelDeleted:
 */
 
-void Channels::RmInvite(int inviter, int invited, int type){
-    if (type == 1 || type == 0){
-        for (std::map<int,std::vector<int> >::iterator it = InviteList.begin(); it !=  InviteList.end(); it++){
-            for (std::vector<int>::iterator v_it = it->second.begin(); v_it != it->second.end(); it++){
-                if (*v_it == invited)
-                    it->second.erase(v_it);
-            }
-        }
-        if (type == 1){
-            Clients *cl = DataControler::getClient(invited);
-            cl->PendingInvite(this->ChannelName,0,2);
-        }
-    }
-    else if (type == 2){
-        if (InviteList.find(inviter) != InviteList.end()){
-            Clients *cl;
-            for(std::vector<int>::iterator it = InviteList[inviter].begin(); it != InviteList[inviter].end(); it++){
-                cl = DataControler::getClient(*it);
-                cl->PendingInvite(ChannelName,inviter,4);
-            }
-            InviteList.erase(inviter);
-        }
-    }
-    else if (type == 3){
-        std::set<int> InvitedList;
-        for (std::map<int,std::vector<int> >::iterator it = InviteList.begin(); it !=  InviteList.end(); it++){
-            std::vector<int> &invitedList = it->second;
-            for (std::vector<int>::iterator v_it = invitedList.begin(); v_it != invitedList.end(); it++){
-                InvitedList.insert(*v_it);
-            }
-        }
-        if (InvitedList.size()){
-            Clients *cl;
-            for(std::set<int>::iterator it = InvitedList.begin(); it != InvitedList.end(); it++){
-                cl = DataControler::getClient(*it);
-                cl->PendingInvite(ChannelName,0,3);
-            }
-        }
-    }
-}
+// void Channels::RmInvite(int inviter, int invited, int type){
+//     if (type == 1 || type == 0){
+//         for (std::map<int,std::vector<int> >::iterator it = InviteList.begin(); it !=  InviteList.end(); it++){
+//             for (std::vector<int>::iterator v_it = it->second.begin(); v_it != it->second.end(); it++){
+//                 if (*v_it == invited)
+//                     it->second.erase(v_it);
+//             }
+//         }
+//         if (type == 1){
+//             Clients *cl = DataControler::getClient(invited);
+//             cl->PendingInvite(this->ChannelName,0,2);
+//         }
+//     }
+//     else if (type == 2){
+//         if (InviteList.find(inviter) != InviteList.end()){
+//             Clients *cl;
+//             for(std::vector<int>::iterator it = InviteList[inviter].begin(); it != InviteList[inviter].end(); it++){
+//                 cl = DataControler::getClient(*it);
+//                 cl->PendingInvite(ChannelName,inviter,4);
+//             }
+//             InviteList.erase(inviter);
+//         }
+//     }
+//     else if (type == 3){
+//         std::set<int> InvitedList;
+//         for (std::map<int,std::vector<int> >::iterator it = InviteList.begin(); it !=  InviteList.end(); it++){
+//             std::vector<int> &invitedList = it->second;
+//             for (std::vector<int>::iterator v_it = invitedList.begin(); v_it != invitedList.end(); it++){
+//                 InvitedList.insert(*v_it);
+//             }
+//         }
+//         if (InvitedList.size()){
+//             Clients *cl;
+//             for(std::set<int>::iterator it = InvitedList.begin(); it != InvitedList.end(); it++){
+//                 cl = DataControler::getClient(*it);
+//                 cl->PendingInvite(ChannelName,0,3);
+//             }
+//         }
+//     }
+// }
+
 
 
 // void Channels::RemovePendingInvite(int type, int ID){
