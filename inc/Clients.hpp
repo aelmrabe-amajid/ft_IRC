@@ -17,6 +17,7 @@ class Clients
 		std::string userName;
 		std::string realName;
 		std::string hostName;
+		std::string hostAddress;
 		int socketfd;
 		int isRegistred;
 		std::vector<std::string> joinedChannels;
@@ -37,6 +38,7 @@ class Clients
 		void setUserName(const std::string &username);
 		void setRealName(const std::string &realname);
 		void setHostName(const std::string &hostname);
+		void setHostAddress(const std::string &hostaddress);
 		int  getRegistrationStatus() const;
 		void joinChannel(const std::string &channelName);
 		void leaveChannel(const std::string &channelName);

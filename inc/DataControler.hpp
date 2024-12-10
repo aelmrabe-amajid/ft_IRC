@@ -1,6 +1,18 @@
 #ifndef DATA_CONTROLER_HPP
 #define DATA_CONTROLER_HPP
 
+#include <sys/socket.h> //-> for socket()
+#include <sys/types.h> //-> for socket()
+#include <netinet/in.h> //-> for sockaddr_in
+#include <fcntl.h> //-> for fcntl()
+#include <unistd.h> //-> for close()
+#include <arpa/inet.h> //-> for inet_ntoa()
+#include <poll.h> //-> for poll()
+#include <csignal> //-> for signal()
+#include <netdb.h>
+#include <ifaddrs.h>
+#include <sys/ioctl.h>
+#include <arpa/inet.h>
 #include <map>
 #include <vector>
 #include <string>
@@ -11,7 +23,6 @@
 class Clients;
 class Channels;
 class Command;
-
 
 class DataControler {
     public:
@@ -29,7 +40,7 @@ class DataControler {
     static bool channelnamesExist(const std::string& channelname); // Check if Channel Name is in the List
     static std::string getClientNickname(int fd); // Get Client Nickname
     // Maps Setters
-    static void addClient(int fd, const std::string& hostname); // Add Client to the List
+    static void addClient(int fd, struct sockaddr_in *cliadd); // Add Client to the List
     static void addNicknames(const std::string& nickname, int clientID); // Add Nickname to the List
     static void modifyClientNickname(int fd, const std::string& newNickname); // Modify Client Nickname
     static void removeClient(int fd, int flag); // Remove Client from the List
@@ -51,6 +62,8 @@ private:
     static std::map<std::string, int> nicknames;
     static std::string password;
     static std::string srv_date;
+    static std::string hostname;
+    static std::string hostaddress;
 };
 
 // #define UPRF(clientID) DataControler::UPREF(clientID);

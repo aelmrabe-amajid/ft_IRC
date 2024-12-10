@@ -13,6 +13,8 @@ std::map<std::string, Channels> DataControler::channelslist;
 std::map<std::string, int> DataControler::nicknames;
 std::string DataControler::password;
 std::string DataControler::srv_date;
+std::string DataControler::hostname;
+std::string DataControler::hostaddress;
 
 void DataControler::clearData() {
     for (std::map<int, Clients>::iterator it = clientslist.begin(); it != clientslist.end(); ++it)
@@ -21,13 +23,54 @@ void DataControler::clearData() {
     nicknames.clear();
 }
 
-void DataControler::initData(std::string psw) {
+void DataControler::initData(std::string psw) {  
     time_t now = time(0);
     DataControler::srv_date = ctime(&now);
     DataControler::srv_date.pop_back();
     DataControler::password = psw;
-    // RFC::INIT();
+
+    int tmp__socket;
+	// struct sockaddr_in remote_addr;
+    struct sockaddr_in addr;
+    struct hostent *host_entry = NULL;
+    socklen_t addr_len = sizeof(addr);
+    const char* s_ip = NULL;
+    char ip[16];
+
+    tmp__socket = socket(AF_INET, SOCK_STREAM, 0);
+    if(tmp__socket == -1)
+		throw(std::runtime_error("faild to create socket"));
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = inet_addr("8.8.8.8");
+    addr.sin_port = htons(53);
+    if (connect(tmp__socket, reinterpret_cast<struct sockaddr *>(&addr), sizeof(addr)) < 0) {
+        close(tmp__socket);
+        throw(std::runtime_error("faild to connect"));
+    }
+    if (getsockname(tmp__socket, reinterpret_cast<struct sockaddr *>(&addr), &addr_len) < 0) {
+        close(tmp__socket);
+        throw(std::runtime_error("faild to getsockname"));
+    }
+    s_ip = inet_ntoa(addr.sin_addr);
+    if (s_ip == NULL) {
+        close(tmp__socket);
+        throw(std::runtime_error("faild to convet ip to string"));
+    }
+    strncpy(ip, s_ip, 16);
+    host_entry = gethostbyaddr(&addr.sin_addr, sizeof(addr.sin_addr), AF_INET);
+    if (host_entry == NULL){
+        close(tmp__socket);
+        throw(std::runtime_error("faild to get hostname"));
+    }
+    hostname = host_entry->h_name;
+    hostaddress = s_ip;
+    std::cout << "Hostname: " << hostname << std::endl;
+    std::cout << "IP Address: " << hostaddress << std::endl;
+    freehostent(host_entry);
+    close(tmp__socket);
 }
+
 
 std::string DataControler::serverCreationDate() {
     return srv_date;
@@ -120,12 +163,26 @@ bool DataControler::channelnamesExist(const std::string& channelname) {
 }
 
 
-void DataControler::addClient(int fd, const std::string& _hostname) {
+void DataControler::addClient(int fd, struct sockaddr_in *cliadd) {
     Clients cl = Clients(fd);
     cl.setNickName("");
     cl.setUserName("");
     cl.setRealName("");
-    cl.setHostName(_hostname);
+    // check if _hostname refers to the same server ip address if then change from 127.0.0.1 to the hostname of server else get the hostname of the client from the ip address
+    std::string s_add = inet_ntoa((cliadd->sin_addr));
+    if (s_add == "127.0.0.1"){
+        cl.setHostName(hostname);
+        cl.setHostAddress(hostaddress);
+    }
+    else{
+        struct hostent *host_entry = NULL;
+        host_entry = gethostbyaddr(&cliadd->sin_addr,sizeof(cliadd->sin_addr), AF_INET);
+        if (host_entry == NULL)
+            cl.setHostName("*");
+        cl.setHostName(host_entry->h_name);
+        cl.setHostAddress(s_add);
+        freehostent(host_entry);
+    }
     cl.setRegistrationStatus(0);
     clientslist[fd] = cl;
 }

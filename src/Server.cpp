@@ -1,8 +1,4 @@
 #include "../inc/Server.hpp"
-#include <netdb.h>
-#include <ifaddrs.h>
-#include <sys/ioctl.h>
-#include <arpa/inet.h>
 
 void Server::ClearClients(int fd){ //-> clear the clients
 	for(size_t i = 0; i < fds.size(); i++){ //-> remove the client from the pollfd
@@ -107,25 +103,6 @@ void Server::ReceiveNewData(int fd)
 }
 
 //https://w3.cs.jmu.edu/kirkpams/OpenCSF/Books/csf/html/Sockets.html
-static void getting_socket(){
-	struct addrinfo hints;
-	struct addrinfo *server_list = NULL;
-	struct addrinfo *server = NULL; 
-	memset(&hints,0,sizeof(hints));
-	std::cout << "Start Getting :" << std::endl;
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-	// hints.ai_flags = AI_PASSIVE;
-	hints.ai_protocol = IPPROTO_TCP;
-	getaddrinfo("0","tcp",&hints,&server_list);
-	for (server = server_list; server != NULL; server = server->ai_next){
-		if (server->ai_family == AF_INET){
-			struct sockaddr_in *add = (struct sockaddr_in *)server->ai_addr;
-			std::cout << "The IP IS : " << inet_ntoa(add->sin_addr) << std::endl;
-		}
-	}
-	freeaddrinfo(server_list);
-}
 
 void Server::AcceptNewClient()
 {
@@ -138,18 +115,13 @@ void Server::AcceptNewClient()
 
 	if (fcntl(incofd, F_SETFL, O_NONBLOCK) == -1) //-> set the socket option (O_NONBLOCK) for non-blocking socket
 		{std::cout << "fcntl() failed" << std::endl; return;}
-
 	NewPoll.fd = incofd; //-> add the client socket to the pollfd
 	NewPoll.events = POLLIN; //-> set the event to POLLIN for reading data
 	NewPoll.revents = 0; //-> set the revents to 0
-		// std::cout << inet_ntoa(cliadd.sin_addr) << std::endl; 
-	DataControler::addClient(incofd,inet_ntoa((cliadd.sin_addr))); //-> add the client to the map of new clients
+	DataControler::addClient(incofd,&cliadd);
 	fds.push_back(NewPoll); //-> add the client socket to the pollfd
 	std::cout << incofd << inet_ntoa((cliadd.sin_addr)) << std::endl;
 	std::cout << GRE << "Client <" << incofd << "> Connected" << WHI << std::endl;
-	std::cout << "--------------------------------" << std::endl;
-	getting_socket();
-	std::cout << "--------------------------------" << std::endl;
 }
 
 
@@ -166,7 +138,6 @@ void Server::SerSocket()
 	SerSocketFd = socket(AF_INET, SOCK_STREAM, 0); //-> create the server socket
 	if(SerSocketFd == -1) //-> check if the socket is created
 		throw(std::runtime_error("faild to create socket"));
-
 	if(setsockopt(SerSocketFd, SOL_SOCKET, SO_REUSEADDR, &en, sizeof(en)) == -1) //-> set the socket option (SO_REUSEADDR) to reuse the address
 		throw(std::runtime_error("faild to set option (SO_REUSEADDR) on socket"));
 	if (fcntl(SerSocketFd, F_SETFL, O_NONBLOCK) == -1) //-> set the socket option (O_NONBLOCK) for non-blocking socket
@@ -175,8 +146,6 @@ void Server::SerSocket()
 		throw(std::runtime_error("faild to bind socket"));
 	if (listen(SerSocketFd, SOMAXCONN) == -1) //-> listen for incoming connections and making the socket a passive socket
 		throw(std::runtime_error("listen() faild"));
-	std::cout << inet_ntoa(add.sin_addr) << std::endl;
-	getting_socket();
 	NewPoll.fd = SerSocketFd; //-> add the server socket to the pollfd
 	NewPoll.events = POLLIN; //-> set the event to POLLIN for reading data
 	NewPoll.revents = 0; //-> set the revents to 0

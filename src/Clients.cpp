@@ -53,6 +53,10 @@ void Clients::setHostName(const std::string &hostname) {
     this->hostName = hostname;
 }
 
+void Clients::setHostAddress(const std::string &hostaddress) {
+    this->hostAddress = hostaddress;
+}
+
 void Clients::setRealName(const std::string &realname) {
     this->realName = realname;
 }
