@@ -12,6 +12,7 @@ class Clients;
 class Channels;
 class Command;
 
+
 class DataControler {
     public:
         static void clearData(); // Clear Data
@@ -37,7 +38,8 @@ class DataControler {
     static void SendClientMessage(int socketfd, const std::string &message);
     static std::string transformCase(const std::string& str);
     static bool PasswordCheck(const std::string& password);
-    static std::string UPREF(const std::string& nick);
+    // static std::string UPREF(const std::string& nick);
+    // static std::string UPREF(const int clientID);
     static std::string serverCreationDate();
     static void SendMsg(int clientid, std::string msg);
     static void SendMsg(const std::string &channelname, std::string msg);
@@ -50,4 +52,7 @@ private:
     static std::string password;
     static std::string srv_date;
 };
+
+// #define UPRF(clientID) DataControler::UPREF(clientID);
+
 #endif // DATA_CONTROLER_HPP

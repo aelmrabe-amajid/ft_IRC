@@ -191,9 +191,14 @@ void DataControler::SendClientMessage(int socketfd, const std::string &message) 
     send(socketfd, message.c_str(), message.size(), 0);
 };
 
-std::string DataControler::UPREF(const std::string& nick) {
-    return ":" + nick + "!" + DataControler::getClient(nick)->getUserName() + "@" + DataControler::getClient(nick)->getHostName();
-}
+// std::string DataControler::UPREF(const std::string& nick) {
+//     return ":" + nick + "!" + DataControler::getClient(nick)->getUserName() + "@" + DataControler::getClient(nick)->getHostName();
+// }
+
+// std::string DataControler::UPREF(const int clientID){
+//     Clients *cl = DataControler::getClient(clientID);
+//     return (":" + cl->getNickName() + "!" + cl->getUserName() + "@" + cl->getHostName());
+// }
 
 void DataControler::SendMsg(int clientid, std::string msg) {
     size_t len = msg.size();
@@ -234,7 +239,3 @@ void DataControler::SendMsg(const std::string &channelname, int clientid, std::s
             SendMsg(*it, msg);
     }
 }
-
-// void DataControler::RemovePendingInvite(int clientID){
-
-// }

@@ -2,6 +2,22 @@
 #include <iostream>
 #include <bitset>
 
+
+std::string Command::UPREF(int _clientID){
+    Clients *cl;
+
+    cl = DataControler::getClient(_clientID);
+    return (
+        ":" +
+        cl->getNickName() + 
+        "!" +
+        cl->getUserName() +
+        "@" + 
+        cl->getHostName()
+    );
+}
+
+
 static CommandID getCommandId(const std::string& command) {
     if (command == "PASS")          return PASS;
     if (command == "NICK")          return NICK;
@@ -154,7 +170,11 @@ void Command::HandleCommand(int clientID, std::vector<std::string>& message) {
     }
     Clients *cl = DataControler::getClient(clientID);
     cl->setRegistrationStatus(1);
-    DataControler::SendMsg(clientID,RPL_WELCOME(user_id(cl->getNickName(),cl->getUserName()),cl->getNickName()));
+    // DataControler::SendMsg(clientID,RPL_WELCOME(UPRF(clientID),cl->getNickName()));
+    // std::cout <<  << std:
+    std::string prefix = Command::UPREF(clientID);
+    // DataControler::SendMsg(clientID,RPL_WELCOME(user_id(cl->getNickName(),cl->getUserName()),cl->getNickName()));
+    DataControler::SendMsg(clientID,RPL_WELCOME(prefix,cl->getNickName()));
     DataControler::SendMsg(clientID,RPL_YOURHOST(cl->getNickName(),"localhost","1.0"));
     DataControler::SendMsg(clientID,RPL_CREATED(cl->getNickName(),DataControler::serverCreationDate()));
     DataControler::SendMsg(clientID,RPL_MYINFO(cl->getNickName(),"localhost","1.0","ol","itkol","lok"));

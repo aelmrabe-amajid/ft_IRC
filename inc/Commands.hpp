@@ -34,6 +34,7 @@ class Command {
 		static void HandleCommand(int clientID, const std::string& message);
 		static void HandleCommand(int clientID, std::vector<std::string>& message);
 		static std::string transformCase(std::string &str);
+		static std::string UPREF(int _clientID);
 	protected:
     	int clientID;
     	CommandID command;

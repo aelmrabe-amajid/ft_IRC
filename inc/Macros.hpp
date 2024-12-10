@@ -1,6 +1,7 @@
 #ifndef MACROS_HPP
 #define MACROS_HPP
 
+
 # define user_id(nickname, username) (":" + nickname + "!" + username + "@localhost")
 
 # define CHANNELLEN 32
@@ -9,12 +10,6 @@
 # define MAXMODS 10
 # define KEYLEN 16
 # define MODES 10
-
-    // CHANLIMIT 10
-    // CHANNELLEN 32
-    // NICK LEN 8
-    // USER LEN 8
-    // TOPIC LEN 255
 
 # define RPL_WELCOME(user_id, nickname) (":localhost 001 " + nickname + " :Welcome to the Internet Relay Network " + user_id + "\r\n")
 # define RPL_YOURHOST(client, servername, version) (":localhost 002 " + client + " :Your host is " + servername + " (localhost), running version " + version + "\r\n")
@@ -59,6 +54,9 @@
 # define RPL_TOPIC(client, channel, topic) (":localhost 332 " + client + " #" + channel + " :" + topic + "\r\n")
 # define ERR_ALREADYREGISTERED(client) (":localhost 462 " + client + " :You may not reregister.\r\n")
 # define ERR_CHNAME(client, chan_name) (":localhost 479 " + client + " #" + chan_name + " :Illegal channel name.\r\n" )
+
+
+
 
 typedef struct ModeInfo{
     bool set;
