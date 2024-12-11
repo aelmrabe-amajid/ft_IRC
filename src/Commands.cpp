@@ -13,10 +13,9 @@ std::string Command::UPREF(int _clientID){
         "!" +
         cl->getUserName() +
         "@" + 
-        cl->getHostName()
+        cl->getHostAddress()
     );
 }
-
 
 static CommandID getCommandId(const std::string& command) {
     if (command == "PASS")          return PASS;

@@ -49,8 +49,6 @@ class DataControler {
     static void SendClientMessage(int socketfd, const std::string &message);
     static std::string transformCase(const std::string& str);
     static bool PasswordCheck(const std::string& password);
-    // static std::string UPREF(const std::string& nick);
-    // static std::string UPREF(const int clientID);
     static std::string serverCreationDate();
     static std::string _gethn();
     static std::string _getha();

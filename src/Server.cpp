@@ -8,6 +8,7 @@ void Server::ClearClients(int fd){ //-> clear the clients
 }
 
 bool Server::Signal = false; //-> initialize the static boolean
+
 void Server::SignalHandler(int signum)
 {
 	(void)signum;
@@ -16,8 +17,8 @@ void Server::SignalHandler(int signum)
 }
 
 void	Server::CloseFds(){
-	DataControler::clearData(); //-> clear the data
-	if (SerSocketFd != -1){ //-> close the server socket
+	DataControler::clearData();
+	if (SerSocketFd != -1){
 		std::cout << RED << "Server <" << SerSocketFd << "> Disconnected" << WHI << std::endl;
 		close(SerSocketFd);
 	}
@@ -102,7 +103,6 @@ void Server::ReceiveNewData(int fd)
 }
 
 //https://w3.cs.jmu.edu/kirkpams/OpenCSF/Books/csf/html/Sockets.html
-
 void Server::AcceptNewClient()
 {
 	struct sockaddr_in cliadd;

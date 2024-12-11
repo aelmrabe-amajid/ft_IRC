@@ -30,6 +30,7 @@ class Clients
 		std::string getUserName() const;
 		std::string getRealName() const;
 		std::string getHostName() const;
+		std::string getHostAddress() const;
 		int getID() const;
 		std::vector<std::string> getJoinedChannels() const;
 		bool isClientInChannel(const std::string &channelName) const;

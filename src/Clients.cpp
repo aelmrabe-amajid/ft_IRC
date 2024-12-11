@@ -54,6 +54,10 @@ void Clients::setHostName(const std::string &hostname) {
     this->hostName = hostname;
 }
 
+std::string Clients::getHostAddress() const {
+    return (this->hostAddress);
+}
+
 void Clients::setHostAddress(const std::string &hostaddress) {
     this->hostAddress = hostaddress;
 }
