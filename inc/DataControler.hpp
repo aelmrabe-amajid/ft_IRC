@@ -52,6 +52,8 @@ class DataControler {
     // static std::string UPREF(const std::string& nick);
     // static std::string UPREF(const int clientID);
     static std::string serverCreationDate();
+    static std::string _gethn();
+    static std::string _getha();
     static void SendMsg(int clientid, std::string msg);
     static void SendMsg(const std::string &channelname, std::string msg);
     static void SendMsg(const std::string &channelname, int clientid, std::string msg);

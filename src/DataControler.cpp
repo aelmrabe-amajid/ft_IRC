@@ -23,14 +23,20 @@ void DataControler::clearData() {
     nicknames.clear();
 }
 
+std::string DataControler::_getha(){
+    return (hostaddress);
+}
+
+std::string DataControler::_gethn(){
+    return (hostname);
+}
+
 void DataControler::initData(std::string psw) {  
     time_t now = time(0);
     DataControler::srv_date = ctime(&now);
     DataControler::srv_date.pop_back();
     DataControler::password = psw;
-
     int tmp__socket;
-	// struct sockaddr_in remote_addr;
     struct sockaddr_in addr;
     struct hostent *host_entry = NULL;
     socklen_t addr_len = sizeof(addr);
@@ -65,10 +71,9 @@ void DataControler::initData(std::string psw) {
     }
     hostname = host_entry->h_name;
     hostaddress = s_ip;
-    std::cout << "Hostname: " << hostname << std::endl;
-    std::cout << "IP Address: " << hostaddress << std::endl;
-    freehostent(host_entry);
     close(tmp__socket);
+    freehostent(host_entry);
+    close(6);
 }
 
 
@@ -170,9 +175,10 @@ void DataControler::addClient(int fd, struct sockaddr_in *cliadd) {
     cl.setRealName("");
     // check if _hostname refers to the same server ip address if then change from 127.0.0.1 to the hostname of server else get the hostname of the client from the ip address
     std::string s_add = inet_ntoa((cliadd->sin_addr));
-    if (s_add == "127.0.0.1"){
+    if (s_add == hostaddress || s_add == "127.0.0.1"){
         cl.setHostName(hostname);
         cl.setHostAddress(hostaddress);
+        std::cout << s_add << std::endl;
     }
     else{
         struct hostent *host_entry = NULL;

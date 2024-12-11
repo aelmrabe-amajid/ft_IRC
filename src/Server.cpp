@@ -10,7 +10,6 @@ void Server::ClearClients(int fd){ //-> clear the clients
 bool Server::Signal = false; //-> initialize the static boolean
 void Server::SignalHandler(int signum)
 {
-	std::cout << "signal is : " << signum << std::endl;
 	(void)signum;
 	std::cout << std::endl << "Signal Received!" << std::endl;
 	Server::Signal = true; //-> set the static boolean to true to stop the server
@@ -112,7 +111,6 @@ void Server::AcceptNewClient()
 	int incofd = accept(SerSocketFd, reinterpret_cast<sockaddr *>(&cliadd), &len); //-> accept the new client
 	if (incofd == -1)
 		{std::cout << "accept() failed" << std::endl; return;}
-
 	if (fcntl(incofd, F_SETFL, O_NONBLOCK) == -1) //-> set the socket option (O_NONBLOCK) for non-blocking socket
 		{std::cout << "fcntl() failed" << std::endl; return;}
 	NewPoll.fd = incofd; //-> add the client socket to the pollfd
