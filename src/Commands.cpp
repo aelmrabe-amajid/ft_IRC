@@ -169,7 +169,6 @@ void Command::HandleCommand(int clientID, std::vector<std::string>& message) {
     Clients *cl = DataControler::getClient(clientID);
     cl->setRegistrationStatus(1);
     std::string prefix = Command::UPREF(clientID);
-    // DataControler::SendMsg(clientID,RPL_WELCOME(user_id(cl->getNickName(),cl->getUserName()),cl->getNickName()));
     DataControler::SendMsg(clientID,RPL_WELCOME(DataControler::_gethn(),prefix,cl->getNickName()));
     DataControler::SendMsg(clientID,RPL_YOURHOST(DataControler::_gethn(),cl->getNickName(),"1.0"));
     DataControler::SendMsg(clientID,RPL_CREATED(DataControler::_gethn(),cl->getNickName(),DataControler::serverCreationDate()));
