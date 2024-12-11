@@ -32,6 +32,10 @@
 # define ERR_UNKNOWNMODE(_host, client, mode) (":" + _host + " " + "472 " + client + " " + mode + " :is unknown mode char to me\r\n")
 # define ERR_USERSDONTMATCH(client) ("502 " + client + " :Cant change mode for other users\r\n")
 # define MODE_CHANNELMSG(user_id, channel, mode) (user_id + " MODE #" + channel + " " + mode + "\r\n")
+# define RPL_TOPIC(_host, client, channel, topic) (":" + _host + " " + "332 " + client + " #" + channel + " :" + topic + "\r\n")
+# define RPL_NOTOPIC(_host, client, channel) (":" + _host + " " + "331 " + client + " #" + channel + " :No topic is set\r\n")
+# define RPL_TOPICWHOTIME(_host, client, channel, setter, _time) (":" + _host + " " + "333 " + client + " #" + channel + " " + setter + " " + _time + "\r\n")
+# define TOPIC_CHANNELMSG(user_id, channel, topic) (user_id + " TOPIC #" + channel + " :" + topic + "\r\n")
 # define RPL_CHANNELMODEIS(_host, client, channel, mode) (":" + _host + " " + "324 " + client + " #" + channel + " " + mode + "\r\n")
 # define ERR_CANNOTSENDTOCHAN(client, channel) ("404 " + client + " #" + channel + " :Cannot send to channel\r\n")
 # define ERR_CHANNELISFULL(client, channel) ("471 " + client + " #" + channel + " :Cannot join channel (+l)\r\n")
@@ -50,7 +54,6 @@
 # define RPL_ERROR(user_id, reason) (user_id + " ERROR :" + reason + "\r\n")
 # define ERR_NOSUCHNICK(client, target) ("401 " + client + " " + target + " :No such nick/channel\r\n")
 # define RPL_PRIVMSG(nick, target, message) (nick + " PRIVMSG " + target + " " + message + "\r\n")
-# define RPL_TOPIC(_host, client, channel, topic) (":" + _host + " " + "332 " + client + " #" + channel + " :" + topic + "\r\n")
 # define ERR_ALREADYREGISTERED(_host, client) (":" + _host + " " + "462 " + client + " :You may not reregister.\r\n")
 # define ERR_CHNAME(_host, client, chan_name) (":" + _host + " " + "479 " + client + " #" + chan_name + " :Illegal channel name.\r\n" )
 

@@ -38,8 +38,11 @@ void Channels::setKey(const std::string& key) {
 void Channels::setTopic(const int clientId, const std::string& topic) {
     Topic = topic;
     TopicSetter = clientId;
-    std::time_t current_time = std::time(NULL);
-    TopicTime = std::ctime(&current_time); 
+    time_t now;
+    time(&now);
+    TopicTime = std::to_string(now);
+    // std::time_t current_time = std::time(NULL);
+    // TopicTime = std::ctime(&current_time); 
 }
 
 void Channels::setMemberLimit(int limit) {

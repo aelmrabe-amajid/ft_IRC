@@ -74,7 +74,8 @@ int Server::handleMsg(int fd)
 void Server::ReceiveNewData(int fd)
 {
 	int flag = handleMsg(fd);
-    if (flag == 1){
+    if (flag == 1)
+	{
         std::string &Message = inputs[fd];
 		if (DataControler::getClient(fd)->getRegistrationStatus() == 1)
 		{
@@ -121,7 +122,6 @@ void Server::AcceptNewClient()
 	std::cout << incofd << inet_ntoa((cliadd.sin_addr)) << std::endl;
 	std::cout << GRE << "Client <" << incofd << "> Connected" << WHI << std::endl;
 }
-
 
 void Server::SerSocket()
 {

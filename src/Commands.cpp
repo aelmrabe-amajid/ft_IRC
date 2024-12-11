@@ -2,7 +2,6 @@
 #include <iostream>
 #include <bitset>
 
-
 std::string Command::UPREF(int _clientID){
     Clients *cl;
 
@@ -169,8 +168,6 @@ void Command::HandleCommand(int clientID, std::vector<std::string>& message) {
     }
     Clients *cl = DataControler::getClient(clientID);
     cl->setRegistrationStatus(1);
-    // DataControler::SendMsg(clientID,RPL_WELCOME(UPRF(clientID),cl->getNickName()));
-    // std::cout <<  << std:
     std::string prefix = Command::UPREF(clientID);
     // DataControler::SendMsg(clientID,RPL_WELCOME(user_id(cl->getNickName(),cl->getUserName()),cl->getNickName()));
     DataControler::SendMsg(clientID,RPL_WELCOME(DataControler::_gethn(),prefix,cl->getNickName()));
@@ -202,7 +199,6 @@ void Command::HandleCommand(int clientID, const std::string& _message) {
     cmd->execute();
 	delete cmd;
 }
-
 
 Command *Command::createCommand(int clientID, const std::string& params, CommandID command) {
 	Command *cmd;
@@ -316,7 +312,6 @@ NickCommand::NickCommand(int clientID, const std::string& message) : Command(cli
 
 void NickCommand::execute() {
     Clients *cl = DataControler::getClient(clientID);
-    std::cout << "im here" << std::endl;
     if (cl->getRegistrationStatus() == 0){
         std::string cl_n = "*";
         if (nickname.empty())
@@ -409,7 +404,6 @@ void JoinCommand::joinExistingChannel(const std::string& channel, const std::str
     
     if (cl->isClientInChannel(channel))
         return;
-    // Remember to remove this option of BANNED
     if (ch->isBanned(clientID))
         return (DataControler::SendMsg(clientID,ERR_BANNEDFROMCHAN(cl->getNickName(),ch->getChannelName())));
     if (ch->isFull())
@@ -418,20 +412,19 @@ void JoinCommand::joinExistingChannel(const std::string& channel, const std::str
         return;
     if (!ch->isPublic() && !ch->isInvited(clientID))
         return (DataControler::SendMsg(clientID,ERR_INVITEONLYCHAN(cl->getNickName(),ch->getChannelName())));
-    // if (!ch->isPublic() && !ch->isInvited(clientID))
-    //     return (DataControler::SendMsg(clientID,ERR_INVITEONLYCHAN(cl->getNickName(),ch->getChannelName())));
     if (ch->isSecret() && !ch->isKeyValid(key))
         return (DataControler::SendMsg(clientID,ERR_BADCHANNELKEY(cl->getNickName(),ch->getChannelName())));    
     ch->addClientIn(0, clientID);
     cl->joinChannel(channel);
     if (!ch->isPublic())
         ch->RmInvite(0,clientID,1);
-    // if (ch->InviteList[])
     DataControler::SendMsg(ch->getChannelName(),RPL_JOIN(Command::UPREF(clientID),ch->getChannelName()));
     DataControler::SendMsg(clientID,RPL_NAMREPLY(DataControler::_gethn(),cl->getNickName(),"@",ch->getChannelName(),ch->getMemberList()));
     DataControler::SendMsg(clientID,RPL_ENDOFNAMES(DataControler::_gethn(),cl->getNickName(),ch->getChannelName()));
-    if (ch->getTopic().size() > 0)
-        DataControler::SendMsg(clientID,RPL_TOPIC(DataControler::_gethn(),cl->getNickName(),ch->getChannelName(),ch->getTopic()));
+    if (ch->getTopic().size() > 0){
+        DataControler::SendMsg(this->clientID,RPL_TOPICWHOTIME(DataControler::_gethn(),cl->getNickName(),ch->getChannelName(),ch->getTopicSetter(),ch->getTopicTime()));
+        return (DataControler::SendMsg(this->clientID,RPL_TOPIC(DataControler::_gethn(),cl->getNickName(),ch->getChannelName(),ch->getTopic())));
+    }
 };
 
 void JoinCommand::joinNewChannel(const std::string& channel) {
@@ -693,26 +686,34 @@ void QuitCommand::execute() {
             channels.push_back(ch);
         }
         for (size_t i = 0; i < channels.size(); i++){
-            if (channels[i]->isOperator(clientID) == true){
-                std::vector<int> members = channels[i]->getList(0);
+            std::vector<int> members = channels[i]->getList(0);
+            std::vector<int> ops = channels[i]->getList(1);
+            if (ops.size() == 1 && channels[i]->isOperator(clientID) == true){
                 std::string n_reason = ":No operator left in the channel";
-                std::string ch_n = channels[i]->getChannelName();
+                channels[i]->RmInvite(0,0,3);
+                DataControler::SendMsg(channels[i]->getChannelName(),RPL_PART(Command::UPREF(clientID),channels[i]->getChannelName(),reason));
+                cl->leaveChannel(channels[i]->getChannelName());
                 for (std::vector<int>::iterator it = members.begin(); it != members.end(); ++it) {
                     Clients *_cl = DataControler::getClient(*it);
-                    DataControler::SendMsg(_cl->getID(),RPL_PART(Command::UPREF(clientID),ch_n,n_reason));
+                    DataControler::SendMsg(_cl->getID(),RPL_PART(Command::UPREF(_cl->getID()),channels[i]->getChannelName(),n_reason));
                     _cl->leaveChannel(channels[i]->getChannelName());
                 }
-                channels[i]->RmInvite(0,0,3);
                 DataControler::removeChannel(channels[i]->getChannelName());
             }
-            else if (channels[i]->isMember(clientID) == true){
-                    DataControler::SendMsg(channels[i]->getChannelName(),RPL_PART(Command::UPREF(clientID),channels[i]->getChannelName(),reason));
-                    channels[i]->removeClientFrom(channels[i]->isOperator(clientID),clientID);
+            else{
+                DataControler::SendMsg(channels[i]->getChannelName(),RPL_PART(Command::UPREF(clientID),channels[i]->getChannelName(),reason));
+                if (channels[i]->isOperator(clientID) == true)
+                    channels[i]->removeClientFrom(1,clientID);
+                else
+                    channels[i]->removeClientFrom(0,clientID);
+                cl->leaveChannel(channels[i]->getChannelName());
             }
-            DataControler::SendMsg(clientID,RPL_QUIT(cl->getNickName(),reason));
-            DataControler::removeClient(clientID,false);
+            members.clear();
+            ops.clear();
         }
     }
+    DataControler::SendMsg(clientID,RPL_QUIT(Command::UPREF(clientID),reason));
+    DataControler::removeClient(clientID,false);
 }
 
 //-----------------------------------------------------------
@@ -808,14 +809,12 @@ void InviteCommand::execute() {
 
 //-----------------------------------------------------------
 
-
 KickCommand::KickCommand() : Command(0) {};
 KickCommand::~KickCommand() {};
 KickCommand::KickCommand(int clientID, const std::string& message) : Command(clientID) {
     this->command = KICK;
     this->message = message;
 };
-
 
 void KickCommand::execute(){
     std::vector<std::string> parts;
@@ -836,29 +835,33 @@ void KickCommand::execute(){
     if (ch->isOperator(clientID) == false)
         return (DataControler::SendMsg(this->clientID,ERR_CHANOPRIVSNEEDED(DataControler::_gethn(),cl->getNickName(),ch->getChannelName())));
     std::vector<std::string> users = split(parts[1], ',');
-    std::string comment = parts[2];
-    if (comment.empty())
-        comment = "No Reason ...";
+    std::string comment;
+    if (parts.size() < 3)
+        comment = ":No Reason ...";
+    else
+        comment = parts[2];
     Clients *_cl;
     for (size_t i = 0; i < users.size(); i++) {
-        if (DataControler::isClient(users[i]) == false)
-            return (DataControler::SendMsg(this->clientID,ERR_NOSUCHNICK(cl->getNickName(),users[i])));
-        _cl = DataControler::getClient(users[i]);
-        if (ch->isMember(_cl->getID()) == false && ch->isOperator(_cl->getID()) == false)
-            return (DataControler::SendMsg(this->clientID,ERR_USERNOTINCHANNEL(cl->getNickName(),users[i],ch->getChannelName())));
-        if (_cl->getID() == clientID)
-            return;
-        if (ch->isMember(_cl->getID())){
-            ch->removeClientFrom(0,_cl->getID());
-            _cl->leaveChannel(ch->getChannelName());
+        if (DataControler::isClient(users[i]) == false){
+            DataControler::SendMsg(this->clientID,ERR_NOSUCHNICK(cl->getNickName(),users[i]));
+            continue;
         }
-        else if (ch->isOperator(_cl->getID())){
+        _cl = DataControler::getClient(users[i]);
+        if (_cl->getID() == clientID)
+            continue;
+        if (ch->isMember(_cl->getID()) == false && ch->isOperator(_cl->getID()) == false){
+            DataControler::SendMsg(this->clientID,ERR_USERNOTINCHANNEL(cl->getNickName(),users[i],ch->getChannelName()));
+            continue;
+        }
+        DataControler::SendMsg(_cl->getID(),RPL_KICK(Command::UPREF(clientID),ch->getChannelName(),users[i],comment));
+        if (ch->isOperator(_cl->getID())){
             ch->RmInvite(clientID,0,2);
-            _cl->leaveChannel(ch->getChannelName());
-            // ch->RemovePendingInvitesFrom(_cl->getID());
             ch->removeClientFrom(1,_cl->getID());
         }
-        // DataControler::SendMsg(_cl->getID(),RPL_KICK(user_id(cl->getNickName(),cl->getUserName()),ch->getChannelName(),users[i],comment));
+        else{
+            ch->removeClientFrom(0,_cl->getID());
+        }
+        _cl->leaveChannel(ch->getChannelName());
         DataControler::SendMsg(ch->getChannelName(),RPL_KICK(Command::UPREF(clientID),ch->getChannelName(),users[i],comment));
     }
 }
@@ -875,10 +878,8 @@ TopicCommand::TopicCommand(int clientID, const std::string& message) : Command(c
 void TopicCommand::execute(){
     std::vector<std::string> parts;
     Clients *cl = DataControler::getClient(clientID);
-    if (this->message.empty() == true)
-        return (DataControler::SendMsg(this->clientID,ERR_NEEDMOREPARAMS(DataControler::_gethn(),cl->getNickName(),"TOPIC")));
     parts = splitParts(this->message, 2);
-    if (parts.size() < 1)
+    if (this->message.empty() == true || parts.size() < 1)
         return (DataControler::SendMsg(this->clientID,ERR_NEEDMOREPARAMS(DataControler::_gethn(),cl->getNickName(),"TOPIC")));
     if (parts[0][0] != '#')
         return (DataControler::SendMsg(this->clientID,ERR_NOSUCHCHANNEL(DataControler::_gethn(),cl->getNickName(),parts[0])));
@@ -888,18 +889,20 @@ void TopicCommand::execute(){
     Channels *ch = DataControler::getChannel(parts[0]);
     if (ch->isMember(clientID) == false && ch->isOperator(clientID) == false)
         return (DataControler::SendMsg(this->clientID,ERR_NOTONCHANNEL(DataControler::_gethn(),cl->getNickName(),ch->getChannelName())));
+    if (parts.size() == 1){
+        if (ch->getTopic().empty())
+            return (DataControler::SendMsg(this->clientID,RPL_NOTOPIC(DataControler::_gethn(),cl->getNickName(),ch->getChannelName())));
+        DataControler::SendMsg(this->clientID,RPL_TOPICWHOTIME(DataControler::_gethn(),cl->getNickName(),ch->getChannelName(),ch->getTopicSetter(),ch->getTopicTime()));
+        return (DataControler::SendMsg(this->clientID,RPL_TOPIC(DataControler::_gethn(),cl->getNickName(),ch->getChannelName(),ch->getTopic())));
+    }
     if (ch->isTopicSet() == true && ch->isOperator(clientID) == false)
         return (DataControler::SendMsg(this->clientID,ERR_CHANOPRIVSNEEDED(DataControler::_gethn(),cl->getNickName(),ch->getChannelName())));
-    if (parts.size() == 1)
-        return (DataControler::SendMsg(this->clientID,RPL_TOPIC(DataControler::_gethn(),cl->getNickName(),ch->getChannelName(),ch->getTopic())));
     if (parts[1].size() > TOPICLEN)
         parts[1] = parts[1].substr(0,TOPICLEN);
-    if (ch->isOperator(clientID) == false)
-        return (DataControler::SendMsg(this->clientID,ERR_CHANOPRIVSNEEDED(DataControler::_gethn(),cl->getNickName(),ch->getChannelName())));
     if (parts[1][0] == ':')
         parts[1].erase(0,1);
     ch->setTopic(clientID,parts[1]);
-    DataControler::SendMsg(ch->getChannelName(),RPL_TOPIC(DataControler::_gethn(),cl->getNickName(),ch->getChannelName(),ch->getTopic()));
+    DataControler::SendMsg(ch->getChannelName(),TOPIC_CHANNELMSG(Command::UPREF(clientID),ch->getChannelName(),parts[1]));
 }
 
 //-----------------------------------------------------------

@@ -175,20 +175,25 @@ void DataControler::addClient(int fd, struct sockaddr_in *cliadd) {
     cl.setRealName("");
     // check if _hostname refers to the same server ip address if then change from 127.0.0.1 to the hostname of server else get the hostname of the client from the ip address
     std::string s_add = inet_ntoa((cliadd->sin_addr));
-    if (s_add == hostaddress || s_add == "127.0.0.1"){
-        cl.setHostName(hostname);
+    if (s_add.compare("127.0.0.1") == 0 || s_add.compare(hostaddress) == 0)
         cl.setHostAddress(hostaddress);
-        std::cout << s_add << std::endl;
-    }
-    else{
-        struct hostent *host_entry = NULL;
-        host_entry = gethostbyaddr(&cliadd->sin_addr,sizeof(cliadd->sin_addr), AF_INET);
-        if (host_entry == NULL)
-            cl.setHostName("*");
-        cl.setHostName(host_entry->h_name);
+    else
         cl.setHostAddress(s_add);
-        freehostent(host_entry);
-    }
+    // if (s_add == hostaddress || s_add == "127.0.0.1"){
+    //     // cl.setHostName(hostname);
+    // cl.setHostAddress(s_add);
+    //     std::cout << s_add << std::endl;
+    // }
+    // else{
+    //     struct hostent *host_entry = NULL;
+    //     host_entry = gethostbyaddr(&cliadd->sin_addr,sizeof(cliadd->sin_addr), AF_INET);
+    //     if (host_entry == NULL){
+    //             cl.setHostAddress(s_add);
+    //     }
+    //     cl.setHostName("*");
+    //     cl.setHostName(host_entry->h_name);
+    //     freehostent(host_entry);
+    // }    
     cl.setRegistrationStatus(0);
     clientslist[fd] = cl;
 }
@@ -283,8 +288,10 @@ void DataControler::SendMsg(const std::string &channelname, std::string msg) {
         uniqueMembers.insert(*it);
     
     for (std::set<int>::iterator it = uniqueMembers.begin(); it != uniqueMembers.end(); it++) {
-        if (*it != 0)
+        if (*it != 0){
+            std::cout << *it << std::endl;
             SendMsg(*it, msg);
+        }
     }
 }
 

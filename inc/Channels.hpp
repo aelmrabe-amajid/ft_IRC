@@ -24,7 +24,6 @@ private:
     std::string ChannelName;
     std::vector<int> Members;
     std::vector<int> Operators;
-    std::map<int,bool> _Members;
     std::vector<int> Banned;
     t_Invites Invites;
 	// std::map<int,int> InviteList;

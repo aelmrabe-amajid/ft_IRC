@@ -2,7 +2,7 @@
 
 void f(void)
 {
-	system("leaks -l ircserv");
+	system("leaks ircserv");
 	system("lsof -c ircserv");
 }
 int main(int arg_num, char **args)

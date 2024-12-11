@@ -50,7 +50,6 @@ void Clients::setUserName(const std::string &username) {
 }
 
 void Clients::setHostName(const std::string &hostname) {
-    std::cout << "im here" << std::endl;
     this->hostName = hostname;
 }
 
