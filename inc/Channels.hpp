@@ -38,8 +38,6 @@ private:
     std::string TopicTime;
     int TopicSetter;
     int MemberLimit;
-    int MemberCount;
-
 public:
     Channels();
     Channels(std::string channelName);

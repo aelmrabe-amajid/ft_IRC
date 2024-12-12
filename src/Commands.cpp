@@ -87,8 +87,6 @@ static std::vector<std::string> parse(const std::string& _message) {
         msg.pop_back();
 	while (pos < msg.size() && msg[pos] == ' ')
         pos++;
-    // if (msg[0] != '/')
-    //     return;
     size_t command_end = msg.find(' ', pos);
     if (command_end == std::string::npos) {
         commad = msg.substr(pos);
@@ -98,8 +96,8 @@ static std::vector<std::string> parse(const std::string& _message) {
         pos = command_end;
     }
     if (commad[0] == '/')
-        commad = commad.substr(1); // remove the /
-    parse.push_back(Command::transformCase(commad)); // Convert to Upper
+        commad = commad.substr(1); 
+    parse.push_back(Command::transformCase(commad)); 
 	while (pos < msg.size() && msg[pos] == ' ')
 		pos++;
     if (msg.length() == pos) {
@@ -367,7 +365,6 @@ UserCommand::UserCommand(int clientid, const std::string& _message) : Command(cl
 }
 UserCommand::~UserCommand(){}
 
-// userName 0 * :realname
 void UserCommand::execute(){
     std::vector<std::string> parts;
     Clients *cl;
@@ -553,6 +550,8 @@ static bool isvalid(std::string &parm, int ty){
     return (true);
 }
 
+
+
 void ModeCommand::execute(){
     Clients *cl = DataControler::getClient(clientID);
 
@@ -615,10 +614,10 @@ void ModeCommand::execute(){
         }
         else if (modes[i].type == 'l'){
             if (modes[i].set){
-                if (modes[i].param.empty() || std::stoi(modes[i].param) < 0 || !isvalid(modes[i].param,0))
+                if (modes[i].param.empty() || atoi(modes[i].param.c_str()) < 0 || !isvalid(modes[i].param, 0))
                     continue;
-                if (std::stoi(modes[i].param) < ch->getMemberLimit())
-                    modes[i].param = std::to_string(ch->getMemberLimit());
+                if (atoi(modes[i].param.c_str()) < ch->getMemberCount())
+                    modes[i].param = std::to_string(ch->getMemberCount());
             }
             ch->setChannelMode(c, modes[i].set, modes[i].param);
             DataControler::SendMsg(ch->getChannelName(),MODE_CHANNELMSG(Command::UPREF(clientID),ch->getChannelName(),s_mode + " " + modes[i].param));
@@ -756,7 +755,7 @@ void PartCommand::execute() {
                 std::string ch_n = ch->getChannelName();
                 for (std::vector<int>::iterator it = members.begin(); it != members.end(); ++it) {
                     Clients *_cl = DataControler::getClient(*it);
-                    DataControler::SendMsg(_cl->getID(),RPL_PART(Command::UPREF(clientID),ch_n,n_reason));
+                    DataControler::SendMsg(_cl->getID(),RPL_PART(Command::UPREF(_cl->getID()),ch_n,n_reason));
                     _cl->leaveChannel(ch->getChannelName());
                 }
                 ch->RmInvite(0,0,3);

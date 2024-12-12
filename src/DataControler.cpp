@@ -99,19 +99,11 @@ Channels* DataControler::getChannel(const std::string& channelname) {
     return &(channelslist[ch_lower]);
 }
 
-/*
-    * This function is safe to use because we will check if the client exists before calling it
-*/
 Clients* DataControler::getClient(const std::string& nickname) {
     std::string nick_lower = transformCase(nickname);
     return(&(clientslist[nicknames[nick_lower]]));
 }
 
-
-/*
-    * This function will just iterate over the channelsName vector and get the members of each channel
-    * and insert them into a 
-*/
 std::vector<int>& DataControler::getChannelsMembers(const std::vector<std::string>& channelsName) {
     static std::vector<int> members;
     members.clear();
@@ -123,7 +115,6 @@ std::vector<int>& DataControler::getChannelsMembers(const std::vector<std::strin
         uniqueMembers.insert(channelMembers.begin(), channelMembers.end());
     }
     members.assign(uniqueMembers.begin(), uniqueMembers.end());
-    // members.push_back()
     return members;
 }
 
@@ -159,9 +150,6 @@ std::string DataControler::getClientNickname(int fd){
 
 bool DataControler::channelnamesExist(const std::string& channelname) {
     std::string ch_lower = transformCase(channelname);
-    // i need to check this late
-    // if (ch_lower.size() > CHANNELLEN)
-    //     return (false);
     if (channelslist.find(ch_lower) != channelslist.end())
         return true; 
     return false;
@@ -173,27 +161,11 @@ void DataControler::addClient(int fd, struct sockaddr_in *cliadd) {
     cl.setNickName("");
     cl.setUserName("");
     cl.setRealName("");
-    // check if _hostname refers to the same server ip address if then change from 127.0.0.1 to the hostname of server else get the hostname of the client from the ip address
     std::string s_add = inet_ntoa((cliadd->sin_addr));
     if (s_add.compare("127.0.0.1") == 0 || s_add.compare(hostaddress) == 0)
         cl.setHostAddress(hostaddress);
     else
         cl.setHostAddress(s_add);
-    // if (s_add == hostaddress || s_add == "127.0.0.1"){
-    //     // cl.setHostName(hostname);
-    // cl.setHostAddress(s_add);
-    //     std::cout << s_add << std::endl;
-    // }
-    // else{
-    //     struct hostent *host_entry = NULL;
-    //     host_entry = gethostbyaddr(&cliadd->sin_addr,sizeof(cliadd->sin_addr), AF_INET);
-    //     if (host_entry == NULL){
-    //             cl.setHostAddress(s_add);
-    //     }
-    //     cl.setHostName("*");
-    //     cl.setHostName(host_entry->h_name);
-    //     freehostent(host_entry);
-    // }    
     cl.setRegistrationStatus(0);
     clientslist[fd] = cl;
 }
@@ -258,15 +230,6 @@ bool DataControler::PasswordCheck(const std::string& psw) {
 void DataControler::SendClientMessage(int socketfd, const std::string &message) {
     send(socketfd, message.c_str(), message.size(), 0);
 };
-
-// std::string DataControler::UPREF(const std::string& nick) {
-//     return ":" + nick + "!" + DataControler::getClient(nick)->getUserName() + "@" + DataControler::getClient(nick)->getHostName();
-// }
-
-// std::string DataControler::UPREF(const int clientID){
-//     Clients *cl = DataControler::getClient(clientID);
-//     return (":" + cl->getNickName() + "!" + cl->getUserName() + "@" + cl->getHostName());
-// }
 
 void DataControler::SendMsg(int clientid, std::string msg) {
     size_t len = msg.size();

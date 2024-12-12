@@ -7,13 +7,13 @@ void Server::ClearClients(int fd){ //-> clear the clients
 	}
 }
 
-bool Server::Signal = false; //-> initialize the static boolean
+bool Server::Signal = false;
 
 void Server::SignalHandler(int signum)
 {
 	(void)signum;
 	std::cout << std::endl << "Signal Received!" << std::endl;
-	Server::Signal = true; //-> set the static boolean to true to stop the server
+	Server::Signal = true; 
 }
 
 void	Server::CloseFds(){
